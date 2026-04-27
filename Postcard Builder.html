@@ -137,9 +137,13 @@ async function fetchLibrary(builderId) {
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
   if (error) throw error;
-  const out = { facts: [], stats: [], quotes: [], frontCtas: [], backCtas: [] };
+  const out = { facts: [], stats: [], quotes: [], frontCtas: [], backCtas: [], fixedText: {} };
   for (const row of data || []) {
-    if (out[row.section]) out[row.section].push({ id: row.external_id, ...row.content });
+    if (out[row.section]) {
+      out[row.section].push({ id: row.external_id, ...row.content });
+    } else if (row.section === 'fixed_text') {
+      out.fixedText = row.content || {};
+    }
   }
   return out;
 }
@@ -253,6 +257,7 @@ function App() {
       qrSource: state.qrMode === 'image' ? state.qrImage : state.url,
       facts, stats, quote,
       frontCta, backCta,
+      fixedText: lib.fixedText || {},
     };
   }, [state, lib]);
 
@@ -517,7 +522,10 @@ function App() {
             Copy share link
           </button>
           <button className="btn btn-secondary" onClick={resetAll}>Reset</button>
-          <div style={{ marginLeft: 'auto', fontSize: 11, color: '#A7A7A7' }}>6 × 6 in · 600 × 600 px</div>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <span style={{ fontSize: 11, color: '#A7A7A7' }}>6 × 6 in · 600 × 600 px</span>
+            <a href="admin.html" style={{ fontSize: 11, color: '#0070F0', textDecoration: 'none', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', borderLeft: '1px solid #e0e6ee', paddingLeft: 14 }}>Admin →</a>
+          </div>
         </div>
 
         <div className="help-banner">

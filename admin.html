@@ -4,11 +4,13 @@
 <meta charset="UTF-8" />
 <title>WGU Library Admin</title>
 <link rel="stylesheet" href="source/colors_and_type.css" />
+<meta name="ext-resource-dependency" content="assets/swirl-navy.png" data-resource-id="swirlBg" />
+<meta name="ext-resource-dependency" content="assets/wgu-wordmark-white.png" data-resource-id="wguLogo" />
 <style>
   html, body { margin: 0; padding: 0; background: #f4f6f9; font-family: 'Jost', sans-serif; color: #001731; }
   * { box-sizing: border-box; }
 
-  /* ===== Sign-in screen ===== */
+  /* ===== Sign-in screen (unchanged from before) ===== */
   .signin-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
   .signin-card { background: #fff; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,23,49,0.08); padding: 40px; max-width: 420px; width: 100%; }
   .signin-card h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.04em; color: #001731; margin: 0 0 8px; }
@@ -16,87 +18,100 @@
   .signin-card label { font-size: 12px; font-weight: 600; color: #264468; display: block; margin-bottom: 6px; }
   .signin-card input[type="email"], .signin-card input[type="password"] { width: 100%; padding: 10px 12px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; }
   .signin-card input[type="email"]:focus, .signin-card input[type="password"]:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
-  .method-toggle { display: flex; gap: 4px; background: #eef2f6; border-radius: 6px; padding: 3px; margin-bottom: 16px; }
-  .method-toggle button { flex: 1; border: 0; background: transparent; padding: 8px 10px; font-size: 12px; font-weight: 600; color: #264468; border-radius: 4px; cursor: pointer; font-family: inherit; }
-  .method-toggle button.active { background: #fff; color: #0070F0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
   .signin-card .info-box { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 14px; font-size: 13px; color: #002855; line-height: 1.5; margin-bottom: 16px; }
   .signin-card .err-box { background: #fff1f1; border: 1px solid #fbcaca; border-radius: 6px; padding: 12px; font-size: 12px; color: #dc2626; line-height: 1.5; margin-top: 12px; }
   .signin-card .footer-note { font-size: 11px; color: #A7A7A7; margin-top: 24px; line-height: 1.5; }
+  .method-toggle { display: flex; gap: 4px; background: #eef2f6; border-radius: 6px; padding: 3px; margin-bottom: 16px; }
+  .method-toggle button { flex: 1; border: 0; background: transparent; padding: 8px 10px; font-size: 12px; font-weight: 600; color: #264468; border-radius: 4px; cursor: pointer; font-family: inherit; }
+  .method-toggle button.active { background: #fff; color: #0070F0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
-  /* ===== Admin shell ===== */
-  .admin-wrap { min-height: 100vh; }
-  .admin-bar { background: #001731; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-  .admin-bar h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.12em; margin: 0; color: #fff; }
-  .admin-bar .right { display: flex; gap: 16px; align-items: center; font-size: 12px; flex-wrap: wrap; }
-  .admin-bar .user-email { color: #BBD0E8; }
-  .admin-bar a { color: #97E152; text-decoration: none; font-weight: 600; }
-  .admin-bar a:hover { text-decoration: underline; }
-  .admin-bar button { background: transparent; border: 1px solid #46B1EF; color: #46B1EF; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .admin-bar button:hover { background: rgba(70,177,239,0.1); }
+  /* ===== App layout (mirrors builder) ===== */
+  .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
+  .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 80px; }
+  .form-header { padding: 20px 28px 16px; border-bottom: 1px solid #e0e6ee; background: #fff; color: #001731; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 rgba(0,23,49,0.04); display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .form-header .title-block h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px; color: #001731; }
+  .form-header .title-block p { margin: 0; font-size: 11px; color: #264468; line-height: 1.4; }
+  .form-header .header-actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
+  .form-header .user-line { font-size: 10px; color: #A7A7A7; max-width: 160px; text-align: right; word-break: break-all; }
+  .form-header .header-actions a, .form-header .header-actions button { font-size: 10px; color: #0070F0; text-decoration: none; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; background: transparent; border: 0; cursor: pointer; padding: 0; font-family: inherit; }
+  .form-header .header-actions a:hover, .form-header .header-actions button:hover { text-decoration: underline; }
+  .form-header .header-actions button.signout { color: #dc2626; }
 
-  .admin-content { max-width: 920px; margin: 0 auto; padding: 32px; }
+  .section { padding: 22px 28px 18px; border-bottom: 1px solid #eef2f6; }
+  .section h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; color: #0070F0; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  .section h2 .step-num { background: #0070F0; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-family: 'Jost', sans-serif; font-weight: 700; }
+  .section h2 .step-num.brand { background: #97E152; color: #001731; }
+  .section h2 .meta { font-size: 11px; color: #A7A7A7; font-weight: 500; letter-spacing: 0; text-transform: none; margin-left: auto; }
+  .section .help { font-size: 11px; color: #264468; background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 4px; padding: 8px 10px; margin: 0 0 12px; line-height: 1.45; }
 
-  /* ===== Tabs ===== */
-  .tabs { display: flex; gap: 0; border-bottom: 2px solid #e0e6ee; margin-bottom: 24px; flex-wrap: wrap; }
-  .tab { padding: 12px 18px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: #264468; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.12s; text-transform: uppercase; letter-spacing: 0.06em; }
-  .tab:hover { color: #0070F0; }
-  .tab.active { color: #0070F0; border-bottom-color: #0070F0; }
-  .tab .count { background: #e0e6ee; color: #264468; padding: 1px 7px; border-radius: 10px; font-size: 11px; margin-left: 8px; font-weight: 700; letter-spacing: 0; }
-  .tab.active .count { background: #0070F0; color: #fff; }
+  /* ===== Brand-text fields ===== */
+  .brand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .brand-grid .brand-row { display: flex; flex-direction: column; gap: 4px; }
+  .brand-grid .brand-row.full { grid-column: 1 / -1; }
+  .brand-grid label { font-size: 10px; font-weight: 600; color: #264468; text-transform: uppercase; letter-spacing: 0.06em; }
+  .brand-grid input { width: 100%; padding: 8px 10px; border: 1px solid #c7d1de; border-radius: 4px; font-family: inherit; font-size: 13px; color: #001731; background: #fff; }
+  .brand-grid input:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 2px rgba(0,112,240,0.15); }
+  .brand-grid input.sky { color: #0070F0; }
+  .brand-grid input.lime { color: #5fa61f; }
 
-  /* ===== Item rows ===== */
-  .item-list { display: flex; flex-direction: column; gap: 8px; }
-  .item { background: #fff; border: 1px solid #e0e6ee; border-radius: 6px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; transition: background 0.12s, border-color 0.12s; }
+  /* ===== Item rows (library editing) ===== */
+  .item-list { display: flex; flex-direction: column; gap: 6px; }
+  .item { background: #fff; border: 1px solid #e0e6ee; border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; transition: background 0.12s, border-color 0.12s; }
   .item.saving { background: #f7faff; }
   .item.error-state { border-color: #dc2626; }
-  .item-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; color: #0070F0; min-width: 28px; padding-top: 6px; text-align: center; }
-  .item-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-  .field-row { display: flex; gap: 10px; align-items: flex-start; }
-  .field-row .field-label { font-size: 10px; color: #A7A7A7; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; min-width: 70px; padding-top: 10px; }
-  .field-input-wrap { flex: 1; display: flex; flex-direction: column; }
-  .field-input-wrap input, .field-input-wrap textarea { font-family: inherit; font-size: 13px; padding: 8px 10px; border: 1px solid #c7d1de; border-radius: 4px; color: #001731; background: #fff; transition: border-color 0.12s; width: 100%; }
+  .item-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; color: #0070F0; min-width: 22px; padding-top: 4px; text-align: center; }
+  .item-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field-row { display: flex; gap: 8px; align-items: flex-start; }
+  .field-row .field-label { font-size: 9px; color: #A7A7A7; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; min-width: 56px; padding-top: 8px; }
+  .field-input-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .field-input-wrap input, .field-input-wrap textarea { font-family: inherit; font-size: 12.5px; padding: 6px 8px; border: 1px solid #c7d1de; border-radius: 4px; color: #001731; background: #fff; transition: border-color 0.12s; width: 100%; }
   .field-input-wrap input:focus, .field-input-wrap textarea:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 2px rgba(0,112,240,0.15); }
-  .field-input-wrap textarea { resize: vertical; min-height: 56px; line-height: 1.4; }
-  .counter { font-size: 10px; color: #A7A7A7; font-variant-numeric: tabular-nums; align-self: flex-end; margin-top: 2px; }
+  .field-input-wrap textarea { resize: vertical; min-height: 44px; line-height: 1.4; }
+  .counter { font-size: 9px; color: #A7A7A7; font-variant-numeric: tabular-nums; align-self: flex-end; margin-top: 1px; }
   .counter.warn { color: #d97706; }
   .counter.over { color: #dc2626; font-weight: 700; }
 
-  .save-pill-wrap { min-height: 18px; display: flex; align-items: center; gap: 6px; }
-  .save-pill { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #97E152; color: #001731; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .save-pill-wrap { min-height: 14px; display: flex; align-items: center; gap: 6px; }
+  .save-pill { font-size: 9px; padding: 1px 6px; border-radius: 8px; background: #97E152; color: #001731; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
   .save-pill.error-pill { background: #dc2626; color: #fff; }
   .save-pill.saving-pill { background: #BBD0E8; color: #002855; }
 
-  .item-actions { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
-  .icon-btn { background: transparent; border: 1px solid #e0e6ee; border-radius: 4px; width: 30px; height: 26px; cursor: pointer; color: #264468; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.12s; font-family: inherit; font-size: 12px; }
+  .item-actions { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; flex-shrink: 0; }
+  .icon-btn { background: transparent; border: 1px solid #e0e6ee; border-radius: 3px; width: 24px; height: 22px; cursor: pointer; color: #264468; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.12s; font-family: inherit; font-size: 11px; }
   .icon-btn:hover:not(:disabled) { border-color: #0070F0; color: #0070F0; background: #f7faff; }
   .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .icon-btn.delete:hover:not(:disabled) { border-color: #dc2626; color: #dc2626; background: #fff1f1; }
 
   /* ===== Buttons ===== */
-  .btn { padding: 10px 16px; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; transition: all 0.12s; }
+  .btn { padding: 9px 14px; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; transition: all 0.12s; }
   .btn-primary { background: #0070F0; color: #fff; }
   .btn-primary:hover:not(:disabled) { background: #0057C2; }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-outline { background: transparent; border: 1px dashed #c7d1de; color: #264468; padding: 10px 16px; }
+  .btn-outline { background: transparent; border: 1px dashed #c7d1de; color: #264468; padding: 8px 14px; }
   .btn-outline:hover:not(:disabled) { border-style: solid; border-color: #0070F0; color: #0070F0; }
-  .add-row { margin-top: 16px; }
+  .add-row { margin-top: 10px; }
 
-  /* ===== Section help ===== */
-  .section-help { font-size: 12px; color: #264468; background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; line-height: 1.5; }
+  /* ===== Preview panel ===== */
+  .preview-panel { padding: 32px; overflow-y: auto; height: 100vh; background: #f4f6f9; }
+  .preview-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; font-size: 11px; color: #264468; }
+  .preview-toolbar .pill { background: #fff; border: 1px solid #e0e6ee; padding: 6px 10px; border-radius: 999px; font-weight: 600; }
+  .preview-toolbar .live-pill { background: #97E152; color: #001731; border-color: #97E152; }
+  .preview-help { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
+  .preview-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .preview-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #264468; font-weight: 600; }
+  .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; }
 
-  /* ===== Toast ===== */
+  /* ===== Toast & modal ===== */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; }
   .toast.error { background: #dc2626; }
-
-  /* ===== Modal ===== */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,23,49,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .modal { background: #fff; border-radius: 8px; box-shadow: 0 12px 36px rgba(0,23,49,0.25); padding: 32px; max-width: 400px; width: 100%; }
-  .modal h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; color: #001731; margin: 0 0 16px; }
-  .modal label { font-size: 12px; font-weight: 600; color: #264468; display: block; margin-bottom: 6px; }
-  .modal input[type="password"] { width: 100%; padding: 10px 12px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; }
-  .modal input[type="password"]:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
-  .modal .err-box { background: #fff1f1; border: 1px solid #fbcaca; border-radius: 6px; padding: 10px; font-size: 12px; color: #dc2626; line-height: 1.5; margin-top: 12px; }
-  .modal .ok-box { background: #f4fce4; border: 1px solid #97E152; border-radius: 6px; padding: 10px; font-size: 12px; color: #001731; line-height: 1.5; margin-top: 12px; }
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,23,49,0.4); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
+  .modal { background: #fff; border-radius: 8px; padding: 32px; max-width: 400px; width: 100%; box-shadow: 0 12px 36px rgba(0,23,49,0.25); }
+  .modal h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; color: #001731; margin: 0 0 6px; }
+  .modal .sub { font-size: 12px; color: #264468; margin: 0 0 16px; }
+  .modal label { font-size: 11px; font-weight: 600; color: #264468; display: block; margin-bottom: 6px; margin-top: 12px; }
+  .modal input[type="password"] { width: 100%; padding: 9px 11px; border: 1px solid #c7d1de; border-radius: 6px; font-size: 13px; font-family: inherit; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
 </style>
 </head>
 <body>
@@ -107,6 +122,8 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="source/supabase-config.js"></script>
+<script src="source/qrcode-mini.js"></script>
+<script type="text/babel" src="source/postcard-render.jsx"></script>
 
 <script type="text/babel">
 const sb = window.supabase.createClient(
@@ -116,48 +133,63 @@ const sb = window.supabase.createClient(
 
 const BUILDER_ID = 'postcard';
 
-// Section definitions drive the editor: which fields to render, character limits,
-// and the prefix for auto-generated external_ids on new items.
 const SECTIONS = [
   {
-    id: 'facts', label: 'Facts', singular: 'fact', prefix: 'f',
-    help: 'Short factual statements. Up to 5 are picked at a time and shown numbered on the back of the card.',
-    fields: [{ key: 'text', label: 'Text', type: 'textarea', max: 200 }],
+    id: 'frontCtas', label: 'Front CTAs', singular: 'front CTA', prefix: 'fc',
+    help: 'Action line on the front, above the URL. Builder users pick one. Keep it short and punchy.',
+    fields: [{ key: 'text', label: 'Text', type: 'text', max: 30 }],
   },
   {
-    id: 'stats', label: 'Stats', singular: 'stat', prefix: 's',
-    help: 'Big-number stats. Up to 3 picked at once, shown in the lime band on the back. Keep numbers very short (e.g. "180K+", "$8K") and labels to one or two words.',
+    id: 'stats', label: 'Stats Strip', singular: 'stat', prefix: 's',
+    help: 'Big-number stats in the lime band on the back. Builder users pick up to 3. Keep numbers very short ("180K+", "$8K") and labels to one or two words.',
     fields: [
       { key: 'num',   label: 'Number', type: 'text', max: 10 },
       { key: 'label', label: 'Label',  type: 'text', max: 30 },
     ],
   },
   {
-    id: 'quotes', label: 'Quotes', singular: 'quote', prefix: 'q',
-    help: 'Short pull-quote testimonials. One is shown above the back-side CTA bar. Avoid line breaks — they wrap automatically.',
+    id: 'facts', label: 'Fast Facts', singular: 'fact', prefix: 'f',
+    help: 'Numbered fast-fact lines on the back. Builder users pick up to 5.',
+    fields: [{ key: 'text', label: 'Text', type: 'textarea', max: 200 }],
+  },
+  {
+    id: 'quotes', label: 'Pull Quotes', singular: 'quote', prefix: 'q',
+    help: 'Pull-quote testimonial above the back-side CTA bar. Builder users pick one (or write their own).',
     fields: [
       { key: 'text',        label: 'Quote',       type: 'textarea', max: 220 },
       { key: 'attribution', label: 'Attribution', type: 'text',     max: 80 },
     ],
   },
   {
-    id: 'frontCtas', label: 'Front CTAs', singular: 'front CTA', prefix: 'fc',
-    help: 'Short call-to-action lines on the front of the card, above the URL. Pick one. Keep it punchy — single phrase.',
-    fields: [{ key: 'text', label: 'Text', type: 'text', max: 30 }],
-  },
-  {
     id: 'backCtas', label: 'Back CTAs', singular: 'back CTA', prefix: 'bc',
-    help: 'Two-line call-to-action shown in the navy bar at the bottom of the back side. Use a period to split the lines (the second half is colored lime). Example: "Partner with us. Start this week."',
+    help: 'Two-line action in the navy bar at the bottom of the back side. Use a period to split lines — second half is colored lime. Example: "Partner with us. Start this week."',
     fields: [{ key: 'text', label: 'Text', type: 'text', max: 60 }],
   },
 ];
 
-function genExternalId(prefix) {
-  return prefix + '-' + Math.random().toString(36).slice(2, 8);
-}
+const BRAND_FIELDS = [
+  { key: 'eyebrow_l1',     label: 'Eyebrow line 1',  max: 14, half: true,                           help: '"Strategic"' },
+  { key: 'eyebrow_l2',     label: 'Eyebrow line 2',  max: 16, half: true,                           help: '"Partnerships"' },
+  { key: 'headline_l1',    label: 'Headline line 1', max: 16, full: true,                           help: 'Top word in the giant headline. Default "Talent."' },
+  { key: 'headline_on',    label: 'Headline mid',    max: 8,  half: true,  className: 'sky',        help: 'Sky-blue word. Default "On"' },
+  { key: 'headline_demand',label: 'Headline last',   max: 14, half: true,  className: 'lime',       help: 'Lime word. Default "Demand."' },
+  { key: 'back_band',      label: 'Back top band',   max: 18, half: true,                           help: '"Fast Facts"' },
+  { key: 'back_title',     label: 'Back title',      max: 50, half: true,                           help: '"Why partner with WGU."' },
+];
+
+const DEFAULT_BRAND = {
+  eyebrow_l1: 'Strategic', eyebrow_l2: 'Partnerships',
+  headline_l1: 'Talent.', headline_on: 'On', headline_demand: 'Demand.',
+  back_band: 'Fast Facts', back_title: 'Why partner with WGU.',
+};
+
+const PREVIEW_DEFAULT_SUBHEAD = 'A workforce engine purpose-built for your org — 100% online, competency-based, and accredited.';
+const PREVIEW_DEFAULT_URL = 'partners.wgu.edu';
+
+function genExternalId(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 8); }
 
 // =========================================================================
-// Sign-in screen
+// Sign-in
 // =========================================================================
 function SignIn() {
   const [email, setEmail] = React.useState('');
@@ -166,7 +198,6 @@ function SignIn() {
   const [status, setStatus] = React.useState('idle');
   const [error, setError] = React.useState('');
 
-  // Surface auth errors that arrived in the URL hash (e.g. expired magic link)
   React.useEffect(() => {
     const hash = window.location.hash;
     if (hash.includes('error=')) {
@@ -180,8 +211,7 @@ function SignIn() {
   const submit = async (e) => {
     e?.preventDefault();
     if (!email.trim()) return;
-    setStatus('sending');
-    setError('');
+    setStatus('sending'); setError('');
     try {
       if (method === 'magic') {
         const { error } = await sb.auth.signInWithOtp({
@@ -192,15 +222,12 @@ function SignIn() {
         setStatus('sent');
       } else {
         const { error } = await sb.auth.signInWithPassword({
-          email: email.trim().toLowerCase(),
-          password,
+          email: email.trim().toLowerCase(), password,
         });
         if (error) throw error;
-        // onAuthStateChange in App() will detect the new session and re-render.
       }
     } catch (e) {
-      setStatus('error');
-      setError(e.message || 'Sign in failed.');
+      setStatus('error'); setError(e.message || 'Sign in failed.');
     }
   };
 
@@ -247,30 +274,112 @@ function SignIn() {
 }
 
 // =========================================================================
-// Item row (one editable record)
+// Change-password modal
+// =========================================================================
+function ChangePasswordModal({ onClose, showToast }) {
+  const [pw, setPw] = React.useState('');
+  const [pw2, setPw2] = React.useState('');
+  const [err, setErr] = React.useState('');
+  const [submitting, setSubmitting] = React.useState(false);
+  const submit = async (e) => {
+    e?.preventDefault(); setErr('');
+    if (pw.length < 6) { setErr('Password must be at least 6 characters.'); return; }
+    if (pw !== pw2)    { setErr('Passwords do not match.'); return; }
+    setSubmitting(true);
+    const { error } = await sb.auth.updateUser({ password: pw });
+    setSubmitting(false);
+    if (error) { setErr(error.message); return; }
+    showToast('Password updated.');
+    onClose();
+  };
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <h2>Change password</h2>
+        <p className="sub">Set a new password for your admin account.</p>
+        <form onSubmit={submit}>
+          <label>New password</label>
+          <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} required autoFocus />
+          <label>Confirm new password</label>
+          <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} required />
+          {err && <div style={{ color: '#dc2626', fontSize: 12, marginTop: 12 }}>{err}</div>}
+          <div className="modal-actions">
+            <button type="button" className="btn btn-outline" onClick={onClose} disabled={submitting}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={submitting || !pw || !pw2}>{submitting ? 'Saving…' : 'Save'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// Brand-text section (the formerly-locked stuff)
+// =========================================================================
+function BrandTextSection({ brand, onSave }) {
+  const [local, setLocal] = React.useState(brand);
+  const [savingState, setSavingState] = React.useState('idle');
+  React.useEffect(() => { setLocal(brand); }, [JSON.stringify(brand)]);
+
+  const setField = (key, val) => setLocal((prev) => ({ ...prev, [key]: val }));
+  const flushIfDirty = async (key) => {
+    if (local[key] === brand[key]) return;
+    setSavingState('saving');
+    try { await onSave(local); setSavingState('saved'); setTimeout(() => setSavingState('idle'), 1500); }
+    catch (e) { console.error(e); setSavingState('error'); setTimeout(() => setSavingState('idle'), 4000); }
+  };
+
+  return (
+    <div className="section">
+      <h2>
+        <span className="step-num brand">★</span>
+        Brand text <span className="meta">unlocked for admins</span>
+      </h2>
+      <div className="help">Normally locked from builder users for brand consistency. Edit here and changes go live to all postcards.</div>
+      <div className="brand-grid">
+        {BRAND_FIELDS.map((f) => {
+          const val = local[f.key] || '';
+          const len = val.length;
+          const counterCls = len > f.max ? 'over' : (len > f.max * 0.9 ? 'warn' : '');
+          return (
+            <div key={f.key} className={`brand-row ${f.full ? 'full' : ''}`}>
+              <label>{f.label} <span style={{ color: '#A7A7A7', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>· {f.help}</span></label>
+              <input
+                type="text"
+                className={f.className || ''}
+                value={val}
+                onChange={(e) => setField(f.key, e.target.value)}
+                onBlur={() => flushIfDirty(f.key)}
+                maxLength={f.max + 20}
+              />
+              <span className={`counter ${counterCls}`}>{len}/{f.max}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="save-pill-wrap" style={{ marginTop: 8 }}>
+        {savingState === 'saving' && <span className="save-pill saving-pill">Saving…</span>}
+        {savingState === 'saved' && <span className="save-pill">Saved</span>}
+        {savingState === 'error' && <span className="save-pill error-pill">Save failed</span>}
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// One library item row
 // =========================================================================
 function ItemRow({ item, idx, total, sectionDef, onSave, onMove, onDelete }) {
   const [local, setLocal] = React.useState(item.content);
   const [savingState, setSavingState] = React.useState('idle');
-
   React.useEffect(() => { setLocal(item.content); }, [item.id, JSON.stringify(item.content)]);
-
   const setField = (key, val) => setLocal((prev) => ({ ...prev, [key]: val }));
-
   const flushIfDirty = async (key) => {
     if (local[key] === item.content[key]) return;
     setSavingState('saving');
-    try {
-      await onSave(item.id, local);
-      setSavingState('saved');
-      setTimeout(() => setSavingState('idle'), 1500);
-    } catch (e) {
-      console.error('Save failed:', e);
-      setSavingState('error');
-      setTimeout(() => setSavingState('idle'), 4000);
-    }
+    try { await onSave(item.id, local); setSavingState('saved'); setTimeout(() => setSavingState('idle'), 1500); }
+    catch (e) { console.error(e); setSavingState('error'); setTimeout(() => setSavingState('idle'), 4000); }
   };
-
   return (
     <div className={`item ${savingState === 'saving' ? 'saving' : ''} ${savingState === 'error' ? 'error-state' : ''}`}>
       <div className="item-num">{idx + 1}</div>
@@ -300,18 +409,18 @@ function ItemRow({ item, idx, total, sectionDef, onSave, onMove, onDelete }) {
         </div>
       </div>
       <div className="item-actions">
-        <button className="icon-btn" disabled={idx === 0} onClick={() => onMove(item.id, -1)} title="Move up" aria-label="Move up">▲</button>
-        <button className="icon-btn" disabled={idx === total - 1} onClick={() => onMove(item.id, 1)} title="Move down" aria-label="Move down">▼</button>
-        <button className="icon-btn delete" onClick={() => onDelete(item.id)} title="Delete" aria-label="Delete">✕</button>
+        <button className="icon-btn" disabled={idx === 0} onClick={() => onMove(item.id, -1)} title="Move up">▲</button>
+        <button className="icon-btn" disabled={idx === total - 1} onClick={() => onMove(item.id, 1)} title="Move down">▼</button>
+        <button className="icon-btn delete" onClick={() => onDelete(item.id)} title="Delete">✕</button>
       </div>
     </div>
   );
 }
 
 // =========================================================================
-// Section editor (one tab's worth of items)
+// Library section (one of facts / stats / quotes / etc)
 // =========================================================================
-function SectionEditor({ sectionDef, items, refresh, showToast }) {
+function LibrarySection({ stepIdx, sectionDef, items, refresh, showToast }) {
   const [adding, setAdding] = React.useState(false);
 
   const saveContent = async (id, content) => {
@@ -319,7 +428,6 @@ function SectionEditor({ sectionDef, items, refresh, showToast }) {
     if (error) throw error;
     refresh();
   };
-
   const move = async (id, delta) => {
     const idx = items.findIndex((x) => x.id === id);
     const target = idx + delta;
@@ -331,24 +439,20 @@ function SectionEditor({ sectionDef, items, refresh, showToast }) {
     if (e2) { showToast('Reorder failed: ' + e2.message, true); return; }
     refresh();
   };
-
   const remove = async (id) => {
     if (!confirm("Delete this item? This can't be undone.")) return;
     const { error } = await sb.from('library_items').delete().eq('id', id);
     if (error) { showToast('Delete failed: ' + error.message, true); return; }
     refresh();
   };
-
   const add = async () => {
     setAdding(true);
     const maxSort = items.reduce((m, x) => Math.max(m, x.sort_order), 0);
     const blankContent = sectionDef.fields.reduce((o, f) => { o[f.key] = ''; return o; }, {});
     const { error } = await sb.from('library_items').insert({
-      builder_id: BUILDER_ID,
-      section: sectionDef.id,
+      builder_id: BUILDER_ID, section: sectionDef.id,
       external_id: genExternalId(sectionDef.prefix),
-      sort_order: maxSort + 1,
-      content: blankContent,
+      sort_order: maxSort + 1, content: blankContent,
     });
     setAdding(false);
     if (error) { showToast('Add failed: ' + error.message, true); return; }
@@ -356,15 +460,20 @@ function SectionEditor({ sectionDef, items, refresh, showToast }) {
   };
 
   return (
-    <div>
-      {sectionDef.help && <div className="section-help">{sectionDef.help}</div>}
+    <div className="section">
+      <h2>
+        <span className="step-num">{stepIdx}</span>
+        {sectionDef.label}
+        <span className="meta">{items.length} item{items.length === 1 ? '' : 's'}</span>
+      </h2>
+      {sectionDef.help && <div className="help">{sectionDef.help}</div>}
       <div className="item-list">
         {items.map((item, i) => (
           <ItemRow key={item.id} item={item} idx={i} total={items.length} sectionDef={sectionDef}
                    onSave={saveContent} onMove={move} onDelete={remove} />
         ))}
         {items.length === 0 && (
-          <div style={{ padding: 24, textAlign: 'center', color: '#A7A7A7', fontSize: 13, background: '#fff', border: '1px dashed #e0e6ee', borderRadius: 6 }}>
+          <div style={{ padding: 16, textAlign: 'center', color: '#A7A7A7', fontSize: 12, background: '#fff', border: '1px dashed #e0e6ee', borderRadius: 6 }}>
             No items yet. Add one below.
           </div>
         )}
@@ -379,59 +488,14 @@ function SectionEditor({ sectionDef, items, refresh, showToast }) {
 }
 
 // =========================================================================
-// Change password modal
-// =========================================================================
-function ChangePasswordModal({ onClose }) {
-  const [pw, setPw] = React.useState('');
-  const [confirm, setConfirm] = React.useState('');
-  const [status, setStatus] = React.useState('idle');
-  const [error, setError] = React.useState('');
-
-  const submit = async (e) => {
-    e?.preventDefault();
-    if (pw !== confirm) { setError('Passwords do not match.'); return; }
-    if (pw.length < 6) { setError('Password must be at least 6 characters.'); return; }
-    setStatus('saving');
-    setError('');
-    const { error } = await sb.auth.updateUser({ password: pw });
-    if (error) { setError(error.message); setStatus('idle'); return; }
-    setStatus('saved');
-    setTimeout(onClose, 900);
-  };
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2>Change password</h2>
-        <form onSubmit={submit}>
-          <label htmlFor="newpw">New password</label>
-          <input id="newpw" type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoFocus required minLength={6} />
-          <div style={{ marginTop: 12 }}>
-            <label htmlFor="confirmpw">Confirm new password</label>
-            <input id="confirmpw" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
-          </div>
-          {error && <div className="err-box">{error}</div>}
-          {status === 'saved' && <div className="ok-box">✓ Password updated.</div>}
-          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-            <button type="button" className="btn btn-outline" onClick={onClose} disabled={status === 'saving'}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={status === 'saving' || !pw || !confirm}>
-              {status === 'saved' ? 'Saved' : status === 'saving' ? 'Saving…' : 'Save'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// =========================================================================
-// Main admin shell (after auth)
+// Admin (after auth)
 // =========================================================================
 function Admin({ session }) {
-  const [items, setItems] = React.useState(null);
-  const [activeSection, setActiveSection] = React.useState(SECTIONS[0].id);
+  const [items, setItems]       = React.useState(null);
+  const [brand, setBrand]       = React.useState(DEFAULT_BRAND);
+  const [brandRowId, setBrandRowId] = React.useState(null);
   const [loadError, setLoadError] = React.useState('');
-  const [toast, setToast] = React.useState(null);
+  const [toast, setToast]       = React.useState(null);
   const [showPwModal, setShowPwModal] = React.useState(false);
 
   const refresh = React.useCallback(async () => {
@@ -441,7 +505,16 @@ function Admin({ session }) {
       .eq('builder_id', BUILDER_ID)
       .order('sort_order', { ascending: true });
     if (error) { setLoadError(error.message); return; }
-    setItems(data || []);
+    const all = data || [];
+    setItems(all.filter((x) => x.section !== 'fixed_text'));
+    const brandRow = all.find((x) => x.section === 'fixed_text');
+    if (brandRow) {
+      setBrandRowId(brandRow.id);
+      setBrand({ ...DEFAULT_BRAND, ...(brandRow.content || {}) });
+    } else {
+      setBrandRowId(null);
+      setBrand(DEFAULT_BRAND);
+    }
   }, []);
 
   React.useEffect(() => { refresh(); }, [refresh]);
@@ -449,6 +522,23 @@ function Admin({ session }) {
   const showToast = (msg, isError = false) => {
     setToast({ msg, isError });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const saveBrand = async (newBrand) => {
+    setBrand(newBrand);
+    if (brandRowId) {
+      const { error } = await sb.from('library_items').update({ content: newBrand }).eq('id', brandRowId);
+      if (error) throw error;
+    } else {
+      // Row doesn't exist yet (admin in a fresh DB) — create it.
+      const { data, error } = await sb.from('library_items').insert({
+        builder_id: BUILDER_ID, section: 'fixed_text', external_id: 'main',
+        sort_order: 0, content: newBrand,
+      }).select().single();
+      if (error) throw error;
+      if (data) setBrandRowId(data.id);
+    }
+    refresh();
   };
 
   const signOut = async () => { await sb.auth.signOut(); };
@@ -461,33 +551,74 @@ function Admin({ session }) {
   );
   if (!items) return <div style={{ padding: 32, color: '#264468' }}>Loading library…</div>;
 
-  const counts = SECTIONS.reduce((c, s) => { c[s.id] = items.filter((x) => x.section === s.id).length; return c; }, {});
-  const activeDef = SECTIONS.find((s) => s.id === activeSection);
-  const activeItems = items.filter((x) => x.section === activeSection).sort((a, b) => a.sort_order - b.sort_order);
+  // ----- Build preview data from current brand + first-N items per library -----
+  const itemsBy = (sec) => items.filter((x) => x.section === sec).sort((a, b) => a.sort_order - b.sort_order);
+  const facts     = itemsBy('facts').slice(0, 5).map((r) => ({ id: r.external_id, ...r.content }));
+  const stats     = itemsBy('stats').slice(0, 3).map((r) => ({ id: r.external_id, ...r.content }));
+  const quotesArr = itemsBy('quotes');
+  const frontArr  = itemsBy('frontCtas');
+  const backArr   = itemsBy('backCtas');
+  const quote     = quotesArr[0] ? { ...quotesArr[0].content } : null;
+  const frontCta  = frontArr[0]?.content?.text || 'Start here →';
+  const backCta   = backArr[0]?.content?.text || 'Partner with us. Start this week.';
+
+  const previewData = {
+    campaign: '',
+    subhead: PREVIEW_DEFAULT_SUBHEAD,
+    url: PREVIEW_DEFAULT_URL,
+    qrSource: PREVIEW_DEFAULT_URL,
+    facts, stats, quote,
+    frontCta, backCta,
+    fixedText: brand,
+  };
 
   return (
-    <div className="admin-wrap">
-      <div className="admin-bar">
-        <h1>WGU Library Admin · Postcard Builder</h1>
-        <div className="right">
-          <span className="user-email">{session.user.email}</span>
-          <a href="Postcard%20Builder.html" target="_blank" rel="noopener">Open builder ↗</a>
-          <button onClick={() => setShowPwModal(true)}>Change password</button>
-          <button onClick={signOut}>Sign out</button>
+    <div className="app">
+      <div className="form-panel">
+        <div className="form-header">
+          <div className="title-block">
+            <h1>Library Admin</h1>
+            <p>WGU Postcard Builder · edit content + brand text. Saves are live.</p>
+          </div>
+          <div className="header-actions">
+            <span className="user-line">{session.user.email}</span>
+            <a href="Postcard%20Builder.html" target="_blank" rel="noopener">Open builder ↗</a>
+            <button onClick={() => setShowPwModal(true)}>Change password</button>
+            <button className="signout" onClick={signOut}>Sign out</button>
+          </div>
+        </div>
+
+        <BrandTextSection brand={brand} onSave={saveBrand} />
+
+        {SECTIONS.map((sec, i) => {
+          const sectionItems = itemsBy(sec.id);
+          return <LibrarySection key={sec.id} stepIdx={i + 1} sectionDef={sec} items={sectionItems} refresh={refresh} showToast={showToast} />;
+        })}
+      </div>
+
+      <div className="preview-panel">
+        <div className="preview-toolbar">
+          <span className="pill live-pill">● Live preview</span>
+          <span className="pill">Default builder state · first 5 facts, first 3 stats, etc.</span>
+          <a href="Postcard%20Builder.html" target="_blank" rel="noopener" style={{ marginLeft: 'auto', fontSize: 11, color: '#0070F0', fontWeight: 600, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Open builder ↗</a>
+        </div>
+        <div className="preview-help">
+          <strong>What you're seeing:</strong> a sample postcard rendered with the first item from each library + the brand text fields above. Edit any field and watch this preview update. Builder users see this same renderer with their own selections.
+        </div>
+        <div className="preview-row">
+          <div className="preview-side">
+            <div className="preview-label">Front (1A)</div>
+            <div className="card-frame"><PostcardFront data={previewData} /></div>
+          </div>
+          <div className="preview-side">
+            <div className="preview-label">Back (1B)</div>
+            <div className="card-frame"><PostcardBack data={previewData} /></div>
+          </div>
         </div>
       </div>
-      <div className="admin-content">
-        <div className="tabs">
-          {SECTIONS.map((s) => (
-            <button key={s.id} className={`tab ${s.id === activeSection ? 'active' : ''}`} onClick={() => setActiveSection(s.id)}>
-              {s.label}<span className="count">{counts[s.id]}</span>
-            </button>
-          ))}
-        </div>
-        <SectionEditor sectionDef={activeDef} items={activeItems} refresh={refresh} showToast={showToast} />
-      </div>
+
       {toast && <div className={`toast ${toast.isError ? 'error' : ''}`}>{toast.msg}</div>}
-      {showPwModal && <ChangePasswordModal onClose={() => setShowPwModal(false)} />}
+      {showPwModal && <ChangePasswordModal onClose={() => setShowPwModal(false)} showToast={showToast} />}
     </div>
   );
 }
@@ -501,12 +632,9 @@ function App() {
 
   React.useEffect(() => {
     sb.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoaded(true);
+      setSession(data.session); setLoaded(true);
     });
-    const { data } = sb.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-    });
+    const { data } = sb.auth.onAuthStateChange((_event, newSession) => { setSession(newSession); });
     return () => data.subscription.unsubscribe();
   }, []);
 

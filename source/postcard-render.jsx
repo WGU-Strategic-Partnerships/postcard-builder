@@ -105,6 +105,12 @@ function CampaignMark({ text, color }) {
 
 // FRONT
 function PostcardFront({ data }) {
+  const ft = data.fixedText || {};
+  const eyebrow1 = ft.eyebrow_l1 || 'Strategic';
+  const eyebrow2 = ft.eyebrow_l2 || 'Partnerships';
+  const headlineL1 = ft.headline_l1 || 'Talent.';
+  const headlineOn = ft.headline_on || 'On';
+  const headlineDemand = ft.headline_demand || 'Demand.';
   return (
     <div style={{
       width: 600, height: 600, position: 'relative', overflow: 'hidden',
@@ -117,8 +123,8 @@ function PostcardFront({ data }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <WGULogo width={110} />
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 10, letterSpacing: '0.26em', textTransform: 'uppercase', color: PC.lime, fontWeight: 700 }}>Strategic</div>
-            <div style={{ fontSize: 10, letterSpacing: '0.26em', textTransform: 'uppercase', color: PC.lime, fontWeight: 700 }}>Partnerships</div>
+            <div style={{ fontSize: 10, letterSpacing: '0.26em', textTransform: 'uppercase', color: PC.lime, fontWeight: 700 }}>{eyebrow1}</div>
+            <div style={{ fontSize: 10, letterSpacing: '0.26em', textTransform: 'uppercase', color: PC.lime, fontWeight: 700 }}>{eyebrow2}</div>
           </div>
         </div>
 
@@ -128,9 +134,9 @@ function PostcardFront({ data }) {
             lineHeight: 0.88, color: PC.white, textTransform: 'uppercase',
             letterSpacing: '-0.01em',
           }}>
-            Talent.<br/>
-            <span style={{ color: PC.sky }}>On</span>{' '}
-            <span style={{ color: PC.lime }}>Demand.</span>
+            {headlineL1}<br/>
+            <span style={{ color: PC.sky }}>{headlineOn}</span>{' '}
+            <span style={{ color: PC.lime }}>{headlineDemand}</span>
           </div>
           {data.subhead && (
             <div style={{ marginTop: 18, fontSize: 15, lineHeight: 1.4, color: '#BBD0E8', maxWidth: 360 }}>
@@ -163,6 +169,9 @@ function PostcardBack({ data }) {
   const stats = (data.stats || []).slice(0, 3);
   const quote = data.quote;
   const pad = 44;
+  const ft = data.fixedText || {};
+  const backBand = ft.back_band || 'Fast Facts';
+  const backTitle = ft.back_title || 'Why partner with WGU.';
 
   return (
     <div style={{
@@ -177,7 +186,7 @@ function PostcardBack({ data }) {
       }}>
         <WGULogo width={76} />
         <div style={{ fontFamily: PC_FONT_CAMPAIGN, fontWeight: 700, fontSize: 18, color: PC.lime, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-          Fast Facts
+          {backBand}
         </div>
       </div>
       <div style={{ position: 'absolute', top: 64, left: 0, right: 0, height: 3, background: PC.lime }} />
@@ -185,7 +194,7 @@ function PostcardBack({ data }) {
       {/* Title */}
       <div style={{ position: 'absolute', top: 92, left: pad, right: pad }}>
         <div style={{ fontFamily: PC_FONT_CAMPAIGN, fontWeight: 700, fontSize: 34, color: PC.blue, textTransform: 'uppercase', letterSpacing: '-0.005em', lineHeight: 0.95, maxWidth: 420 }}>
-          Why partner with WGU.
+          {backTitle}
         </div>
         <div style={{ width: 42, height: 3, background: PC.mediumBlue, marginTop: 10 }} />
       </div>
