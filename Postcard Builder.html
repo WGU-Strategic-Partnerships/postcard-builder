@@ -116,13 +116,33 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
+<script src="source/supabase-config.js"></script>
 <script src="source/qrcode-mini.js"></script>
-<script src="source/libraries.jsx"></script>
 <script type="text/babel" src="source/postcard-render.jsx"></script>
 
 <script type="text/babel">
-const LIB = window.WGU_LIBRARIES;
+const sb = window.supabase.createClient(
+  window.WGU_SUPABASE.url,
+  window.WGU_SUPABASE.publishableKey,
+  { auth: { persistSession: false } }
+);
+
+async function fetchLibrary(builderId) {
+  const { data, error } = await sb
+    .from('library_items')
+    .select('section, external_id, content')
+    .eq('builder_id', builderId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  const out = { facts: [], stats: [], quotes: [], frontCtas: [], backCtas: [] };
+  for (const row of data || []) {
+    if (out[row.section]) out[row.section].push({ id: row.external_id, ...row.content });
+  }
+  return out;
+}
 
 const LIMITS = {
   subhead: 140,
@@ -193,8 +213,19 @@ function PickItem({ selected, order, disabled, onClick, children }) {
 function App() {
   const [state, setState] = React.useState(loadInitialState);
   const [toast, setToast] = React.useState(null);
+  const [lib, setLib] = React.useState(null);
+  const [loadError, setLoadError] = React.useState(null);
 
   const update = (patch) => setState((prev) => ({ ...prev, ...patch }));
+
+  React.useEffect(() => {
+    fetchLibrary('postcard')
+      .then(setLib)
+      .catch((e) => {
+        console.error('Library fetch failed:', e);
+        setLoadError(e.message || 'Failed to load library content from Supabase.');
+      });
+  }, []);
 
   React.useEffect(() => {
     const id = setTimeout(() => {
@@ -207,13 +238,14 @@ function App() {
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2400); };
 
   const renderData = React.useMemo(() => {
-    const facts = state.factIds.map((id) => LIB.facts.find((f) => f.id === id)).filter(Boolean);
-    const stats = state.statIds.map((id) => LIB.stats.find((s) => s.id === id)).filter(Boolean);
+    if (!lib) return null;
+    const facts = state.factIds.map((id) => lib.facts.find((f) => f.id === id)).filter(Boolean);
+    const stats = state.statIds.map((id) => lib.stats.find((s) => s.id === id)).filter(Boolean);
     const quote = state.customQuote
       ? { text: state.customQuoteText, attribution: state.customQuoteAttribution }
-      : LIB.quotes.find((q) => q.id === state.quoteId);
-    const frontCta = LIB.frontCtas.find((c) => c.id === state.frontCtaId)?.text || LIB.frontCtas[0].text;
-    const backCta = LIB.backCtas.find((c) => c.id === state.backCtaId)?.text || LIB.backCtas[0].text;
+      : lib.quotes.find((q) => q.id === state.quoteId);
+    const frontCta = lib.frontCtas.find((c) => c.id === state.frontCtaId)?.text || lib.frontCtas[0]?.text || '';
+    const backCta = lib.backCtas.find((c) => c.id === state.backCtaId)?.text || lib.backCtas[0]?.text || '';
     return {
       campaign: state.campaign,
       subhead: state.subhead,
@@ -222,7 +254,7 @@ function App() {
       facts, stats, quote,
       frontCta, backCta,
     };
-  }, [state]);
+  }, [state, lib]);
 
   const toggleFact = (id) => {
     const cur = state.factIds;
@@ -284,6 +316,24 @@ function App() {
       showToast("PDF export failed — see browser console for details.");
     }
   };
+
+  if (loadError) {
+    return (
+      <div style={{ padding: 40, fontFamily: "'Jost', sans-serif", color: '#001731', maxWidth: 520 }}>
+        <h2 style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: 22, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.04em', margin: '0 0 12px' }}>Couldn't load library content</h2>
+        <p style={{ fontSize: 14, lineHeight: 1.5, color: '#264468' }}>The builder couldn't reach Supabase to fetch facts, stats, quotes, and CTAs.</p>
+        <pre style={{ background: '#f4f6f9', padding: 12, borderRadius: 6, fontSize: 12, color: '#dc2626', overflowX: 'auto' }}>{loadError}</pre>
+        <p style={{ fontSize: 12, color: '#A7A7A7' }}>Check your internet connection. If this keeps happening, contact the builder admin.</p>
+      </div>
+    );
+  }
+  if (!lib || !renderData) {
+    return (
+      <div style={{ padding: 40, fontFamily: "'Jost', sans-serif", color: '#264468', fontSize: 14 }}>
+        Loading library content…
+      </div>
+    );
+  }
 
   return (
     <div className="app">
@@ -350,7 +400,7 @@ function App() {
         <div className="section">
           <h2><span className="step-num">4</span>Front CTA <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 1</span></h2>
           <div className="picklist">
-            {LIB.frontCtas.map((c) => (
+            {lib.frontCtas.map((c) => (
               <PickItem key={c.id} selected={state.frontCtaId === c.id} onClick={() => update({ frontCtaId: c.id })}>
                 <strong style={{ fontFamily: 'Oswald, sans-serif', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{c.text}</strong>
               </PickItem>
@@ -363,7 +413,7 @@ function App() {
           <h2><span className="step-num">5</span>Stats Strip <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 3</span></h2>
           <div className="pick-help">Selected: {state.statIds.length} of 3</div>
           <div className="picklist">
-            {LIB.stats.map((s) => {
+            {lib.stats.map((s) => {
               const idx = state.statIds.indexOf(s.id);
               const selected = idx >= 0;
               const disabled = !selected && state.statIds.length >= 3;
@@ -381,7 +431,7 @@ function App() {
           <h2><span className="step-num">6</span>Fast Facts <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 5</span></h2>
           <div className="pick-help">Selected: {state.factIds.length} of 5 · numbers reflect display order</div>
           <div className="picklist">
-            {LIB.facts.map((f) => {
+            {lib.facts.map((f) => {
               const idx = state.factIds.indexOf(f.id);
               const selected = idx >= 0;
               const disabled = !selected && state.factIds.length >= 5;
@@ -403,7 +453,7 @@ function App() {
           </div>
           {!state.customQuote && (
             <div className="picklist" style={{ marginTop: 8 }}>
-              {LIB.quotes.map((q) => (
+              {lib.quotes.map((q) => (
                 <PickItem key={q.id} selected={state.quoteId === q.id} onClick={() => update({ quoteId: q.id })}>
                   <em style={{ fontFamily: 'Newsreader, serif' }}>"{q.text}"</em>
                   <div style={{ fontSize: 11, color: '#0070F0', fontWeight: 600, marginTop: 4 }}>— {q.attribution}</div>
@@ -436,7 +486,7 @@ function App() {
           <h2><span className="step-num">8</span>Back CTA <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 1</span></h2>
           <div className="pick-help">Two-line CTA in the navy bar at the bottom of the back side.</div>
           <div className="picklist">
-            {LIB.backCtas.map((c) => (
+            {lib.backCtas.map((c) => (
               <PickItem key={c.id} selected={state.backCtaId === c.id} onClick={() => update({ backCtaId: c.id })}>
                 <strong style={{ fontFamily: 'Oswald, sans-serif', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{c.text}</strong>
               </PickItem>
