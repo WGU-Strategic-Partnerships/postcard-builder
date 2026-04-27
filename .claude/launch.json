@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "postcard-builder",
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["-run", "-e", "httpd", "/Users/bentley/Documents/Claude/Projects/Dynamic Template Builder", "-p", "8765"],
+      "port": 8765
+    }
+  ]
+}

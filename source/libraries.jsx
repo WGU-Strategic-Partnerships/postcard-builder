@@ -1,0 +1,61 @@
+// libraries.jsx — pre-approved content libraries
+
+window.WGU_LIBRARIES = {
+  facts: [
+    { id: 'f1',  text: "A nonprofit, accredited university serving 180K+ learners." },
+    { id: 'f2',  text: "4,500+ employer & community partners nationwide." },
+    { id: 'f3',  text: "Flat-rate tuition — most bachelor's under $8k per year." },
+    { id: 'f4',  text: "Competency-based: pace matches the learner, not the calendar." },
+    { id: 'f5',  text: "Dedicated partnership team — strategy, stand-up, scale." },
+    { id: 'f6',  text: "75+ industry-aligned, accredited degree programs." },
+    { id: 'f7',  text: "100% online — learn during shifts, deployments, life." },
+    { id: 'f8',  text: "6-month terms; finish faster when you already have skills." },
+    { id: 'f9',  text: "Custom cohorts stood up in under 30 days." },
+    { id: 'f10', text: "Outcomes report + ROI dashboard delivered quarterly." },
+    { id: 'f11', text: "Tuition discounts available for employer partners." },
+    { id: 'f12', text: "Skills-aligned curriculum mapped to real job roles." },
+    { id: 'f13', text: "Regionally accredited by the Northwest Commission on Colleges & Universities." },
+    { id: 'f14', text: "Ranked #1 in U.S. for online IT and education programs (multiple sources)." },
+    { id: 'f15', text: "Year-round enrollment — start the 1st of any month." },
+  ],
+  stats: [
+    { id: 's1',  num: "180K+",  label: "learners" },
+    { id: 's2',  num: "4,500+", label: "partners" },
+    { id: 's3',  num: "$8K",    label: "flat tuition" },
+    { id: 's4',  num: "75+",    label: "programs" },
+    { id: 's5',  num: "100%",   label: "online" },
+    { id: 's6',  num: "30 days", label: "to launch" },
+    { id: 's7',  num: "50",     label: "states served" },
+    { id: 's8',  num: "1:1",    label: "mentor support" },
+    { id: 's9',  num: "6 mo.",  label: "term length" },
+    { id: 's10', num: "24 hr",  label: "partner SLA" },
+  ],
+  quotes: [
+    { id: 'q1',  text: "WGU graduates start contributing on day one. The alignment to our skills map is unlike anything else we've seen.", attribution: "VP Talent, Fortune 100 partner" },
+    { id: 'q2',  text: "The flexibility lets our teams upskill without missing a beat at work.", attribution: "Director of L&D, Healthcare partner" },
+    { id: 'q3',  text: "WGU's competency model finally rewards the experience our employees already bring.", attribution: "CHRO, Manufacturing partner" },
+    { id: 'q4',  text: "We stood up a custom IT cohort in three weeks. The partner desk made it effortless.", attribution: "VP Technology, Logistics partner" },
+    { id: 'q5',  text: "ROI is clear in retention alone — our partner-cohort employees stay longer.", attribution: "People Analytics Lead" },
+    { id: 'q6',  text: "Affordability + accreditation + outcomes. WGU is the only program that hit all three for us.", attribution: "Workforce Strategy Director" },
+    { id: 'q7',  text: "From handshake to first cohort in under a month — and the curriculum was tailored to our roles.", attribution: "VP Operations, Retail partner" },
+    { id: 'q8',  text: "Our nurses can finish a BSN while still on the floor. That changes who can advance.", attribution: "Chief Nursing Officer" },
+    { id: 'q9',  text: "WGU made advancement accessible to people who never thought college was an option.", attribution: "DEI Program Lead" },
+    { id: 'q10', text: "The partnership team is genuinely a partner — they came to the table with answers, not pitches.", attribution: "Talent Acquisition VP" },
+  ],
+  // 5 options for the front CTA (short, action-forward — appears above URL)
+  frontCtas: [
+    { id: 'fc1', text: "Start here →" },
+    { id: 'fc2', text: "Learn more →" },
+    { id: 'fc3', text: "Talk to us →" },
+    { id: 'fc4', text: "Scan to begin →" },
+    { id: 'fc5', text: "Get the details →" },
+  ],
+  // 5 options for the back CTA (longer, two-line capable — period separates lines)
+  backCtas: [
+    { id: 'bc1', text: "Partner with us. Start this week." },
+    { id: 'bc2', text: "Build your workforce. With WGU." },
+    { id: 'bc3', text: "Skills your teams need. Faster." },
+    { id: 'bc4', text: "Connect with us. Today." },
+    { id: 'bc5', text: "Ready to begin? Scan now." },
+  ],
+};

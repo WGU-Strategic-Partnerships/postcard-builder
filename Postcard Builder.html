@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>WGU Strategic Partnerships — Postcard Builder</title>
+<link rel="stylesheet" href="source/colors_and_type.css" />
+<meta name="ext-resource-dependency" content="assets/swirl-navy.png" data-resource-id="swirlBg" />
+<meta name="ext-resource-dependency" content="assets/wgu-wordmark-white.png" data-resource-id="wguLogo" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f4f6f9; font-family: 'Jost', sans-serif; color: #001731; }
+  * { box-sizing: border-box; }
+
+  .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
+
+  .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 80px; }
+  .form-header { padding: 24px 28px 18px; border-bottom: 1px solid #e0e6ee; background: #001731; color: #fff; position: sticky; top: 0; z-index: 10; }
+  .form-header h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 4px; }
+  .form-header p { margin: 0; font-size: 12px; color: #BBD0E8; line-height: 1.4; }
+
+  .section { padding: 22px 28px 18px; border-bottom: 1px solid #eef2f6; }
+  .section h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; color: #0070F0; margin: 0 0 16px; display: flex; align-items: center; gap: 8px; }
+  .section h2 .step-num { background: #0070F0; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-family: 'Jost', sans-serif; font-weight: 700; }
+
+  .field { margin-bottom: 14px; }
+  .field-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; color: #264468; margin-bottom: 6px; }
+  .field-counter { font-size: 11px; color: #A7A7A7; font-variant-numeric: tabular-nums; }
+  .field-counter.warn { color: #d97706; }
+  .field-counter.over { color: #dc2626; font-weight: 700; }
+
+  input[type="text"], input[type="url"], textarea { width: 100%; padding: 10px 12px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; transition: border-color 0.15s; }
+  input:focus, textarea:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.4; }
+
+  .picklist { display: flex; flex-direction: column; gap: 6px; }
+  .pick-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e0e6ee; border-radius: 6px; cursor: pointer; transition: all 0.12s; background: #fff; }
+  .pick-item:hover { border-color: #0070F0; background: #f7faff; }
+  .pick-item.selected { border-color: #0070F0; background: #eef6ff; box-shadow: 0 0 0 1px #0070F0 inset; }
+  .pick-item.disabled { opacity: 0.45; cursor: not-allowed; }
+  .pick-checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #c7d1de; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; margin-top: 1px; }
+  .pick-item.selected .pick-checkbox { background: #0070F0; border-color: #0070F0; }
+  .pick-checkbox svg { display: none; }
+  .pick-item.selected .pick-checkbox svg { display: block; }
+  .pick-text { flex: 1; font-size: 13px; color: #001731; line-height: 1.4; }
+  .pick-text strong { font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 15px; }
+  .pick-order { width: 22px; height: 22px; border-radius: 50%; background: #97E152; color: #001731; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pick-help { font-size: 11px; color: #A7A7A7; margin: 4px 0 8px; }
+
+  .qr-toggle { display: flex; gap: 4px; background: #eef2f6; border-radius: 6px; padding: 3px; margin-bottom: 8px; }
+  .qr-toggle button { flex: 1; border: 0; background: transparent; padding: 6px 8px; font-size: 12px; font-weight: 600; color: #264468; border-radius: 4px; cursor: pointer; font-family: inherit; }
+  .qr-toggle button.active { background: #fff; color: #0070F0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+  .upload-zone { border: 1.5px dashed #c7d1de; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; background: #f9fbfd; transition: all 0.12s; }
+  .upload-zone:hover { border-color: #0070F0; background: #eef6ff; }
+  .upload-zone.has-file { border-style: solid; border-color: #97E152; background: #f4fce4; }
+  .upload-zone .upload-label { font-size: 13px; font-weight: 600; color: #264468; }
+  .upload-zone .upload-hint { font-size: 11px; color: #A7A7A7; margin-top: 3px; }
+
+  .locked-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f4f6f9; border: 1px solid #e0e6ee; border-radius: 6px; font-size: 12px; color: #A7A7A7; margin-bottom: 8px; position: relative; }
+  .locked-row svg { flex-shrink: 0; }
+  .locked-row .tooltip-trigger { margin-left: auto; cursor: help; color: #0070F0; font-weight: 700; font-size: 11px; }
+  .tooltip { position: absolute; bottom: 100%; right: 0; background: #001731; color: #fff; font-size: 11px; padding: 8px 10px; border-radius: 6px; max-width: 240px; line-height: 1.4; z-index: 5; margin-bottom: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: none; }
+  .tooltip-trigger:hover + .tooltip { display: block; }
+
+  .preview-panel { padding: 32px; overflow-y: auto; height: 100vh; background: #f4f6f9; }
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+  .btn { border: 0; padding: 10px 16px; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.12s; }
+  .btn-primary { background: #0070F0; color: #fff; }
+  .btn-primary:hover { background: #0057C2; }
+  .btn-secondary { background: #fff; color: #001731; border: 1px solid #c7d1de; }
+  .btn-secondary:hover { background: #f4f6f9; }
+  .btn-success { background: #97E152; color: #001731; }
+  .btn-success:hover { background: #82c93f; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; animation: toastIn 0.2s ease-out; }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  .preview-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .preview-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #264468; font-weight: 600; }
+  .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; }
+
+  .help-banner { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
+
+  @media print {
+    @page { size: 6in 6in; margin: 0; }
+    html, body { background: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .form-panel, .toolbar, .help-banner, .preview-label, .toast { display: none !important; }
+    .app { display: block !important; }
+    .preview-panel { padding: 0 !important; height: auto !important; overflow: visible !important; background: #fff !important; }
+    .preview-row { display: block !important; gap: 0 !important; }
+    .preview-side { display: block !important; gap: 0 !important; page-break-after: always; break-after: page; width: 6in; height: 6in; overflow: hidden; }
+    .preview-side:last-child { page-break-after: auto; break-after: auto; }
+    .card-frame { box-shadow: none !important; border-radius: 0 !important; width: 6in !important; height: 6in !important; overflow: hidden !important; }
+    /* Force the 600px React-rendered card to exactly 6in by scaling. 1in @ 96dpi = 96px; 6in = 576px. We render at 600px, scale to 6in. */
+    .card-frame > div { transform: scale(calc(6in / 600px)); transform-origin: top left; width: 600px !important; height: 600px !important; }
+  }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#001731"/>
+  <rect x="60" y="60" width="280" height="280" rx="6" fill="#002855"/>
+  <rect x="60" y="60" width="280" height="48" rx="6" fill="#0070F0"/>
+  <rect x="84" y="138" width="170" height="14" rx="2" fill="#46B1EF"/>
+  <rect x="84" y="200" width="232" height="36" rx="3" fill="#97E152" opacity="0.25"/>
+  <rect x="84" y="306" width="60" height="20" rx="3" fill="#97E152"/>
+  <text x="200" y="98" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="700" font-size="20" letter-spacing="2">BUILDER</text>
+</svg>
+</template>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="source/qrcode-mini.js"></script>
+<script src="source/libraries.jsx"></script>
+<script type="text/babel" src="source/postcard-render.jsx"></script>
+
+<script type="text/babel">
+const LIB = window.WGU_LIBRARIES;
+
+const LIMITS = {
+  subhead: 140,
+  url: 80,
+  campaign: 50,
+  customQuoteText: 180,
+  customQuoteAttribution: 60,
+};
+
+const DEFAULTS = {
+  campaign: "",
+  subhead: "A workforce engine purpose-built for your org — 100% online, competency-based, and accredited.",
+  url: "partners.wgu.edu",
+  qrMode: "url",
+  qrImage: "",
+  factIds: ["f1", "f2", "f3", "f4", "f5"],
+  statIds: ["s1", "s2", "s3"],
+  quoteId: "q1",
+  customQuote: false,
+  customQuoteText: "",
+  customQuoteAttribution: "",
+  frontCtaId: "fc1",
+  backCtaId: "bc1",
+};
+
+function encodeState(s) { try { return btoa(encodeURIComponent(JSON.stringify(s))); } catch (e) { return ''; } }
+function decodeState(str) { try { return JSON.parse(decodeURIComponent(atob(str))); } catch (e) { return null; } }
+function loadInitialState() {
+  const m = window.location.hash.match(/^#s=(.+)$/);
+  if (m) { const decoded = decodeState(m[1]); if (decoded) return { ...DEFAULTS, ...decoded }; }
+  return DEFAULTS;
+}
+
+function CharCounter({ value, max }) {
+  const len = (value || '').length;
+  const cls = len > max ? 'over' : (len > max * 0.9 ? 'warn' : '');
+  return <span className={`field-counter ${cls}`}>{len}/{max}</span>;
+}
+
+function LockedRow({ label, value, tooltip }) {
+  return (
+    <div className="locked-row">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="2.5" y="6" width="9" height="6" rx="1" fill="#A7A7A7"/>
+        <path d="M4.5 6V4a2.5 2.5 0 015 0v2" stroke="#A7A7A7" strokeWidth="1.3" fill="none"/>
+      </svg>
+      <span><strong style={{ color: '#264468' }}>{label}:</strong> {value}</span>
+      <span className="tooltip-trigger">why?</span>
+      <div className="tooltip">{tooltip}</div>
+    </div>
+  );
+}
+
+function PickItem({ selected, order, disabled, onClick, children }) {
+  return (
+    <div className={`pick-item ${selected ? 'selected' : ''} ${disabled ? 'disabled' : ''}`} onClick={disabled ? null : onClick}>
+      <div className="pick-checkbox">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+          <path d="M2.5 6L5 8.5L9.5 4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+      <div className="pick-text">{children}</div>
+      {selected && order != null && <div className="pick-order">{order}</div>}
+    </div>
+  );
+}
+
+function App() {
+  const [state, setState] = React.useState(loadInitialState);
+  const [toast, setToast] = React.useState(null);
+
+  const update = (patch) => setState((prev) => ({ ...prev, ...patch }));
+
+  React.useEffect(() => {
+    const id = setTimeout(() => {
+      const encoded = encodeState(state);
+      window.history.replaceState(null, '', `#s=${encoded}`);
+    }, 300);
+    return () => clearTimeout(id);
+  }, [state]);
+
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2400); };
+
+  const renderData = React.useMemo(() => {
+    const facts = state.factIds.map((id) => LIB.facts.find((f) => f.id === id)).filter(Boolean);
+    const stats = state.statIds.map((id) => LIB.stats.find((s) => s.id === id)).filter(Boolean);
+    const quote = state.customQuote
+      ? { text: state.customQuoteText, attribution: state.customQuoteAttribution }
+      : LIB.quotes.find((q) => q.id === state.quoteId);
+    const frontCta = LIB.frontCtas.find((c) => c.id === state.frontCtaId)?.text || LIB.frontCtas[0].text;
+    const backCta = LIB.backCtas.find((c) => c.id === state.backCtaId)?.text || LIB.backCtas[0].text;
+    return {
+      campaign: state.campaign,
+      subhead: state.subhead,
+      url: state.url,
+      qrSource: state.qrMode === 'image' ? state.qrImage : state.url,
+      facts, stats, quote,
+      frontCta, backCta,
+    };
+  }, [state]);
+
+  const toggleFact = (id) => {
+    const cur = state.factIds;
+    if (cur.includes(id)) update({ factIds: cur.filter((x) => x !== id) });
+    else if (cur.length < 5) update({ factIds: [...cur, id] });
+  };
+  const toggleStat = (id) => {
+    const cur = state.statIds;
+    if (cur.includes(id)) update({ statIds: cur.filter((x) => x !== id) });
+    else if (cur.length < 3) update({ statIds: [...cur, id] });
+  };
+
+  const onQRUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => update({ qrImage: reader.result, qrMode: 'image' });
+    reader.readAsDataURL(file);
+  };
+
+  const copyShareLink = async () => {
+    try { await navigator.clipboard.writeText(window.location.href); showToast("Share link copied — paste into email or a SharePoint message."); }
+    catch (e) { showToast("Couldn't copy automatically — link is in the URL bar."); }
+  };
+  const resetAll = () => {
+    if (confirm("Reset all fields back to defaults? This will clear your work.")) {
+      setState(DEFAULTS);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  };
+  const printPDF = () => window.print();
+
+  return (
+    <div className="app">
+      <div className="form-panel">
+        <div className="form-header">
+          <h1>Postcard Builder</h1>
+          <p>WGU Strategic Partnerships · 6×6" two-sided handout. Edit on the left, see your card live on the right.</p>
+        </div>
+
+        {/* 1. Campaign + URL */}
+        <div className="section">
+          <h2><span className="step-num">1</span>Campaign & URL</h2>
+
+          <div className="field">
+            <div className="field-label">
+              <span>Campaign name <span style={{ color: '#A7A7A7', fontWeight: 400 }}>(small mark, bottom-right)</span></span>
+              <CharCounter value={state.campaign} max={LIMITS.campaign} />
+            </div>
+            <input type="text" value={state.campaign} onChange={(e) => update({ campaign: e.target.value })} placeholder="e.g. Spring 2026 · ATD Conference" />
+            <div className="pick-help">Optional. Appears very small in the bottom-right of both pages so you can track which event a card came from.</div>
+          </div>
+
+          <div className="field">
+            <div className="field-label">
+              <span>URL <span style={{ color: '#A7A7A7', fontWeight: 400 }}>(used on both pages)</span></span>
+              <CharCounter value={state.url} max={LIMITS.url} />
+            </div>
+            <input type="text" value={state.url} onChange={(e) => update({ url: e.target.value })} placeholder="partners.wgu.edu/your-event" />
+            <div className="pick-help">One URL drives the front, the back, and (if you don't upload an image) the QR code.</div>
+          </div>
+        </div>
+
+        {/* 2. QR */}
+        <div className="section">
+          <h2><span className="step-num">2</span>QR Code</h2>
+          <div className="qr-toggle">
+            <button className={state.qrMode === 'url' ? 'active' : ''} onClick={() => update({ qrMode: 'url' })}>Generate from URL</button>
+            <button className={state.qrMode === 'image' ? 'active' : ''} onClick={() => update({ qrMode: 'image' })}>Upload image</button>
+          </div>
+          {state.qrMode === 'image' && (
+            <label className={`upload-zone ${state.qrImage ? 'has-file' : ''}`}>
+              <div className="upload-label">{state.qrImage ? '✓ QR image loaded — click to replace' : 'Click to upload QR image'}</div>
+              <div className="upload-hint">PNG, JPG, or SVG · square aspect</div>
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onQRUpload} />
+            </label>
+          )}
+          {state.qrMode === 'url' && <div className="pick-help">A QR will be generated from your URL automatically and shown on both pages.</div>}
+        </div>
+
+        {/* 3. Subhead */}
+        <div className="section">
+          <h2><span className="step-num">3</span>Front Subhead</h2>
+          <div className="field">
+            <div className="field-label">
+              <span>One supporting sentence</span>
+              <CharCounter value={state.subhead} max={LIMITS.subhead} />
+            </div>
+            <textarea value={state.subhead} onChange={(e) => update({ subhead: e.target.value })} maxLength={LIMITS.subhead + 30} />
+            <div className="pick-help">Headline ("Talent. On Demand.") is locked for brand consistency.</div>
+          </div>
+        </div>
+
+        {/* 4. Front CTA */}
+        <div className="section">
+          <h2><span className="step-num">4</span>Front CTA <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 1</span></h2>
+          <div className="picklist">
+            {LIB.frontCtas.map((c) => (
+              <PickItem key={c.id} selected={state.frontCtaId === c.id} onClick={() => update({ frontCtaId: c.id })}>
+                <strong style={{ fontFamily: 'Oswald, sans-serif', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{c.text}</strong>
+              </PickItem>
+            ))}
+          </div>
+        </div>
+
+        {/* 5. Stats */}
+        <div className="section">
+          <h2><span className="step-num">5</span>Stats Strip <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 3</span></h2>
+          <div className="pick-help">Selected: {state.statIds.length} of 3</div>
+          <div className="picklist">
+            {LIB.stats.map((s) => {
+              const idx = state.statIds.indexOf(s.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.statIds.length >= 3;
+              return (
+                <PickItem key={s.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleStat(s.id)}>
+                  <strong>{s.num}</strong> <span style={{ color: '#264468' }}>· {s.label}</span>
+                </PickItem>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 6. Facts */}
+        <div className="section">
+          <h2><span className="step-num">6</span>Fast Facts <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 5</span></h2>
+          <div className="pick-help">Selected: {state.factIds.length} of 5 · numbers reflect display order</div>
+          <div className="picklist">
+            {LIB.facts.map((f) => {
+              const idx = state.factIds.indexOf(f.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.factIds.length >= 5;
+              return (
+                <PickItem key={f.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleFact(f.id)}>
+                  {f.text}
+                </PickItem>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 7. Quote */}
+        <div className="section">
+          <h2><span className="step-num">7</span>Pull Quote</h2>
+          <div className="qr-toggle">
+            <button className={!state.customQuote ? 'active' : ''} onClick={() => update({ customQuote: false })}>Pick from library</button>
+            <button className={state.customQuote ? 'active' : ''} onClick={() => update({ customQuote: true })}>Write your own</button>
+          </div>
+          {!state.customQuote && (
+            <div className="picklist" style={{ marginTop: 8 }}>
+              {LIB.quotes.map((q) => (
+                <PickItem key={q.id} selected={state.quoteId === q.id} onClick={() => update({ quoteId: q.id })}>
+                  <em style={{ fontFamily: 'Newsreader, serif' }}>"{q.text}"</em>
+                  <div style={{ fontSize: 11, color: '#0070F0', fontWeight: 600, marginTop: 4 }}>— {q.attribution}</div>
+                </PickItem>
+              ))}
+            </div>
+          )}
+          {state.customQuote && (
+            <>
+              <div className="field" style={{ marginTop: 8 }}>
+                <div className="field-label">
+                  <span>Quote text</span>
+                  <CharCounter value={state.customQuoteText} max={LIMITS.customQuoteText} />
+                </div>
+                <textarea value={state.customQuoteText} onChange={(e) => update({ customQuoteText: e.target.value })} placeholder="A short, punchy testimonial…" />
+              </div>
+              <div className="field">
+                <div className="field-label">
+                  <span>Attribution</span>
+                  <CharCounter value={state.customQuoteAttribution} max={LIMITS.customQuoteAttribution} />
+                </div>
+                <input type="text" value={state.customQuoteAttribution} onChange={(e) => update({ customQuoteAttribution: e.target.value })} placeholder="VP Talent, Acme Corp" />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* 8. Back CTA */}
+        <div className="section">
+          <h2><span className="step-num">8</span>Back CTA <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 1</span></h2>
+          <div className="pick-help">Two-line CTA in the navy bar at the bottom of the back side.</div>
+          <div className="picklist">
+            {LIB.backCtas.map((c) => (
+              <PickItem key={c.id} selected={state.backCtaId === c.id} onClick={() => update({ backCtaId: c.id })}>
+                <strong style={{ fontFamily: 'Oswald, sans-serif', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{c.text}</strong>
+              </PickItem>
+            ))}
+          </div>
+        </div>
+
+        {/* Locked */}
+        <div className="section" style={{ borderBottom: 'none' }}>
+          <h2><span className="step-num" style={{ background: '#A7A7A7' }}>🔒</span>Locked for brand consistency</h2>
+          <LockedRow label="WGU logo" value="placement and color" tooltip="Brand mark placement is set by WGU brand standards. This keeps every postcard recognizable at a glance." />
+          <LockedRow label="Headline" value='"Talent. On Demand."' tooltip="The campaign headline is part of the Strategic Partnerships brand voice. Contact brand@wgu.edu to propose new variants." />
+          <LockedRow label="Colors" value="WGU navy + lime + sky" tooltip="The four-color palette ensures consistency across all partner-facing materials." />
+          <LockedRow label="Pattern" value="Swirl (locked)" tooltip="The Swirl pattern is the official Strategic Partnerships campaign visual. To request a different pattern, contact brand@wgu.edu." />
+          <LockedRow label="Layout & spacing" value="all element positions" tooltip="Layout is locked so the card prints reliably at 6×6 inches with consistent visual hierarchy." />
+          <LockedRow label="Back title" value='"Why partner with WGU."' tooltip="Standard back-side header across all Strategic Partnerships materials." />
+        </div>
+      </div>
+
+      <div className="preview-panel">
+        <div className="toolbar">
+          <button className="btn btn-success" onClick={printPDF}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5V2h7v3.5M3 9.5h8M2 5.5h10v5h-2v2H4v-2H2v-5z" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinejoin="round"/></svg>
+            Save as PDF (print)
+          </button>
+          <button className="btn btn-primary" onClick={copyShareLink}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 8.5L8.5 5.5M5.5 5.5L4 7a2.12 2.12 0 003 3l1.5-1.5M8.5 8.5L10 7a2.12 2.12 0 00-3-3L5.5 5.5" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round"/></svg>
+            Copy share link
+          </button>
+          <button className="btn btn-secondary" onClick={resetAll}>Reset</button>
+          <div style={{ marginLeft: 'auto', fontSize: 11, color: '#A7A7A7' }}>6 × 6 in · 600 × 600 px</div>
+        </div>
+
+        <div className="help-banner">
+          <strong>How to use:</strong> Edit the fields on the left → preview updates live → click <strong>Save as PDF</strong> for print, or <strong>Copy share link</strong> to send your draft to a teammate (the URL contains all your settings).
+        </div>
+
+        <div className="preview-row">
+          <div className="preview-side">
+            <div className="preview-label">Front (1A)</div>
+            <div className="card-frame"><PostcardFront data={renderData} /></div>
+          </div>
+          <div className="preview-side">
+            <div className="preview-label">Back (1B)</div>
+            <div className="card-frame"><PostcardBack data={renderData} /></div>
+          </div>
+        </div>
+      </div>
+
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
