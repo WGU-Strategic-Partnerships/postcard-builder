@@ -13,9 +13,9 @@
   .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
 
   .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 80px; }
-  .form-header { padding: 24px 28px 18px; border-bottom: 1px solid #e0e6ee; background: #001731; color: #fff; position: sticky; top: 0; z-index: 10; }
-  .form-header h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 4px; }
-  .form-header p { margin: 0; font-size: 12px; color: #BBD0E8; line-height: 1.4; }
+  .form-header { padding: 24px 28px 18px; border-bottom: 1px solid #e0e6ee; background: #fff; color: #001731; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 rgba(0,23,49,0.04); }
+  .form-header h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 4px; color: #001731; }
+  .form-header p { margin: 0; font-size: 12px; color: #264468; line-height: 1.4; }
 
   .section { padding: 22px 28px 18px; border-bottom: 1px solid #eef2f6; }
   .section h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; color: #0070F0; margin: 0 0 16px; display: flex; align-items: center; gap: 8px; }
@@ -114,6 +114,8 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <script src="source/qrcode-mini.js"></script>
 <script src="source/libraries.jsx"></script>
@@ -251,7 +253,37 @@ function App() {
       window.history.replaceState(null, '', window.location.pathname);
     }
   };
-  const printPDF = () => window.print();
+  const exportPDF = async () => {
+    if (!window.jspdf || !window.html2canvas) {
+      showToast("PDF tools still loading — try again in a moment.");
+      return;
+    }
+    showToast("Generating PDF…");
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const { jsPDF } = window.jspdf;
+      const MARGIN_IN = 0.25;
+      const CARD_IN = 6;
+      const PAGE_IN = CARD_IN + MARGIN_IN * 2;
+      const SCALE = 4;
+
+      const pdf = new jsPDF({ unit: 'in', format: [PAGE_IN, PAGE_IN], orientation: 'portrait', compress: true });
+      const cardEls = document.querySelectorAll('.card-frame > div');
+      for (let i = 0; i < cardEls.length; i++) {
+        if (i > 0) pdf.addPage([PAGE_IN, PAGE_IN], 'portrait');
+        const canvas = await window.html2canvas(cardEls[i], {
+          scale: SCALE, backgroundColor: null, useCORS: true, logging: false,
+        });
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', MARGIN_IN, MARGIN_IN, CARD_IN, CARD_IN, undefined, 'FAST');
+      }
+      const slug = (state.campaign || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      pdf.save(`wgu-postcard${slug ? '-' + slug : ''}.pdf`);
+      showToast("PDF saved.");
+    } catch (e) {
+      console.error('PDF export failed:', e);
+      showToast("PDF export failed — see browser console for details.");
+    }
+  };
 
   return (
     <div className="app">
@@ -426,9 +458,9 @@ function App() {
 
       <div className="preview-panel">
         <div className="toolbar">
-          <button className="btn btn-success" onClick={printPDF}>
+          <button className="btn btn-success" onClick={exportPDF}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5V2h7v3.5M3 9.5h8M2 5.5h10v5h-2v2H4v-2H2v-5z" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinejoin="round"/></svg>
-            Save as PDF (print)
+            Save as PDF
           </button>
           <button className="btn btn-primary" onClick={copyShareLink}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 8.5L8.5 5.5M5.5 5.5L4 7a2.12 2.12 0 003 3l1.5-1.5M8.5 8.5L10 7a2.12 2.12 0 00-3-3L5.5 5.5" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round"/></svg>
