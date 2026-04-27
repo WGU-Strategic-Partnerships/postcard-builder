@@ -87,6 +87,16 @@
   /* ===== Toast ===== */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; }
   .toast.error { background: #dc2626; }
+
+  /* ===== Modal ===== */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,23,49,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .modal { background: #fff; border-radius: 8px; box-shadow: 0 12px 36px rgba(0,23,49,0.25); padding: 32px; max-width: 400px; width: 100%; }
+  .modal h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; color: #001731; margin: 0 0 16px; }
+  .modal label { font-size: 12px; font-weight: 600; color: #264468; display: block; margin-bottom: 6px; }
+  .modal input[type="password"] { width: 100%; padding: 10px 12px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; }
+  .modal input[type="password"]:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
+  .modal .err-box { background: #fff1f1; border: 1px solid #fbcaca; border-radius: 6px; padding: 10px; font-size: 12px; color: #dc2626; line-height: 1.5; margin-top: 12px; }
+  .modal .ok-box { background: #f4fce4; border: 1px solid #97E152; border-radius: 6px; padding: 10px; font-size: 12px; color: #001731; line-height: 1.5; margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -369,6 +379,52 @@ function SectionEditor({ sectionDef, items, refresh, showToast }) {
 }
 
 // =========================================================================
+// Change password modal
+// =========================================================================
+function ChangePasswordModal({ onClose }) {
+  const [pw, setPw] = React.useState('');
+  const [confirm, setConfirm] = React.useState('');
+  const [status, setStatus] = React.useState('idle');
+  const [error, setError] = React.useState('');
+
+  const submit = async (e) => {
+    e?.preventDefault();
+    if (pw !== confirm) { setError('Passwords do not match.'); return; }
+    if (pw.length < 6) { setError('Password must be at least 6 characters.'); return; }
+    setStatus('saving');
+    setError('');
+    const { error } = await sb.auth.updateUser({ password: pw });
+    if (error) { setError(error.message); setStatus('idle'); return; }
+    setStatus('saved');
+    setTimeout(onClose, 900);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <h2>Change password</h2>
+        <form onSubmit={submit}>
+          <label htmlFor="newpw">New password</label>
+          <input id="newpw" type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoFocus required minLength={6} />
+          <div style={{ marginTop: 12 }}>
+            <label htmlFor="confirmpw">Confirm new password</label>
+            <input id="confirmpw" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+          </div>
+          {error && <div className="err-box">{error}</div>}
+          {status === 'saved' && <div className="ok-box">✓ Password updated.</div>}
+          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+            <button type="button" className="btn btn-outline" onClick={onClose} disabled={status === 'saving'}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={status === 'saving' || !pw || !confirm}>
+              {status === 'saved' ? 'Saved' : status === 'saving' ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
 // Main admin shell (after auth)
 // =========================================================================
 function Admin({ session }) {
@@ -376,6 +432,7 @@ function Admin({ session }) {
   const [activeSection, setActiveSection] = React.useState(SECTIONS[0].id);
   const [loadError, setLoadError] = React.useState('');
   const [toast, setToast] = React.useState(null);
+  const [showPwModal, setShowPwModal] = React.useState(false);
 
   const refresh = React.useCallback(async () => {
     const { data, error } = await sb
@@ -415,6 +472,7 @@ function Admin({ session }) {
         <div className="right">
           <span className="user-email">{session.user.email}</span>
           <a href="Postcard%20Builder.html" target="_blank" rel="noopener">Open builder ↗</a>
+          <button onClick={() => setShowPwModal(true)}>Change password</button>
           <button onClick={signOut}>Sign out</button>
         </div>
       </div>
@@ -429,6 +487,7 @@ function Admin({ session }) {
         <SectionEditor sectionDef={activeDef} items={activeItems} refresh={refresh} showToast={showToast} />
       </div>
       {toast && <div className={`toast ${toast.isError ? 'error' : ''}`}>{toast.msg}</div>}
+      {showPwModal && <ChangePasswordModal onClose={() => setShowPwModal(false)} />}
     </div>
   );
 }
