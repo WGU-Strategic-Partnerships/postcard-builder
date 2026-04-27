@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>WGU Library Admin</title>
+<link rel="stylesheet" href="source/colors_and_type.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f4f6f9; font-family: 'Jost', sans-serif; color: #001731; }
+  * { box-sizing: border-box; }
+
+  /* ===== Sign-in screen ===== */
+  .signin-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .signin-card { background: #fff; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,23,49,0.08); padding: 40px; max-width: 420px; width: 100%; }
+  .signin-card h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.04em; color: #001731; margin: 0 0 8px; }
+  .signin-card .sub { font-size: 13px; color: #264468; margin: 0 0 24px; line-height: 1.5; }
+  .signin-card label { font-size: 12px; font-weight: 600; color: #264468; display: block; margin-bottom: 6px; }
+  .signin-card input[type="email"], .signin-card input[type="password"] { width: 100%; padding: 10px 12px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; }
+  .signin-card input[type="email"]:focus, .signin-card input[type="password"]:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
+  .method-toggle { display: flex; gap: 4px; background: #eef2f6; border-radius: 6px; padding: 3px; margin-bottom: 16px; }
+  .method-toggle button { flex: 1; border: 0; background: transparent; padding: 8px 10px; font-size: 12px; font-weight: 600; color: #264468; border-radius: 4px; cursor: pointer; font-family: inherit; }
+  .method-toggle button.active { background: #fff; color: #0070F0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .signin-card .info-box { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 14px; font-size: 13px; color: #002855; line-height: 1.5; margin-bottom: 16px; }
+  .signin-card .err-box { background: #fff1f1; border: 1px solid #fbcaca; border-radius: 6px; padding: 12px; font-size: 12px; color: #dc2626; line-height: 1.5; margin-top: 12px; }
+  .signin-card .footer-note { font-size: 11px; color: #A7A7A7; margin-top: 24px; line-height: 1.5; }
+
+  /* ===== Admin shell ===== */
+  .admin-wrap { min-height: 100vh; }
+  .admin-bar { background: #001731; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .admin-bar h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.12em; margin: 0; color: #fff; }
+  .admin-bar .right { display: flex; gap: 16px; align-items: center; font-size: 12px; flex-wrap: wrap; }
+  .admin-bar .user-email { color: #BBD0E8; }
+  .admin-bar a { color: #97E152; text-decoration: none; font-weight: 600; }
+  .admin-bar a:hover { text-decoration: underline; }
+  .admin-bar button { background: transparent; border: 1px solid #46B1EF; color: #46B1EF; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .admin-bar button:hover { background: rgba(70,177,239,0.1); }
+
+  .admin-content { max-width: 920px; margin: 0 auto; padding: 32px; }
+
+  /* ===== Tabs ===== */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid #e0e6ee; margin-bottom: 24px; flex-wrap: wrap; }
+  .tab { padding: 12px 18px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: #264468; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.12s; text-transform: uppercase; letter-spacing: 0.06em; }
+  .tab:hover { color: #0070F0; }
+  .tab.active { color: #0070F0; border-bottom-color: #0070F0; }
+  .tab .count { background: #e0e6ee; color: #264468; padding: 1px 7px; border-radius: 10px; font-size: 11px; margin-left: 8px; font-weight: 700; letter-spacing: 0; }
+  .tab.active .count { background: #0070F0; color: #fff; }
+
+  /* ===== Item rows ===== */
+  .item-list { display: flex; flex-direction: column; gap: 8px; }
+  .item { background: #fff; border: 1px solid #e0e6ee; border-radius: 6px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; transition: background 0.12s, border-color 0.12s; }
+  .item.saving { background: #f7faff; }
+  .item.error-state { border-color: #dc2626; }
+  .item-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; color: #0070F0; min-width: 28px; padding-top: 6px; text-align: center; }
+  .item-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .field-row { display: flex; gap: 10px; align-items: flex-start; }
+  .field-row .field-label { font-size: 10px; color: #A7A7A7; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; min-width: 70px; padding-top: 10px; }
+  .field-input-wrap { flex: 1; display: flex; flex-direction: column; }
+  .field-input-wrap input, .field-input-wrap textarea { font-family: inherit; font-size: 13px; padding: 8px 10px; border: 1px solid #c7d1de; border-radius: 4px; color: #001731; background: #fff; transition: border-color 0.12s; width: 100%; }
+  .field-input-wrap input:focus, .field-input-wrap textarea:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 2px rgba(0,112,240,0.15); }
+  .field-input-wrap textarea { resize: vertical; min-height: 56px; line-height: 1.4; }
+  .counter { font-size: 10px; color: #A7A7A7; font-variant-numeric: tabular-nums; align-self: flex-end; margin-top: 2px; }
+  .counter.warn { color: #d97706; }
+  .counter.over { color: #dc2626; font-weight: 700; }
+
+  .save-pill-wrap { min-height: 18px; display: flex; align-items: center; gap: 6px; }
+  .save-pill { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #97E152; color: #001731; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .save-pill.error-pill { background: #dc2626; color: #fff; }
+  .save-pill.saving-pill { background: #BBD0E8; color: #002855; }
+
+  .item-actions { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+  .icon-btn { background: transparent; border: 1px solid #e0e6ee; border-radius: 4px; width: 30px; height: 26px; cursor: pointer; color: #264468; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.12s; font-family: inherit; font-size: 12px; }
+  .icon-btn:hover:not(:disabled) { border-color: #0070F0; color: #0070F0; background: #f7faff; }
+  .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .icon-btn.delete:hover:not(:disabled) { border-color: #dc2626; color: #dc2626; background: #fff1f1; }
+
+  /* ===== Buttons ===== */
+  .btn { padding: 10px 16px; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; transition: all 0.12s; }
+  .btn-primary { background: #0070F0; color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: #0057C2; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-outline { background: transparent; border: 1px dashed #c7d1de; color: #264468; padding: 10px 16px; }
+  .btn-outline:hover:not(:disabled) { border-style: solid; border-color: #0070F0; color: #0070F0; }
+  .add-row { margin-top: 16px; }
+
+  /* ===== Section help ===== */
+  .section-help { font-size: 12px; color: #264468; background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; line-height: 1.5; }
+
+  /* ===== Toast ===== */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; }
+  .toast.error { background: #dc2626; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="source/supabase-config.js"></script>
+
+<script type="text/babel">
+const sb = window.supabase.createClient(
+  window.WGU_SUPABASE.url,
+  window.WGU_SUPABASE.publishableKey
+);
+
+const BUILDER_ID = 'postcard';
+
+// Section definitions drive the editor: which fields to render, character limits,
+// and the prefix for auto-generated external_ids on new items.
+const SECTIONS = [
+  {
+    id: 'facts', label: 'Facts', singular: 'fact', prefix: 'f',
+    help: 'Short factual statements. Up to 5 are picked at a time and shown numbered on the back of the card.',
+    fields: [{ key: 'text', label: 'Text', type: 'textarea', max: 200 }],
+  },
+  {
+    id: 'stats', label: 'Stats', singular: 'stat', prefix: 's',
+    help: 'Big-number stats. Up to 3 picked at once, shown in the lime band on the back. Keep numbers very short (e.g. "180K+", "$8K") and labels to one or two words.',
+    fields: [
+      { key: 'num',   label: 'Number', type: 'text', max: 10 },
+      { key: 'label', label: 'Label',  type: 'text', max: 30 },
+    ],
+  },
+  {
+    id: 'quotes', label: 'Quotes', singular: 'quote', prefix: 'q',
+    help: 'Short pull-quote testimonials. One is shown above the back-side CTA bar. Avoid line breaks — they wrap automatically.',
+    fields: [
+      { key: 'text',        label: 'Quote',       type: 'textarea', max: 220 },
+      { key: 'attribution', label: 'Attribution', type: 'text',     max: 80 },
+    ],
+  },
+  {
+    id: 'frontCtas', label: 'Front CTAs', singular: 'front CTA', prefix: 'fc',
+    help: 'Short call-to-action lines on the front of the card, above the URL. Pick one. Keep it punchy — single phrase.',
+    fields: [{ key: 'text', label: 'Text', type: 'text', max: 30 }],
+  },
+  {
+    id: 'backCtas', label: 'Back CTAs', singular: 'back CTA', prefix: 'bc',
+    help: 'Two-line call-to-action shown in the navy bar at the bottom of the back side. Use a period to split the lines (the second half is colored lime). Example: "Partner with us. Start this week."',
+    fields: [{ key: 'text', label: 'Text', type: 'text', max: 60 }],
+  },
+];
+
+function genExternalId(prefix) {
+  return prefix + '-' + Math.random().toString(36).slice(2, 8);
+}
+
+// =========================================================================
+// Sign-in screen
+// =========================================================================
+function SignIn() {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [method, setMethod] = React.useState('password');
+  const [status, setStatus] = React.useState('idle');
+  const [error, setError] = React.useState('');
+
+  // Surface auth errors that arrived in the URL hash (e.g. expired magic link)
+  React.useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.includes('error=')) {
+      const params = new URLSearchParams(hash.substring(1));
+      const desc = params.get('error_description');
+      if (desc) setError(desc.replace(/\+/g, ' '));
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
+  const submit = async (e) => {
+    e?.preventDefault();
+    if (!email.trim()) return;
+    setStatus('sending');
+    setError('');
+    try {
+      if (method === 'magic') {
+        const { error } = await sb.auth.signInWithOtp({
+          email: email.trim().toLowerCase(),
+          options: { emailRedirectTo: window.location.href.split('#')[0], shouldCreateUser: false },
+        });
+        if (error) throw error;
+        setStatus('sent');
+      } else {
+        const { error } = await sb.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+        if (error) throw error;
+        // onAuthStateChange in App() will detect the new session and re-render.
+      }
+    } catch (e) {
+      setStatus('error');
+      setError(e.message || 'Sign in failed.');
+    }
+  };
+
+  return (
+    <div className="signin-wrap">
+      <div className="signin-card">
+        <h1>Library Admin</h1>
+        <p className="sub">Sign in to edit the content libraries that power the WGU postcard builder.</p>
+        {status !== 'sent' ? (
+          <>
+            <div className="method-toggle">
+              <button type="button" className={method === 'password' ? 'active' : ''} onClick={() => { setMethod('password'); setError(''); }}>Password</button>
+              <button type="button" className={method === 'magic' ? 'active' : ''} onClick={() => { setMethod('magic'); setError(''); }}>Magic link</button>
+            </div>
+            <form onSubmit={submit}>
+              <label htmlFor="email">Email</label>
+              <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" disabled={status === 'sending'} autoFocus />
+              {method === 'password' && (
+                <div style={{ marginTop: 14 }}>
+                  <label htmlFor="password">Password</label>
+                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={status === 'sending'} />
+                </div>
+              )}
+              <button type="submit" className="btn btn-primary" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} disabled={status === 'sending' || !email.trim() || (method === 'password' && !password)}>
+                {status === 'sending' ? (method === 'magic' ? 'Sending…' : 'Signing in…') : (method === 'magic' ? 'Send magic link' : 'Sign in')}
+              </button>
+              {error && <div className="err-box">{error}</div>}
+            </form>
+          </>
+        ) : (
+          <div>
+            <div className="info-box">
+              ✓ Check your email — we sent a sign-in link to <strong>{email}</strong>. Open the email on this device and click the link.
+            </div>
+            <button className="btn btn-outline" onClick={() => { setStatus('idle'); setEmail(''); setError(''); }}>Use a different email</button>
+          </div>
+        )}
+        <p className="footer-note">
+          Only invited users can sign in. If your email isn't on the list, ask the builder admin to add it in Supabase Authentication → Users.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// Item row (one editable record)
+// =========================================================================
+function ItemRow({ item, idx, total, sectionDef, onSave, onMove, onDelete }) {
+  const [local, setLocal] = React.useState(item.content);
+  const [savingState, setSavingState] = React.useState('idle');
+
+  React.useEffect(() => { setLocal(item.content); }, [item.id, JSON.stringify(item.content)]);
+
+  const setField = (key, val) => setLocal((prev) => ({ ...prev, [key]: val }));
+
+  const flushIfDirty = async (key) => {
+    if (local[key] === item.content[key]) return;
+    setSavingState('saving');
+    try {
+      await onSave(item.id, local);
+      setSavingState('saved');
+      setTimeout(() => setSavingState('idle'), 1500);
+    } catch (e) {
+      console.error('Save failed:', e);
+      setSavingState('error');
+      setTimeout(() => setSavingState('idle'), 4000);
+    }
+  };
+
+  return (
+    <div className={`item ${savingState === 'saving' ? 'saving' : ''} ${savingState === 'error' ? 'error-state' : ''}`}>
+      <div className="item-num">{idx + 1}</div>
+      <div className="item-fields">
+        {sectionDef.fields.map((f) => {
+          const val = local[f.key] || '';
+          const len = val.length;
+          const counterCls = len > f.max ? 'over' : (len > f.max * 0.9 ? 'warn' : '');
+          return (
+            <div key={f.key} className="field-row" style={{ alignItems: f.type === 'textarea' ? 'flex-start' : 'center' }}>
+              {sectionDef.fields.length > 1 && <span className="field-label">{f.label}</span>}
+              <div className="field-input-wrap">
+                {f.type === 'textarea' ? (
+                  <textarea value={val} onChange={(e) => setField(f.key, e.target.value)} onBlur={() => flushIfDirty(f.key)} maxLength={f.max + 60} />
+                ) : (
+                  <input type="text" value={val} onChange={(e) => setField(f.key, e.target.value)} onBlur={() => flushIfDirty(f.key)} maxLength={f.max + 30} />
+                )}
+                <span className={`counter ${counterCls}`}>{len}/{f.max}</span>
+              </div>
+            </div>
+          );
+        })}
+        <div className="save-pill-wrap">
+          {savingState === 'saving' && <span className="save-pill saving-pill">Saving…</span>}
+          {savingState === 'saved' && <span className="save-pill">Saved</span>}
+          {savingState === 'error' && <span className="save-pill error-pill">Save failed</span>}
+        </div>
+      </div>
+      <div className="item-actions">
+        <button className="icon-btn" disabled={idx === 0} onClick={() => onMove(item.id, -1)} title="Move up" aria-label="Move up">▲</button>
+        <button className="icon-btn" disabled={idx === total - 1} onClick={() => onMove(item.id, 1)} title="Move down" aria-label="Move down">▼</button>
+        <button className="icon-btn delete" onClick={() => onDelete(item.id)} title="Delete" aria-label="Delete">✕</button>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// Section editor (one tab's worth of items)
+// =========================================================================
+function SectionEditor({ sectionDef, items, refresh, showToast }) {
+  const [adding, setAdding] = React.useState(false);
+
+  const saveContent = async (id, content) => {
+    const { error } = await sb.from('library_items').update({ content }).eq('id', id);
+    if (error) throw error;
+    refresh();
+  };
+
+  const move = async (id, delta) => {
+    const idx = items.findIndex((x) => x.id === id);
+    const target = idx + delta;
+    if (idx < 0 || target < 0 || target >= items.length) return;
+    const a = items[idx], b = items[target];
+    const { error: e1 } = await sb.from('library_items').update({ sort_order: b.sort_order }).eq('id', a.id);
+    if (e1) { showToast('Reorder failed: ' + e1.message, true); return; }
+    const { error: e2 } = await sb.from('library_items').update({ sort_order: a.sort_order }).eq('id', b.id);
+    if (e2) { showToast('Reorder failed: ' + e2.message, true); return; }
+    refresh();
+  };
+
+  const remove = async (id) => {
+    if (!confirm("Delete this item? This can't be undone.")) return;
+    const { error } = await sb.from('library_items').delete().eq('id', id);
+    if (error) { showToast('Delete failed: ' + error.message, true); return; }
+    refresh();
+  };
+
+  const add = async () => {
+    setAdding(true);
+    const maxSort = items.reduce((m, x) => Math.max(m, x.sort_order), 0);
+    const blankContent = sectionDef.fields.reduce((o, f) => { o[f.key] = ''; return o; }, {});
+    const { error } = await sb.from('library_items').insert({
+      builder_id: BUILDER_ID,
+      section: sectionDef.id,
+      external_id: genExternalId(sectionDef.prefix),
+      sort_order: maxSort + 1,
+      content: blankContent,
+    });
+    setAdding(false);
+    if (error) { showToast('Add failed: ' + error.message, true); return; }
+    refresh();
+  };
+
+  return (
+    <div>
+      {sectionDef.help && <div className="section-help">{sectionDef.help}</div>}
+      <div className="item-list">
+        {items.map((item, i) => (
+          <ItemRow key={item.id} item={item} idx={i} total={items.length} sectionDef={sectionDef}
+                   onSave={saveContent} onMove={move} onDelete={remove} />
+        ))}
+        {items.length === 0 && (
+          <div style={{ padding: 24, textAlign: 'center', color: '#A7A7A7', fontSize: 13, background: '#fff', border: '1px dashed #e0e6ee', borderRadius: 6 }}>
+            No items yet. Add one below.
+          </div>
+        )}
+      </div>
+      <div className="add-row">
+        <button className="btn btn-outline" onClick={add} disabled={adding}>
+          {adding ? 'Adding…' : `+ Add a ${sectionDef.singular}`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// Main admin shell (after auth)
+// =========================================================================
+function Admin({ session }) {
+  const [items, setItems] = React.useState(null);
+  const [activeSection, setActiveSection] = React.useState(SECTIONS[0].id);
+  const [loadError, setLoadError] = React.useState('');
+  const [toast, setToast] = React.useState(null);
+
+  const refresh = React.useCallback(async () => {
+    const { data, error } = await sb
+      .from('library_items')
+      .select('id, section, external_id, sort_order, content')
+      .eq('builder_id', BUILDER_ID)
+      .order('sort_order', { ascending: true });
+    if (error) { setLoadError(error.message); return; }
+    setItems(data || []);
+  }, []);
+
+  React.useEffect(() => { refresh(); }, [refresh]);
+
+  const showToast = (msg, isError = false) => {
+    setToast({ msg, isError });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const signOut = async () => { await sb.auth.signOut(); };
+
+  if (loadError) return (
+    <div style={{ padding: 32, color: '#dc2626', fontFamily: "'Jost', sans-serif" }}>
+      <h2 style={{ fontFamily: "'Oswald', sans-serif", textTransform: 'uppercase' }}>Couldn't load library</h2>
+      <pre style={{ background: '#fff1f1', padding: 12, borderRadius: 6, fontSize: 12 }}>{loadError}</pre>
+    </div>
+  );
+  if (!items) return <div style={{ padding: 32, color: '#264468' }}>Loading library…</div>;
+
+  const counts = SECTIONS.reduce((c, s) => { c[s.id] = items.filter((x) => x.section === s.id).length; return c; }, {});
+  const activeDef = SECTIONS.find((s) => s.id === activeSection);
+  const activeItems = items.filter((x) => x.section === activeSection).sort((a, b) => a.sort_order - b.sort_order);
+
+  return (
+    <div className="admin-wrap">
+      <div className="admin-bar">
+        <h1>WGU Library Admin · Postcard Builder</h1>
+        <div className="right">
+          <span className="user-email">{session.user.email}</span>
+          <a href="Postcard%20Builder.html" target="_blank" rel="noopener">Open builder ↗</a>
+          <button onClick={signOut}>Sign out</button>
+        </div>
+      </div>
+      <div className="admin-content">
+        <div className="tabs">
+          {SECTIONS.map((s) => (
+            <button key={s.id} className={`tab ${s.id === activeSection ? 'active' : ''}`} onClick={() => setActiveSection(s.id)}>
+              {s.label}<span className="count">{counts[s.id]}</span>
+            </button>
+          ))}
+        </div>
+        <SectionEditor sectionDef={activeDef} items={activeItems} refresh={refresh} showToast={showToast} />
+      </div>
+      {toast && <div className={`toast ${toast.isError ? 'error' : ''}`}>{toast.msg}</div>}
+    </div>
+  );
+}
+
+// =========================================================================
+// Top-level: routes between sign-in and admin based on session state
+// =========================================================================
+function App() {
+  const [session, setSession] = React.useState(null);
+  const [loaded, setLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    sb.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setLoaded(true);
+    });
+    const { data } = sb.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  if (!loaded) return <div style={{ padding: 32, color: '#264468', fontFamily: "'Jost', sans-serif" }}>Loading…</div>;
+  if (!session) return <SignIn />;
+  return <Admin session={session} />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

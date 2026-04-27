@@ -126,7 +126,7 @@
 const sb = window.supabase.createClient(
   window.WGU_SUPABASE.url,
   window.WGU_SUPABASE.publishableKey,
-  { auth: { persistSession: false } }
+  { auth: { persistSession: false, detectSessionInUrl: false } }
 );
 
 async function fetchLibrary(builderId) {
