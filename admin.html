@@ -28,14 +28,21 @@
   /* ===== App layout (mirrors builder) ===== */
   .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
   .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 96px; position: relative; }
-  .form-header { padding: 20px 28px 16px; border-bottom: 1px solid #e0e6ee; background: #fff; color: #001731; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 rgba(0,23,49,0.04); display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
-  .form-header .title-block h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px; color: #001731; }
+  .form-header { padding: 18px 28px 14px; border-bottom: 1px solid #e0e6ee; background: #fff; color: #001731; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 rgba(0,23,49,0.04); }
+  .form-header .top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .form-header .title-block h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 3px; color: #001731; }
   .form-header .title-block p { margin: 0; font-size: 11px; color: #264468; line-height: 1.4; }
   .form-header .header-actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
   .form-header .user-line { font-size: 10px; color: #A7A7A7; max-width: 160px; text-align: right; word-break: break-all; }
   .form-header .header-actions a, .form-header .header-actions button { font-size: 10px; color: #0070F0; text-decoration: none; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; background: transparent; border: 0; cursor: pointer; padding: 0; font-family: inherit; }
   .form-header .header-actions a:hover, .form-header .header-actions button:hover { text-decoration: underline; }
   .form-header .header-actions button.signout { color: #dc2626; }
+
+  /* Builder picker */
+  .builder-picker { margin-top: 12px; display: flex; gap: 6px; align-items: center; }
+  .builder-picker label { font-size: 10px; color: #264468; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .builder-picker select { flex: 1; padding: 6px 8px; border: 1px solid #c7d1de; border-radius: 4px; font-family: inherit; font-size: 12px; color: #001731; background: #fff; cursor: pointer; }
+  .builder-picker select:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 2px rgba(0,112,240,0.15); }
 
   .section { padding: 22px 28px 18px; border-bottom: 1px solid #eef2f6; }
   .section h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; color: #0070F0; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
@@ -58,7 +65,6 @@
   .item-list { display: flex; flex-direction: column; gap: 6px; }
   .item { background: #fff; border: 1px solid #e0e6ee; border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; transition: background 0.12s, border-color 0.12s; }
   .item.is-new { border-color: #97E152; background: #f9fde9; }
-  .item.is-new::before { content: 'NEW'; position: absolute; }
   .item.is-deleted { opacity: 0.5; background: #fff5f5; border-color: #fbcaca; border-style: dashed; }
   .item.is-deleted .field-input-wrap input, .item.is-deleted .field-input-wrap textarea { text-decoration: line-through; color: #A7A7A7; pointer-events: none; }
   .item-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; color: #0070F0; min-width: 22px; padding-top: 4px; text-align: center; }
@@ -107,14 +113,14 @@
   .save-bar .msg-detail { font-size: 10px; font-weight: 500; color: #A7A7A7; display: block; margin-top: 1px; }
 
   /* ===== Preview panel ===== */
-  .preview-panel { padding: 32px; overflow-y: auto; height: 100vh; background: #f4f6f9; }
-  .preview-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; font-size: 11px; color: #264468; }
+  .preview-panel { padding: 24px; overflow: auto; height: 100vh; background: #f4f6f9; }
+  .preview-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; font-size: 11px; color: #264468; }
   .preview-toolbar .pill { background: #fff; border: 1px solid #e0e6ee; padding: 6px 10px; border-radius: 999px; font-weight: 600; }
   .preview-toolbar .live-pill { background: #97E152; color: #001731; border-color: #97E152; }
   .preview-toolbar .draft-pill { background: #fde68a; color: #92400e; border-color: #f6d65a; }
-  .preview-help { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
-  .preview-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
-  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .preview-help { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #002855; line-height: 1.5; }
+  .preview-row { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .preview-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #264468; font-weight: 600; }
   .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; }
 
@@ -140,6 +146,7 @@
 <script src="source/supabase-config.js"></script>
 <script src="source/qrcode-mini.js"></script>
 <script type="text/babel" src="source/postcard-render.jsx"></script>
+<script type="text/babel" src="source/abr-render.jsx"></script>
 
 <script type="text/babel">
 const sb = window.supabase.createClient(
@@ -147,9 +154,12 @@ const sb = window.supabase.createClient(
   window.WGU_SUPABASE.publishableKey
 );
 
-const BUILDER_ID = 'postcard';
+// =========================================================================
+// Per-builder configuration. Adding a new builder = add a new entry here.
+// =========================================================================
 
-const SECTIONS = [
+// --- Postcard ---
+const POSTCARD_SECTIONS = [
   { id: 'frontCtas', label: 'Front CTAs', singular: 'front CTA', prefix: 'fc',
     help: 'Action line on the front, above the URL. Builder users pick one. Keep it short and punchy.',
     fields: [{ key: 'text', label: 'Text', type: 'text', max: 30 }] },
@@ -169,11 +179,11 @@ const SECTIONS = [
       { key: 'attribution', label: 'Attribution', type: 'text',     max: 80 },
     ]},
   { id: 'backCtas', label: 'Back CTAs', singular: 'back CTA', prefix: 'bc',
-    help: 'Two-line action in the navy bar at the bottom of the back side. Use a period to split lines — second half is colored lime. Example: "Partner with us. Start this week."',
+    help: 'Two-line action in the navy bar at the bottom of the back side. Use a period to split lines — second half is colored lime.',
     fields: [{ key: 'text', label: 'Text', type: 'text', max: 60 }] },
 ];
 
-const BRAND_FIELDS = [
+const POSTCARD_BRAND_FIELDS = [
   { key: 'eyebrow_l1',     label: 'Eyebrow line 1',  max: 14, half: true,                           help: '"Strategic"' },
   { key: 'eyebrow_l2',     label: 'Eyebrow line 2',  max: 16, half: true,                           help: '"Partnerships"' },
   { key: 'headline_l1',    label: 'Headline line 1', max: 16, full: true,                           help: 'Top word in the giant headline. Default "Talent."' },
@@ -183,14 +193,158 @@ const BRAND_FIELDS = [
   { key: 'back_title',     label: 'Back title',      max: 50, half: true,                           help: '"Why partner with WGU."' },
 ];
 
-const DEFAULT_BRAND = {
+const POSTCARD_DEFAULT_BRAND = {
   eyebrow_l1: 'Strategic', eyebrow_l2: 'Partnerships',
   headline_l1: 'Talent.', headline_on: 'On', headline_demand: 'Demand.',
   back_band: 'Fast Facts', back_title: 'Why partner with WGU.',
 };
 
-const PREVIEW_DEFAULT_SUBHEAD = 'A workforce engine purpose-built for your org — 100% online, competency-based, and accredited.';
-const PREVIEW_DEFAULT_URL = 'partners.wgu.edu';
+// --- ABR ---
+const ABR_SECTIONS = [
+  { id: 'insights', label: 'Insights & Opportunities', singular: 'insight', prefix: 'i',
+    help: 'Library of insights. Partner exec picks 3 per ABR.',
+    fields: [
+      { key: 'title',       label: 'Title',       type: 'text',     max: 60 },
+      { key: 'description', label: 'Description', type: 'textarea', max: 220 },
+    ]},
+  { id: 'programs', label: 'Top Programs Library', singular: 'program', prefix: 'p',
+    help: 'Master list of degree programs. Partner exec picks up to 8 per ABR.',
+    fields: [{ key: 'text', label: 'Program', type: 'text', max: 80 }] },
+  { id: 'contacts', label: 'Contacts Directory', singular: 'contact', prefix: 'c',
+    help: 'WGU partnership team members shown in the ABR footer. Partner exec picks up to 2 per report.',
+    fields: [
+      { key: 'name',  label: 'Name',  type: 'text', max: 60 },
+      { key: 'title', label: 'Title', type: 'text', max: 80 },
+      { key: 'email', label: 'Email', type: 'text', max: 80 },
+    ]},
+];
+
+const ABR_BRAND_FIELDS = [
+  { key: 'title',                       label: 'Hero title',                max: 50, full: true,  help: '"ANNUAL BUSINESS REPORT"' },
+  { key: 'prepared_for_label',          label: '"Prepared for" label',      max: 20, half: true,  help: 'Default: "PREPARED FOR"' },
+  { key: 'mission_section',             label: 'Mission section title',     max: 30, half: true,  help: '"MISSION ALIGNMENT"' },
+  { key: 'mission_t1_title',            label: 'Mission · 1 title',         max: 16, half: true,  help: 'Default: "Retaining"' },
+  { key: 'mission_t1_subtitle',         label: 'Mission · 1 subtitle',      max: 24, half: true,  help: '"Your Workforce"' },
+  { key: 'mission_t2_title',            label: 'Mission · 2 title',         max: 16, half: true,  help: 'Default: "Upskilling"' },
+  { key: 'mission_t2_subtitle',         label: 'Mission · 2 subtitle',      max: 24, half: true,  help: '"Your Workforce"' },
+  { key: 'mission_t3_title',            label: 'Mission · 3 title',         max: 16, half: true,  help: 'Default: "Expanding"' },
+  { key: 'mission_t3_subtitle',         label: 'Mission · 3 subtitle',      max: 24, half: true,  help: '"Your Workforce"' },
+  { key: 'partnership_section',         label: 'Partnership section title', max: 30, full: true,  help: '"PARTNERSHIP OVERVIEW"' },
+  { key: 'partnership_total_label',     label: 'Big-circle label',          max: 24, half: true,  help: 'Default: "Total Graduates"' },
+  { key: 'partnership_a_label',         label: 'Stat A label',              max: 24, half: true,  help: 'Default: "Current Enrollment"' },
+  { key: 'partnership_b_label',         label: 'Stat B label',              max: 24, half: true,  help: '"FY26 Starts" — bump yearly' },
+  { key: 'partnership_c_label',         label: 'Stat C label',              max: 24, half: true,  help: '"FY25 Starts" — bump yearly' },
+  { key: 'program_mix_section',         label: 'Program-mix title',         max: 30, full: true,  help: '"PROGRAM MIX FY26" — bump yearly' },
+  { key: 'program_1_label',             label: 'Program 1 label',           max: 16, half: true,  help: 'Default: "Business"' },
+  { key: 'program_2_label',             label: 'Program 2 label',           max: 16, half: true,  help: 'Default: "Technology"' },
+  { key: 'program_3_label',             label: 'Program 3 label',           max: 16, half: true,  help: 'Default: "Education"' },
+  { key: 'program_4_label',             label: 'Program 4 label',           max: 16, half: true,  help: 'Default: "Health"' },
+  { key: 'stats_section',               label: 'Stats section title',       max: 20, full: true,  help: '"STATS"' },
+  { key: 'stats_timeline_label',        label: 'Timeline lead-in',          max: 60, full: true,  help: '"Total degrees awarded over time"' },
+  { key: 'stats_completion_message',    label: 'Completion message',        max: 140, full: true, help: '"Completion rates with partner organizations are higher than national WGU rates."' },
+  { key: 'stats_partner_rate_label',    label: 'Partner rate label',        max: 40, half: true,  help: '"Completion rates with partner"' },
+  { key: 'stats_nonpartner_rate_label', label: 'Non-partner rate label',    max: 40, half: true,  help: '"Non-partner completion rates"' },
+  { key: 'top_programs_section',        label: 'Top Programs title',        max: 30, full: true,  help: '"TOP PROGRAMS FY26" — bump yearly' },
+  { key: 'insights_section',            label: 'Insights title',            max: 40, full: true,  help: '"INSIGHTS AND OPPORTUNITIES"' },
+];
+
+const ABR_DEFAULT_BRAND = {
+  title: 'ANNUAL BUSINESS REPORT', prepared_for_label: 'PREPARED FOR',
+  mission_section: 'MISSION ALIGNMENT',
+  mission_t1_title: 'Retaining',  mission_t1_subtitle: 'Your Workforce',
+  mission_t2_title: 'Upskilling', mission_t2_subtitle: 'Your Workforce',
+  mission_t3_title: 'Expanding',  mission_t3_subtitle: 'Your Workforce',
+  partnership_section: 'PARTNERSHIP OVERVIEW',
+  partnership_total_label: 'Total Graduates',
+  partnership_a_label: 'Current Enrollment',
+  partnership_b_label: 'FY26 Starts',
+  partnership_c_label: 'FY25 Starts',
+  program_mix_section: 'PROGRAM MIX FY26',
+  program_1_label: 'Business', program_2_label: 'Technology',
+  program_3_label: 'Education', program_4_label: 'Health',
+  stats_section: 'STATS',
+  stats_timeline_label: 'Total degrees awarded over time',
+  stats_completion_message: 'Completion rates with partner organizations are higher than national WGU rates.',
+  stats_partner_rate_label: 'Completion rates with partner',
+  stats_nonpartner_rate_label: 'Non-partner completion rates',
+  top_programs_section: 'TOP PROGRAMS FY26',
+  insights_section: 'INSIGHTS AND OPPORTUNITIES',
+};
+
+const POSTCARD_PREVIEW_DEFAULT_SUBHEAD = 'A workforce engine purpose-built for your org — 100% online, competency-based, and accredited.';
+
+const BUILDERS_CONFIG = {
+  postcard: {
+    label: 'Postcard Builder',
+    sections: POSTCARD_SECTIONS,
+    brandFields: POSTCARD_BRAND_FIELDS,
+    defaultBrand: POSTCARD_DEFAULT_BRAND,
+    builderUrl: 'Postcard%20Builder.html',
+    buildPreviewData: (draft, itemsBy) => {
+      const facts     = itemsBy('facts').slice(0, 5).map((r) => ({ id: r.external_id, ...r.content }));
+      const stats     = itemsBy('stats').slice(0, 3).map((r) => ({ id: r.external_id, ...r.content }));
+      const quotesArr = itemsBy('quotes');
+      const frontArr  = itemsBy('frontCtas');
+      const backArr   = itemsBy('backCtas');
+      const quote     = quotesArr[0] ? { ...quotesArr[0].content } : null;
+      const frontCta  = frontArr[0]?.content?.text || 'Start here →';
+      const backCta   = backArr[0]?.content?.text || 'Partner with us. Start this week.';
+      return {
+        campaign: '', subhead: POSTCARD_PREVIEW_DEFAULT_SUBHEAD,
+        url: 'partners.wgu.edu', qrSource: 'partners.wgu.edu',
+        facts, stats, quote, frontCta, backCta,
+        fixedText: draft.brand,
+      };
+    },
+    renderPreview: (data) => (
+      <div className="preview-row">
+        <div className="preview-side">
+          <div className="preview-label">Front (1A)</div>
+          <div className="card-frame"><PostcardFront data={data} /></div>
+        </div>
+        <div className="preview-side">
+          <div className="preview-label">Back (1B)</div>
+          <div className="card-frame"><PostcardBack data={data} /></div>
+        </div>
+      </div>
+    ),
+  },
+  abr: {
+    label: 'Annual Business Report',
+    sections: ABR_SECTIONS,
+    brandFields: ABR_BRAND_FIELDS,
+    defaultBrand: ABR_DEFAULT_BRAND,
+    builderUrl: 'ABR%20Builder.html',
+    buildPreviewData: (draft, itemsBy) => {
+      const programs = itemsBy('programs').slice(0, 8).map((r) => ({ id: r.external_id, ...r.content }));
+      const insights = itemsBy('insights').slice(0, 3).map((r) => ({ id: r.external_id, ...r.content }));
+      const contacts = itemsBy('contacts').slice(0, 2).map((r) => ({ id: r.external_id, ...r.content }));
+      return {
+        partnerName: 'Sample Partner Org', url: 'wgu.edu/partners/sample',
+        asOfDate: 'Jan 2026',
+        totalGraduates: 77, currentEnrollment: 61, fyCurrentStarts: 33, fyPrevStarts: 33,
+        timelineYears: ['2023', '2024', '2025'], timelineValues: [19, 20, 24],
+        completionPartner: 68, completionNonPartner: 62,
+        programMixBusiness: 31, programMixTechnology: 13, programMixEducation: 3, programMixHealth: 52,
+        topPrograms: programs, insights, contacts,
+        heroImage: '',
+        fixedText: draft.brand,
+      };
+    },
+    renderPreview: (data) => (
+      <div className="preview-row">
+        <div className="preview-side">
+          <div className="preview-label">ABR (Letter, 8.5×11")</div>
+          <div className="card-frame" style={{ transform: 'scale(0.75)', transformOrigin: 'top center', marginBottom: -275 }}>
+            <ABROnePager data={data} />
+          </div>
+        </div>
+      </div>
+    ),
+  },
+};
+
+const BUILDER_IDS = Object.keys(BUILDERS_CONFIG);
 
 function genExternalId(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 8); }
 function genUUID() {
@@ -206,59 +360,38 @@ const deepClone = (x) => JSON.parse(JSON.stringify(x));
 
 // =========================================================================
 // Diff: turn (saved, draft) into a list of database operations.
-// Each op records both old and new values so we can invert it for undo.
+// builderId is captured so cross-builder switching doesn't pollute ops.
 // =========================================================================
-function computeOperations(saved, draft) {
+function computeOperations(saved, draft, builderId) {
   const ops = [];
-
   if (!equal(saved.brand, draft.brand)) {
-    ops.push({
-      type: 'update_brand',
-      brandRowId: saved.brandRowId,
-      old: saved.brand,
-      new: draft.brand,
-    });
+    ops.push({ type: 'update_brand', builderId, brandRowId: saved.brandRowId, old: saved.brand, new: draft.brand });
   }
-
   const savedById = new Map(saved.items.map((i) => [i.id, i]));
-
-  // Inserts: new items not yet in DB
   for (const di of draft.items) {
     if (di._new && !di._deleted) {
       ops.push({
         type: 'insert',
-        row: {
-          id: di.id, builder_id: BUILDER_ID,
-          section: di.section, external_id: di.external_id,
-          sort_order: di.sort_order, content: di.content,
-        },
+        row: { id: di.id, builder_id: builderId, section: di.section, external_id: di.external_id, sort_order: di.sort_order, content: di.content },
       });
     }
   }
-
-  // Deletes: items present in saved but missing or marked deleted in draft
   for (const si of saved.items) {
     const di = draft.items.find((x) => x.id === si.id);
-    if (!di || di._deleted) {
-      ops.push({ type: 'delete', row: si });
-    }
+    if (!di || di._deleted) ops.push({ type: 'delete', row: si });
   }
-
-  // Updates: existing items whose content or sort_order changed
   for (const di of draft.items) {
     if (di._new || di._deleted) continue;
     const si = savedById.get(di.id);
     if (!si) continue;
     if (!equal(si.content, di.content) || si.sort_order !== di.sort_order) {
       ops.push({
-        type: 'update',
-        id: di.id,
+        type: 'update', id: di.id,
         old: { content: si.content, sort_order: si.sort_order },
         new: { content: di.content, sort_order: di.sort_order },
       });
     }
   }
-
   return ops;
 }
 
@@ -277,7 +410,7 @@ async function applyOp(op) {
       if (error) throw error;
     } else {
       const { error } = await sb.from('library_items').insert({
-        builder_id: BUILDER_ID, section: 'fixed_text', external_id: 'main',
+        builder_id: op.builderId, section: 'fixed_text', external_id: 'main',
         sort_order: 0, content: op.new,
       });
       if (error) throw error;
@@ -336,9 +469,7 @@ function SignIn() {
         if (error) throw error;
         setStatus('sent');
       } else {
-        const { error } = await sb.auth.signInWithPassword({
-          email: email.trim().toLowerCase(), password,
-        });
+        const { error } = await sb.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
         if (error) throw error;
       }
     } catch (e) { setStatus('error'); setError(e.message || 'Sign in failed.'); }
@@ -348,7 +479,7 @@ function SignIn() {
     <div className="signin-wrap">
       <div className="signin-card">
         <h1>Library Admin</h1>
-        <p className="sub">Sign in to edit the content libraries that power the WGU postcard builder.</p>
+        <p className="sub">Sign in to edit the content libraries that power the WGU builder family.</p>
         {status !== 'sent' ? (
           <>
             <div className="method-toggle">
@@ -373,7 +504,7 @@ function SignIn() {
         ) : (
           <div>
             <div className="info-box">
-              ✓ Check your email — we sent a sign-in link to <strong>{email}</strong>. Open the email on this device and click the link.
+              ✓ Check your email — we sent a sign-in link to <strong>{email}</strong>.
             </div>
             <button className="btn btn-outline" onClick={() => { setStatus('idle'); setEmail(''); setError(''); }}>Use a different email</button>
           </div>
@@ -429,7 +560,7 @@ function ChangePasswordModal({ onClose, showToast }) {
 // =========================================================================
 // Brand-text section (controlled)
 // =========================================================================
-function BrandTextSection({ brand, onChange, savedBrand }) {
+function BrandTextSection({ brand, savedBrand, fields, onChange }) {
   const setField = (key, val) => onChange({ ...brand, [key]: val });
   return (
     <div className="section">
@@ -437,9 +568,9 @@ function BrandTextSection({ brand, onChange, savedBrand }) {
         <span className="step-num brand">★</span>
         Brand text <span className="meta">unlocked for admins</span>
       </h2>
-      <div className="help">Normally locked from builder users for brand consistency. Edits go live to all postcards on save.</div>
+      <div className="help">Normally locked from builder users for brand consistency. Edits go live on save.</div>
       <div className="brand-grid">
-        {BRAND_FIELDS.map((f) => {
+        {fields.map((f) => {
           const val = brand[f.key] || '';
           const len = val.length;
           const counterCls = len > f.max ? 'over' : (len > f.max * 0.9 ? 'warn' : '');
@@ -574,7 +705,6 @@ function SaveBar({ pendingCount, isDirty, canUndo, busy, onSave, onDiscard, onUn
       </div>
     );
   }
-  // canUndo
   const time = savedAt ? savedAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
   return (
     <div className="save-bar">
@@ -593,6 +723,7 @@ function SaveBar({ pendingCount, isDirty, canUndo, busy, onSave, onDiscard, onUn
 // Admin (after auth)
 // =========================================================================
 function Admin({ session }) {
+  const [builderId, setBuilderId] = React.useState('postcard');
   const [saved, setSaved] = React.useState(null);
   const [draft, setDraft] = React.useState(null);
   const [lastOps, setLastOps] = React.useState(null);
@@ -602,25 +733,29 @@ function Admin({ session }) {
   const [showPwModal, setShowPwModal] = React.useState(false);
   const [savedAt, setSavedAt] = React.useState(null);
 
+  const builderConfig = BUILDERS_CONFIG[builderId];
+
   const fetchAll = React.useCallback(async () => {
+    const cfg = BUILDERS_CONFIG[builderId];
     const { data, error } = await sb.from('library_items')
       .select('id, section, external_id, sort_order, content')
-      .eq('builder_id', BUILDER_ID)
+      .eq('builder_id', builderId)
       .order('sort_order', { ascending: true });
     if (error) { setLoadError(error.message); return null; }
     const all = data || [];
     const itemsArr = all.filter((x) => x.section !== 'fixed_text');
     const brandRow = all.find((x) => x.section === 'fixed_text');
     return {
-      brand: brandRow ? { ...DEFAULT_BRAND, ...(brandRow.content || {}) } : { ...DEFAULT_BRAND },
+      brand: brandRow ? { ...cfg.defaultBrand, ...(brandRow.content || {}) } : { ...cfg.defaultBrand },
       brandRowId: brandRow ? brandRow.id : null,
       items: itemsArr,
     };
-  }, []);
+  }, [builderId]);
 
   React.useEffect(() => {
+    setLoadError('');
     fetchAll().then((s) => {
-      if (s) { setSaved(s); setDraft(deepClone(s)); }
+      if (s) { setSaved(s); setDraft(deepClone(s)); setLastOps(null); setSavedAt(null); }
     });
   }, [fetchAll]);
 
@@ -629,7 +764,6 @@ function Admin({ session }) {
     return !equal(saved, draft);
   }, [saved, draft]);
 
-  // Browser-unload guard
   React.useEffect(() => {
     if (!isDirty) return;
     const handler = (e) => { e.preventDefault(); e.returnValue = ''; return ''; };
@@ -637,11 +771,10 @@ function Admin({ session }) {
     return () => window.removeEventListener('beforeunload', handler);
   }, [isDirty]);
 
-  // Pending operations count (for the bar) — same logic as save uses
   const pendingOps = React.useMemo(() => {
     if (!saved || !draft) return [];
-    return computeOperations(saved, draft);
-  }, [saved, draft]);
+    return computeOperations(saved, draft, builderId);
+  }, [saved, draft, builderId]);
   const pendingCount = pendingOps.length;
   const canUndo = lastOps !== null && !isDirty;
 
@@ -650,13 +783,9 @@ function Admin({ session }) {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Edits clear undo (the past save is no longer the latest state)
   const clearUndoIfSet = () => { if (lastOps !== null) setLastOps(null); };
 
-  const updateBrand = (newBrand) => {
-    setDraft((d) => ({ ...d, brand: newBrand }));
-    clearUndoIfSet();
-  };
+  const updateBrand = (newBrand) => { setDraft((d) => ({ ...d, brand: newBrand })); clearUndoIfSet(); };
   const updateItemContent = (id, content) => {
     setDraft((d) => ({ ...d, items: d.items.map((it) => it.id === id ? { ...it, content } : it) }));
     clearUndoIfSet();
@@ -686,10 +815,7 @@ function Admin({ session }) {
     setDraft((d) => {
       const item = d.items.find((i) => i.id === id);
       if (!item) return d;
-      // If it's a never-saved new item, just drop it from the draft entirely.
-      if (item._new) {
-        return { ...d, items: d.items.filter((x) => x.id !== id) };
-      }
+      if (item._new) return { ...d, items: d.items.filter((x) => x.id !== id) };
       return { ...d, items: d.items.map((x) => x.id === id ? { ...x, _deleted: true } : x) };
     });
     clearUndoIfSet();
@@ -699,7 +825,7 @@ function Admin({ session }) {
     clearUndoIfSet();
   };
   const addItem = (sectionId) => {
-    const def = SECTIONS.find((s) => s.id === sectionId);
+    const def = builderConfig.sections.find((s) => s.id === sectionId);
     const blankContent = def.fields.reduce((o, f) => { o[f.key] = ''; return o; }, {});
     setDraft((d) => {
       const sectionItems = d.items.filter((x) => x.section === sectionId && !x._deleted);
@@ -721,18 +847,16 @@ function Admin({ session }) {
   const save = async () => {
     setBusy('saving');
     try {
-      const ops = computeOperations(saved, draft);
+      const ops = computeOperations(saved, draft, builderId);
       if (ops.length === 0) return;
       for (const op of ops) await applyOp(op);
       const fresh = await fetchAll();
       if (fresh) {
-        setSaved(fresh);
-        setDraft(deepClone(fresh));
-        setLastOps(ops);
-        setSavedAt(new Date());
+        setSaved(fresh); setDraft(deepClone(fresh));
+        setLastOps(ops); setSavedAt(new Date());
         const c = changeSummary(ops);
         const parts = [];
-        if (c.brand) parts.push(`brand text`);
+        if (c.brand) parts.push('brand text');
         if (c.insert) parts.push(`${c.insert} added`);
         if (c.update) parts.push(`${c.update} edited`);
         if (c.delete) parts.push(`${c.delete} deleted`);
@@ -741,9 +865,7 @@ function Admin({ session }) {
     } catch (e) {
       console.error(e);
       showToast('Save failed: ' + (e.message || ''), true);
-    } finally {
-      setBusy('idle');
-    }
+    } finally { setBusy('idle'); }
   };
 
   const undo = async () => {
@@ -755,24 +877,27 @@ function Admin({ session }) {
       for (const op of inverted) await applyOp(op);
       const fresh = await fetchAll();
       if (fresh) {
-        setSaved(fresh);
-        setDraft(deepClone(fresh));
-        setLastOps(null);
-        setSavedAt(null);
+        setSaved(fresh); setDraft(deepClone(fresh));
+        setLastOps(null); setSavedAt(null);
         showToast('Last save undone.');
       }
     } catch (e) {
       console.error(e);
       showToast('Undo failed: ' + (e.message || ''), true);
-    } finally {
-      setBusy('idle');
-    }
+    } finally { setBusy('idle'); }
   };
 
   const discard = () => {
     if (pendingCount === 0) return;
     if (!confirm(`Discard ${pendingCount} unsaved change${pendingCount === 1 ? '' : 's'}?`)) return;
     setDraft(deepClone(saved));
+  };
+
+  const switchBuilder = (newBuilderId) => {
+    if (newBuilderId === builderId) return;
+    if (isDirty && !confirm('You have unsaved changes. Switching builders will discard them. Continue?')) return;
+    setSaved(null); setDraft(null); setLastOps(null); setSavedAt(null);
+    setBuilderId(newBuilderId);
   };
 
   const signOut = async () => {
@@ -788,46 +913,39 @@ function Admin({ session }) {
   );
   if (!draft || !saved) return <div style={{ padding: 32, color: '#264468' }}>Loading library…</div>;
 
-  // ----- Build preview from draft -----
-  const draftBy = (sec) => draft.items.filter((x) => x.section === sec && !x._deleted).sort((a, b) => a.sort_order - b.sort_order);
-  const facts     = draftBy('facts').slice(0, 5).map((r) => ({ id: r.external_id, ...r.content }));
-  const stats     = draftBy('stats').slice(0, 3).map((r) => ({ id: r.external_id, ...r.content }));
-  const quotesArr = draftBy('quotes');
-  const frontArr  = draftBy('frontCtas');
-  const backArr   = draftBy('backCtas');
-  const quote     = quotesArr[0] ? { ...quotesArr[0].content } : null;
-  const frontCta  = frontArr[0]?.content?.text || 'Start here →';
-  const backCta   = backArr[0]?.content?.text || 'Partner with us. Start this week.';
-
-  const previewData = {
-    campaign: '',
-    subhead: PREVIEW_DEFAULT_SUBHEAD,
-    url: PREVIEW_DEFAULT_URL,
-    qrSource: PREVIEW_DEFAULT_URL,
-    facts, stats, quote,
-    frontCta, backCta,
-    fixedText: draft.brand,
-  };
+  // Build preview from draft
+  const itemsBy = (sec) => draft.items.filter((x) => x.section === sec && !x._deleted).sort((a, b) => a.sort_order - b.sort_order);
+  const previewData = builderConfig.buildPreviewData(draft, itemsBy);
 
   return (
     <div className="app">
       <div className="form-panel">
         <div className="form-header">
-          <div className="title-block">
-            <h1>Library Admin</h1>
-            <p>WGU Postcard Builder · edit content + brand text. Save publishes to all builder users.</p>
+          <div className="top-row">
+            <div className="title-block">
+              <h1>Library Admin</h1>
+              <p>WGU builder family · edit content + brand text. Save publishes to all builder users.</p>
+            </div>
+            <div className="header-actions">
+              <span className="user-line">{session.user.email}</span>
+              <a href={builderConfig.builderUrl} target="_blank" rel="noopener">Open builder ↗</a>
+              <button onClick={() => setShowPwModal(true)}>Change password</button>
+              <button className="signout" onClick={signOut}>Sign out</button>
+            </div>
           </div>
-          <div className="header-actions">
-            <span className="user-line">{session.user.email}</span>
-            <a href="Postcard%20Builder.html" target="_blank" rel="noopener">Open builder ↗</a>
-            <button onClick={() => setShowPwModal(true)}>Change password</button>
-            <button className="signout" onClick={signOut}>Sign out</button>
+          <div className="builder-picker">
+            <label htmlFor="builder-select">Builder:</label>
+            <select id="builder-select" value={builderId} onChange={(e) => switchBuilder(e.target.value)}>
+              {BUILDER_IDS.map((id) => (
+                <option key={id} value={id}>{BUILDERS_CONFIG[id].label}</option>
+              ))}
+            </select>
           </div>
         </div>
 
-        <BrandTextSection brand={draft.brand} savedBrand={saved.brand} onChange={updateBrand} />
+        <BrandTextSection brand={draft.brand} savedBrand={saved.brand} fields={builderConfig.brandFields} onChange={updateBrand} />
 
-        {SECTIONS.map((sec, i) => {
+        {builderConfig.sections.map((sec, i) => {
           const sectionDraft = draft.items.filter((x) => x.section === sec.id).sort((a, b) => a.sort_order - b.sort_order);
           const sectionSaved = saved.items.filter((x) => x.section === sec.id);
           return (
@@ -841,14 +959,8 @@ function Admin({ session }) {
         })}
 
         <SaveBar
-          pendingCount={pendingCount}
-          isDirty={isDirty}
-          canUndo={canUndo}
-          busy={busy}
-          onSave={save}
-          onDiscard={discard}
-          onUndo={undo}
-          savedAt={savedAt}
+          pendingCount={pendingCount} isDirty={isDirty} canUndo={canUndo} busy={busy}
+          onSave={save} onDiscard={discard} onUndo={undo} savedAt={savedAt}
         />
       </div>
 
@@ -857,22 +969,13 @@ function Admin({ session }) {
           <span className={`pill ${isDirty ? 'draft-pill' : 'live-pill'}`}>
             {isDirty ? `● Draft preview · ${pendingCount} unsaved` : '● Live preview'}
           </span>
-          <span className="pill">First item from each library</span>
-          <a href="Postcard%20Builder.html" target="_blank" rel="noopener" style={{ marginLeft: 'auto', fontSize: 11, color: '#0070F0', fontWeight: 600, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Open builder ↗</a>
+          <span className="pill">{builderConfig.label}</span>
+          <a href={builderConfig.builderUrl} target="_blank" rel="noopener" style={{ marginLeft: 'auto', fontSize: 11, color: '#0070F0', fontWeight: 600, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Open builder ↗</a>
         </div>
         <div className="preview-help">
-          <strong>What you're seeing:</strong> the postcard rendered with your <em>draft</em> brand text and the first item from each library. Edits show here immediately. The public builder still shows the last saved version until you hit Save.
+          <strong>What you're seeing:</strong> the {builderConfig.label.toLowerCase()} rendered with your <em>draft</em> brand text and the first item from each library. Edits show here immediately. The public builder still shows the last saved version until you hit Save.
         </div>
-        <div className="preview-row">
-          <div className="preview-side">
-            <div className="preview-label">Front (1A)</div>
-            <div className="card-frame"><PostcardFront data={previewData} /></div>
-          </div>
-          <div className="preview-side">
-            <div className="preview-label">Back (1B)</div>
-            <div className="card-frame"><PostcardBack data={previewData} /></div>
-          </div>
-        </div>
+        {builderConfig.renderPreview(previewData)}
       </div>
 
       {toast && <div className={`toast ${toast.isError ? 'error' : ''}`}>{toast.msg}</div>}

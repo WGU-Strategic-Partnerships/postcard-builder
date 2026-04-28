@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>WGU Strategic Partnerships — ABR Builder</title>
+<link rel="stylesheet" href="source/colors_and_type.css" />
+<meta name="ext-resource-dependency" content="assets/wgu-wordmark-white.png" data-resource-id="wguLogo" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f4f6f9; font-family: 'Jost', sans-serif; color: #001731; }
+  * { box-sizing: border-box; }
+
+  .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
+
+  .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 80px; }
+  .form-header { padding: 24px 28px 18px; border-bottom: 1px solid #e0e6ee; background: #fff; color: #001731; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 rgba(0,23,49,0.04); }
+  .form-header h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 4px; color: #001731; }
+  .form-header p { margin: 0; font-size: 12px; color: #264468; line-height: 1.4; }
+
+  .section { padding: 22px 28px 18px; border-bottom: 1px solid #eef2f6; }
+  .section h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; color: #0070F0; margin: 0 0 16px; display: flex; align-items: center; gap: 8px; }
+  .section h2 .step-num { background: #0070F0; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-family: 'Jost', sans-serif; font-weight: 700; }
+
+  .field { margin-bottom: 14px; }
+  .field-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; color: #264468; margin-bottom: 6px; }
+  .field-counter { font-size: 11px; color: #A7A7A7; font-variant-numeric: tabular-nums; }
+  .field-counter.warn { color: #d97706; }
+  .field-counter.over { color: #dc2626; font-weight: 700; }
+
+  input[type="text"], input[type="url"], input[type="number"], textarea { width: 100%; padding: 9px 11px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; transition: border-color 0.15s; }
+  input:focus, textarea:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.4; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .field-mini { display: flex; flex-direction: column; gap: 4px; }
+  .field-mini .lbl { font-size: 10px; color: #264468; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .picklist { display: flex; flex-direction: column; gap: 6px; }
+  .pick-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e0e6ee; border-radius: 6px; cursor: pointer; transition: all 0.12s; background: #fff; }
+  .pick-item:hover { border-color: #0070F0; background: #f7faff; }
+  .pick-item.selected { border-color: #0070F0; background: #eef6ff; box-shadow: 0 0 0 1px #0070F0 inset; }
+  .pick-item.disabled { opacity: 0.45; cursor: not-allowed; }
+  .pick-checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #c7d1de; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; margin-top: 1px; }
+  .pick-item.selected .pick-checkbox { background: #0070F0; border-color: #0070F0; }
+  .pick-checkbox svg { display: none; }
+  .pick-item.selected .pick-checkbox svg { display: block; }
+  .pick-text { flex: 1; font-size: 13px; color: #001731; line-height: 1.4; min-width: 0; }
+  .pick-text strong { font-weight: 700; }
+  .pick-text small { display: block; font-size: 11px; color: #264468; margin-top: 2px; line-height: 1.4; }
+  .pick-order { width: 22px; height: 22px; border-radius: 50%; background: #97E152; color: #001731; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pick-help { font-size: 11px; color: #A7A7A7; margin: 4px 0 8px; }
+
+  .upload-zone { border: 1.5px dashed #c7d1de; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; background: #f9fbfd; transition: all 0.12s; }
+  .upload-zone:hover { border-color: #0070F0; background: #eef6ff; }
+  .upload-zone.has-file { border-style: solid; border-color: #97E152; background: #f4fce4; }
+  .upload-zone .upload-label { font-size: 13px; font-weight: 600; color: #264468; }
+  .upload-zone .upload-hint { font-size: 11px; color: #A7A7A7; margin-top: 3px; }
+
+  .locked-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f4f6f9; border: 1px solid #e0e6ee; border-radius: 6px; font-size: 12px; color: #A7A7A7; margin-bottom: 8px; }
+  .locked-row svg { flex-shrink: 0; }
+
+  .preview-panel { padding: 32px; overflow: auto; height: 100vh; background: #f4f6f9; }
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+  .btn { border: 0; padding: 10px 16px; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.12s; }
+  .btn-primary { background: #0070F0; color: #fff; }
+  .btn-primary:hover { background: #0057C2; }
+  .btn-secondary { background: #fff; color: #001731; border: 1px solid #c7d1de; }
+  .btn-secondary:hover { background: #f4f6f9; }
+  .btn-success { background: #97E152; color: #001731; }
+  .btn-success:hover { background: #82c93f; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; }
+
+  .help-banner { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
+
+  .preview-stage { display: flex; justify-content: center; }
+  .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; }
+
+  .sum-tip { font-size: 11px; color: #264468; margin-top: 4px; }
+  .sum-tip.warn { color: #d97706; }
+  .sum-tip.ok { color: #5fa61f; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+<script src="source/supabase-config.js"></script>
+<script type="text/babel" src="source/abr-render.jsx"></script>
+
+<script type="text/babel">
+const sb = window.supabase.createClient(
+  window.WGU_SUPABASE.url,
+  window.WGU_SUPABASE.publishableKey,
+  { auth: { persistSession: false, detectSessionInUrl: false } }
+);
+
+const BUILDER_ID = 'abr';
+
+const LIMITS = {
+  partnerName: 60,
+  url: 100,
+  asOfDate: 24,
+};
+
+const DEFAULTS = {
+  partnerName: '',
+  url: 'wgu.edu/partners/',
+  asOfDate: 'Jan 2026',
+  totalGraduates: 77,
+  currentEnrollment: 61,
+  fyCurrentStarts: 33,
+  fyPrevStarts: 33,
+  timelineYears: ['2023', '2024', '2025'],
+  timelineValues: [19, 20, 24],
+  completionPartner: 68,
+  completionNonPartner: 62,
+  programMixBusiness: 31,
+  programMixTechnology: 13,
+  programMixEducation: 3,
+  programMixHealth: 52,
+  topProgramIds: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'],
+  insightIds: ['i1', 'i2', 'i3'],
+  contactIds: ['c1', 'c2'],
+  heroImage: '',
+};
+
+async function fetchABRLibrary() {
+  const { data, error } = await sb.from('library_items')
+    .select('section, external_id, content')
+    .eq('builder_id', BUILDER_ID)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  const out = { insights: [], programs: [], contacts: [], fixedText: {} };
+  for (const row of data || []) {
+    if (row.section === 'fixed_text') out.fixedText = row.content || {};
+    else if (out[row.section]) out[row.section].push({ id: row.external_id, ...row.content });
+  }
+  return out;
+}
+
+function encodeState(s) { try { return btoa(encodeURIComponent(JSON.stringify(s))); } catch { return ''; } }
+function decodeState(s) { try { return JSON.parse(decodeURIComponent(atob(s))); } catch { return null; } }
+function loadInitialState() {
+  const m = window.location.hash.match(/^#s=(.+)$/);
+  if (m) { const d = decodeState(m[1]); if (d) return { ...DEFAULTS, ...d }; }
+  return DEFAULTS;
+}
+
+function CharCounter({ value, max }) {
+  const len = (value || '').length;
+  const cls = len > max ? 'over' : (len > max * 0.9 ? 'warn' : '');
+  return <span className={`field-counter ${cls}`}>{len}/{max}</span>;
+}
+
+function PickItem({ selected, order, disabled, onClick, children }) {
+  return (
+    <div className={`pick-item ${selected ? 'selected' : ''} ${disabled ? 'disabled' : ''}`} onClick={disabled ? null : onClick}>
+      <div className="pick-checkbox">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+          <path d="M2.5 6L5 8.5L9.5 4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+      <div className="pick-text">{children}</div>
+      {selected && order != null && <div className="pick-order">{order}</div>}
+    </div>
+  );
+}
+
+function App() {
+  const [state, setState] = React.useState(loadInitialState);
+  const [toast, setToast] = React.useState(null);
+  const [lib, setLib] = React.useState(null);
+  const [loadError, setLoadError] = React.useState(null);
+
+  const update = (patch) => setState((prev) => ({ ...prev, ...patch }));
+
+  React.useEffect(() => {
+    fetchABRLibrary().then(setLib).catch((e) => { console.error('ABR library fetch failed:', e); setLoadError(e.message || 'Failed to load library'); });
+  }, []);
+
+  React.useEffect(() => {
+    const id = setTimeout(() => {
+      const encoded = encodeState(state);
+      window.history.replaceState(null, '', `#s=${encoded}`);
+    }, 300);
+    return () => clearTimeout(id);
+  }, [state]);
+
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2400); };
+
+  const renderData = React.useMemo(() => {
+    if (!lib) return null;
+    const programs  = state.topProgramIds.map((id) => lib.programs.find((p) => p.id === id)).filter(Boolean);
+    const insights  = state.insightIds.map((id) => lib.insights.find((p) => p.id === id)).filter(Boolean);
+    const contacts  = state.contactIds.map((id) => lib.contacts.find((p) => p.id === id)).filter(Boolean);
+    return {
+      partnerName:        state.partnerName,
+      url:                state.url,
+      asOfDate:           state.asOfDate,
+      totalGraduates:     Number(state.totalGraduates) || 0,
+      currentEnrollment:  Number(state.currentEnrollment) || 0,
+      fyCurrentStarts:    Number(state.fyCurrentStarts) || 0,
+      fyPrevStarts:       Number(state.fyPrevStarts) || 0,
+      timelineYears:      state.timelineYears,
+      timelineValues:     state.timelineValues.map((v) => Number(v) || 0),
+      completionPartner:  Number(state.completionPartner) || 0,
+      completionNonPartner: Number(state.completionNonPartner) || 0,
+      programMixBusiness:    Number(state.programMixBusiness) || 0,
+      programMixTechnology:  Number(state.programMixTechnology) || 0,
+      programMixEducation:   Number(state.programMixEducation) || 0,
+      programMixHealth:      Number(state.programMixHealth) || 0,
+      topPrograms: programs,
+      insights,
+      contacts,
+      heroImage: state.heroImage,
+      fixedText: lib.fixedText,
+    };
+  }, [state, lib]);
+
+  const togglePick = (key, max) => (id) => {
+    const cur = state[key] || [];
+    if (cur.includes(id)) update({ [key]: cur.filter((x) => x !== id) });
+    else if (cur.length < max) update({ [key]: [...cur, id] });
+  };
+  const togglePrograms = togglePick('topProgramIds', 8);
+  const toggleInsight  = togglePick('insightIds', 3);
+  const toggleContact  = togglePick('contactIds', 2);
+
+  const onHeroUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => update({ heroImage: reader.result });
+    reader.readAsDataURL(file);
+  };
+
+  const copyShareLink = async () => {
+    try { await navigator.clipboard.writeText(window.location.href); showToast('Share link copied — paste into email or SharePoint.'); }
+    catch { showToast("Couldn't copy automatically — link is in the URL bar."); }
+  };
+  const resetAll = () => {
+    if (confirm('Reset all fields back to defaults? This will clear your work.')) {
+      setState(DEFAULTS);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  };
+
+  const exportPDF = async () => {
+    if (!window.jspdf || !window.html2canvas) { showToast('PDF tools still loading — try again in a moment.'); return; }
+    showToast('Generating PDF…');
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const { jsPDF } = window.jspdf;
+      const MARGIN_IN = 0.25;
+      const PAGE_W = 8.5;
+      const PAGE_H = 11.0;
+      const SCALE = 3;
+
+      const pdf = new jsPDF({ unit: 'in', format: [PAGE_W, PAGE_H], orientation: 'portrait', compress: true });
+      const cardEl = document.querySelector('.card-frame > div');
+      if (!cardEl) throw new Error('Preview not rendered yet');
+      const canvas = await window.html2canvas(cardEl, { scale: SCALE, backgroundColor: null, useCORS: true, logging: false });
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', MARGIN_IN, MARGIN_IN, PAGE_W - MARGIN_IN * 2, PAGE_H - MARGIN_IN * 2, undefined, 'FAST');
+      const slug = (state.partnerName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      pdf.save(`wgu-abr${slug ? '-' + slug : ''}.pdf`);
+      showToast('PDF saved.');
+    } catch (e) {
+      console.error('PDF export failed:', e);
+      showToast('PDF export failed — see console.');
+    }
+  };
+
+  if (loadError) {
+    return (
+      <div style={{ padding: 40, fontFamily: "'Jost', sans-serif", color: '#001731', maxWidth: 520 }}>
+        <h2 style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: 22, color: '#dc2626', textTransform: 'uppercase' }}>Couldn't load library</h2>
+        <p style={{ fontSize: 14, color: '#264468' }}>The ABR builder couldn't reach Supabase.</p>
+        <pre style={{ background: '#f4f6f9', padding: 12, borderRadius: 6, fontSize: 12, color: '#dc2626', overflowX: 'auto' }}>{loadError}</pre>
+      </div>
+    );
+  }
+  if (!lib || !renderData) {
+    return <div style={{ padding: 40, fontFamily: "'Jost', sans-serif", color: '#264468', fontSize: 14 }}>Loading library content…</div>;
+  }
+
+  // Helpers for sums
+  const programMixSum = (Number(state.programMixBusiness) || 0) + (Number(state.programMixTechnology) || 0) + (Number(state.programMixEducation) || 0) + (Number(state.programMixHealth) || 0);
+
+  return (
+    <div className="app">
+      <div className="form-panel">
+        <div className="form-header">
+          <h1>ABR Builder</h1>
+          <p>Annual Business Report · 8.5×11" partner report. Fill the fields, see your report live, export to PDF.</p>
+        </div>
+
+        {/* 1. Partner & URL */}
+        <div className="section">
+          <h2><span className="step-num">1</span>Partner & URL</h2>
+          <div className="field">
+            <div className="field-label">
+              <span>Partner organization</span>
+              <CharCounter value={state.partnerName} max={LIMITS.partnerName} />
+            </div>
+            <input type="text" value={state.partnerName} onChange={(e) => update({ partnerName: e.target.value })} placeholder="e.g. OhioHealth" />
+          </div>
+          <div className="field">
+            <div className="field-label">
+              <span>Partner URL</span>
+              <CharCounter value={state.url} max={LIMITS.url} />
+            </div>
+            <input type="text" value={state.url} onChange={(e) => update({ url: e.target.value })} placeholder="wgu.edu/partners/your-partner" />
+          </div>
+        </div>
+
+        {/* 2. Hero image (optional) */}
+        <div className="section">
+          <h2><span className="step-num">2</span>Hero image <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· optional</span></h2>
+          <label className={`upload-zone ${state.heroImage ? 'has-file' : ''}`}>
+            <div className="upload-label">{state.heroImage ? '✓ Hero image loaded — click to replace' : 'Click to upload hero image'}</div>
+            <div className="upload-hint">Aspect ~1:1 ideal. Sits left of the title in the dark hero band.</div>
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onHeroUpload} />
+          </label>
+          {state.heroImage && (
+            <button className="btn btn-secondary" style={{ marginTop: 8, fontSize: 12 }} onClick={() => update({ heroImage: '' })}>Remove image</button>
+          )}
+        </div>
+
+        {/* 3. Partnership numbers */}
+        <div className="section">
+          <h2><span className="step-num">3</span>Partnership Numbers</h2>
+          <div className="grid-2">
+            <div className="field-mini">
+              <span className="lbl">Total Graduates</span>
+              <input type="number" min="0" value={state.totalGraduates} onChange={(e) => update({ totalGraduates: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">Current Enrollment</span>
+              <input type="number" min="0" value={state.currentEnrollment} onChange={(e) => update({ currentEnrollment: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">FY26 Starts</span>
+              <input type="number" min="0" value={state.fyCurrentStarts} onChange={(e) => update({ fyCurrentStarts: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">FY25 Starts</span>
+              <input type="number" min="0" value={state.fyPrevStarts} onChange={(e) => update({ fyPrevStarts: e.target.value })} />
+            </div>
+          </div>
+          <div className="field" style={{ marginTop: 14 }}>
+            <div className="field-label">
+              <span>"As of" date <span style={{ color: '#A7A7A7', fontWeight: 400 }}>(shown next to FY-current starts)</span></span>
+              <CharCounter value={state.asOfDate} max={LIMITS.asOfDate} />
+            </div>
+            <input type="text" value={state.asOfDate} onChange={(e) => update({ asOfDate: e.target.value })} placeholder="e.g. Jan 2026" />
+          </div>
+        </div>
+
+        {/* 4. Timeline */}
+        <div className="section">
+          <h2><span className="step-num">4</span>Degrees Timeline</h2>
+          <div className="pick-help">Three years across the timeline strip and the count for each year.</div>
+          <div className="grid-3">
+            {[0, 1, 2].map((i) => (
+              <React.Fragment key={i}>
+                <div className="field-mini">
+                  <span className="lbl">Year {i + 1}</span>
+                  <input type="text" value={state.timelineYears[i] || ''} onChange={(e) => {
+                    const arr = [...state.timelineYears]; arr[i] = e.target.value; update({ timelineYears: arr });
+                  }} />
+                </div>
+              </React.Fragment>
+            ))}
+            {[0, 1, 2].map((i) => (
+              <div key={`v${i}`} className="field-mini">
+                <span className="lbl">Value {i + 1}</span>
+                <input type="number" min="0" value={state.timelineValues[i] ?? 0} onChange={(e) => {
+                  const arr = [...state.timelineValues]; arr[i] = e.target.value; update({ timelineValues: arr });
+                }} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 5. Completion rates */}
+        <div className="section">
+          <h2><span className="step-num">5</span>Completion Rates</h2>
+          <div className="grid-2">
+            <div className="field-mini">
+              <span className="lbl">Partner %</span>
+              <input type="number" min="0" max="100" value={state.completionPartner} onChange={(e) => update({ completionPartner: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">Non-partner %</span>
+              <input type="number" min="0" max="100" value={state.completionNonPartner} onChange={(e) => update({ completionNonPartner: e.target.value })} />
+            </div>
+          </div>
+        </div>
+
+        {/* 6. Program Mix */}
+        <div className="section">
+          <h2><span className="step-num">6</span>Program Mix %</h2>
+          <div className="grid-4">
+            <div className="field-mini">
+              <span className="lbl">Business</span>
+              <input type="number" min="0" max="100" value={state.programMixBusiness} onChange={(e) => update({ programMixBusiness: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">Tech</span>
+              <input type="number" min="0" max="100" value={state.programMixTechnology} onChange={(e) => update({ programMixTechnology: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">Education</span>
+              <input type="number" min="0" max="100" value={state.programMixEducation} onChange={(e) => update({ programMixEducation: e.target.value })} />
+            </div>
+            <div className="field-mini">
+              <span className="lbl">Health</span>
+              <input type="number" min="0" max="100" value={state.programMixHealth} onChange={(e) => update({ programMixHealth: e.target.value })} />
+            </div>
+          </div>
+          <div className={`sum-tip ${programMixSum === 100 ? 'ok' : 'warn'}`}>Sum: {programMixSum}% {programMixSum === 100 ? '✓' : '· should equal 100'}</div>
+        </div>
+
+        {/* 7. Top Programs picklist */}
+        <div className="section">
+          <h2><span className="step-num">7</span>Top Programs <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick up to 8</span></h2>
+          <div className="pick-help">Selected: {state.topProgramIds.length} of 8 · order reflects display order in the navy box</div>
+          <div className="picklist">
+            {lib.programs.map((p) => {
+              const idx = state.topProgramIds.indexOf(p.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.topProgramIds.length >= 8;
+              return (
+                <PickItem key={p.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => togglePrograms(p.id)}>
+                  {p.text}
+                </PickItem>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 8. Insights */}
+        <div className="section">
+          <h2><span className="step-num">8</span>Insights & Opportunities <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 3</span></h2>
+          <div className="pick-help">Selected: {state.insightIds.length} of 3</div>
+          <div className="picklist">
+            {lib.insights.map((ins) => {
+              const idx = state.insightIds.indexOf(ins.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.insightIds.length >= 3;
+              return (
+                <PickItem key={ins.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleInsight(ins.id)}>
+                  <strong>{ins.title}</strong>
+                  <small>{ins.description}</small>
+                </PickItem>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 9. Contacts */}
+        <div className="section">
+          <h2><span className="step-num">9</span>Contacts <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick up to 2</span></h2>
+          <div className="pick-help">Selected: {state.contactIds.length} of 2 · shown in the footer in selection order</div>
+          <div className="picklist">
+            {lib.contacts.map((c) => {
+              const idx = state.contactIds.indexOf(c.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.contactIds.length >= 2;
+              return (
+                <PickItem key={c.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleContact(c.id)}>
+                  <strong>{c.name}</strong>
+                  <small>{c.title}{c.email ? ` · ${c.email}` : ''}</small>
+                </PickItem>
+              );
+            })}
+          </div>
+          {lib.contacts.length === 0 && (
+            <div style={{ fontSize: 11, color: '#A7A7A7' }}>No contacts in the directory yet. Add some via the admin app.</div>
+          )}
+        </div>
+
+        {/* 10. Locked items */}
+        <div className="section" style={{ borderBottom: 'none' }}>
+          <h2><span className="step-num" style={{ background: '#A7A7A7' }}>🔒</span>Locked for brand consistency</h2>
+          <div className="locked-row">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="2.5" y="6" width="9" height="6" rx="1" fill="#A7A7A7"/>
+              <path d="M4.5 6V4a2.5 2.5 0 015 0v2" stroke="#A7A7A7" strokeWidth="1.3" fill="none"/>
+            </svg>
+            <span><strong style={{ color: '#264468' }}>Section titles, headline, mission alignment text</strong> — admins can edit these in the admin app.</span>
+          </div>
+          <div className="locked-row">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="2.5" y="6" width="9" height="6" rx="1" fill="#A7A7A7"/>
+              <path d="M4.5 6V4a2.5 2.5 0 015 0v2" stroke="#A7A7A7" strokeWidth="1.3" fill="none"/>
+            </svg>
+            <span><strong style={{ color: '#264468' }}>Layout, colors, WGU logo</strong> — fixed for brand consistency.</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="preview-panel">
+        <div className="toolbar">
+          <button className="btn btn-success" onClick={exportPDF}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5V2h7v3.5M3 9.5h8M2 5.5h10v5h-2v2H4v-2H2v-5z" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinejoin="round"/></svg>
+            Save as PDF
+          </button>
+          <button className="btn btn-primary" onClick={copyShareLink}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 8.5L8.5 5.5M5.5 5.5L4 7a2.12 2.12 0 003 3l1.5-1.5M8.5 8.5L10 7a2.12 2.12 0 00-3-3L5.5 5.5" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round"/></svg>
+            Copy share link
+          </button>
+          <button className="btn btn-secondary" onClick={resetAll}>Reset</button>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <span style={{ fontSize: 11, color: '#A7A7A7' }}>8.5 × 11 in · 850 × 1100 px</span>
+            <a href="admin.html" style={{ fontSize: 11, color: '#0070F0', textDecoration: 'none', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', borderLeft: '1px solid #e0e6ee', paddingLeft: 14 }}>Admin →</a>
+          </div>
+        </div>
+
+        <div className="help-banner">
+          <strong>How to use:</strong> Edit the fields on the left → preview updates live → click <strong>Save as PDF</strong> for print, or <strong>Copy share link</strong> to send your draft to a teammate (the URL contains all your numbers).
+        </div>
+
+        <div className="preview-stage">
+          <div className="card-frame"><ABROnePager data={renderData} /></div>
+        </div>
+      </div>
+
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
