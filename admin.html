@@ -10,7 +10,7 @@
   html, body { margin: 0; padding: 0; background: #f4f6f9; font-family: 'Jost', sans-serif; color: #001731; }
   * { box-sizing: border-box; }
 
-  /* ===== Sign-in screen (unchanged from before) ===== */
+  /* ===== Sign-in screen ===== */
   .signin-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
   .signin-card { background: #fff; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,23,49,0.08); padding: 40px; max-width: 420px; width: 100%; }
   .signin-card h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.04em; color: #001731; margin: 0 0 8px; }
@@ -27,7 +27,7 @@
 
   /* ===== App layout (mirrors builder) ===== */
   .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
-  .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 80px; }
+  .form-panel { background: #fff; border-right: 1px solid #e0e6ee; overflow-y: auto; height: 100vh; padding: 0 0 96px; position: relative; }
   .form-header { padding: 20px 28px 16px; border-bottom: 1px solid #e0e6ee; background: #fff; color: #001731; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 rgba(0,23,49,0.04); display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
   .form-header .title-block h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px; color: #001731; }
   .form-header .title-block p { margin: 0; font-size: 11px; color: #264468; line-height: 1.4; }
@@ -57,9 +57,13 @@
   /* ===== Item rows (library editing) ===== */
   .item-list { display: flex; flex-direction: column; gap: 6px; }
   .item { background: #fff; border: 1px solid #e0e6ee; border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; transition: background 0.12s, border-color 0.12s; }
-  .item.saving { background: #f7faff; }
-  .item.error-state { border-color: #dc2626; }
+  .item.is-new { border-color: #97E152; background: #f9fde9; }
+  .item.is-new::before { content: 'NEW'; position: absolute; }
+  .item.is-deleted { opacity: 0.5; background: #fff5f5; border-color: #fbcaca; border-style: dashed; }
+  .item.is-deleted .field-input-wrap input, .item.is-deleted .field-input-wrap textarea { text-decoration: line-through; color: #A7A7A7; pointer-events: none; }
   .item-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; color: #0070F0; min-width: 22px; padding-top: 4px; text-align: center; }
+  .item.is-new .item-num { color: #5fa61f; }
+  .item.is-deleted .item-num { color: #dc2626; text-decoration: line-through; }
   .item-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .field-row { display: flex; gap: 8px; align-items: flex-start; }
   .field-row .field-label { font-size: 9px; color: #A7A7A7; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; min-width: 56px; padding-top: 8px; }
@@ -70,17 +74,18 @@
   .counter { font-size: 9px; color: #A7A7A7; font-variant-numeric: tabular-nums; align-self: flex-end; margin-top: 1px; }
   .counter.warn { color: #d97706; }
   .counter.over { color: #dc2626; font-weight: 700; }
-
-  .save-pill-wrap { min-height: 14px; display: flex; align-items: center; gap: 6px; }
-  .save-pill { font-size: 9px; padding: 1px 6px; border-radius: 8px; background: #97E152; color: #001731; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
-  .save-pill.error-pill { background: #dc2626; color: #fff; }
-  .save-pill.saving-pill { background: #BBD0E8; color: #002855; }
+  .badge { font-size: 9px; padding: 1px 6px; border-radius: 8px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .badge-new { background: #97E152; color: #001731; }
+  .badge-deleted { background: #dc2626; color: #fff; }
+  .badge-edited { background: #fde68a; color: #92400e; }
 
   .item-actions { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; flex-shrink: 0; }
-  .icon-btn { background: transparent; border: 1px solid #e0e6ee; border-radius: 3px; width: 24px; height: 22px; cursor: pointer; color: #264468; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.12s; font-family: inherit; font-size: 11px; }
+  .icon-btn { background: transparent; border: 1px solid #e0e6ee; border-radius: 3px; width: 26px; height: 22px; cursor: pointer; color: #264468; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.12s; font-family: inherit; font-size: 11px; }
   .icon-btn:hover:not(:disabled) { border-color: #0070F0; color: #0070F0; background: #f7faff; }
   .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .icon-btn.delete:hover:not(:disabled) { border-color: #dc2626; color: #dc2626; background: #fff1f1; }
+  .icon-btn.restore { border-color: #97E152; color: #5fa61f; width: auto; padding: 0 8px; font-weight: 700; font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .icon-btn.restore:hover { background: #f4fce4; color: #001731; }
 
   /* ===== Buttons ===== */
   .btn { padding: 9px 14px; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; transition: all 0.12s; }
@@ -89,13 +94,24 @@
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-outline { background: transparent; border: 1px dashed #c7d1de; color: #264468; padding: 8px 14px; }
   .btn-outline:hover:not(:disabled) { border-style: solid; border-color: #0070F0; color: #0070F0; }
+  .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-warn { background: #fff; color: #dc2626; border: 1px solid #fbcaca; padding: 8px 14px; }
+  .btn-warn:hover:not(:disabled) { background: #fff1f1; border-color: #dc2626; }
+  .btn-warn:disabled { opacity: 0.5; cursor: not-allowed; }
   .add-row { margin-top: 10px; }
+
+  /* ===== Sticky save bar ===== */
+  .save-bar { position: fixed; left: 0; bottom: 0; width: 460px; background: #fff; border-top: 1px solid #e0e6ee; padding: 12px 20px; display: flex; gap: 8px; align-items: center; box-shadow: 0 -4px 12px rgba(0,23,49,0.06); z-index: 30; min-height: 60px; }
+  .save-bar .msg { font-size: 12px; font-weight: 600; color: #001731; flex: 1; line-height: 1.3; }
+  .save-bar .msg.saved { color: #5fa61f; display: flex; align-items: center; gap: 6px; }
+  .save-bar .msg-detail { font-size: 10px; font-weight: 500; color: #A7A7A7; display: block; margin-top: 1px; }
 
   /* ===== Preview panel ===== */
   .preview-panel { padding: 32px; overflow-y: auto; height: 100vh; background: #f4f6f9; }
   .preview-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; font-size: 11px; color: #264468; }
   .preview-toolbar .pill { background: #fff; border: 1px solid #e0e6ee; padding: 6px 10px; border-radius: 999px; font-weight: 600; }
   .preview-toolbar .live-pill { background: #97E152; color: #001731; border-color: #97E152; }
+  .preview-toolbar .draft-pill { background: #fde68a; color: #92400e; border-color: #f6d65a; }
   .preview-help { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
   .preview-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
   .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -103,7 +119,7 @@
   .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; }
 
   /* ===== Toast & modal ===== */
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #001731; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 100; }
   .toast.error { background: #dc2626; }
   .modal-backdrop { position: fixed; inset: 0; background: rgba(0,23,49,0.4); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
   .modal { background: #fff; border-radius: 8px; padding: 32px; max-width: 400px; width: 100%; box-shadow: 0 12px 36px rgba(0,23,49,0.25); }
@@ -134,37 +150,27 @@ const sb = window.supabase.createClient(
 const BUILDER_ID = 'postcard';
 
 const SECTIONS = [
-  {
-    id: 'frontCtas', label: 'Front CTAs', singular: 'front CTA', prefix: 'fc',
+  { id: 'frontCtas', label: 'Front CTAs', singular: 'front CTA', prefix: 'fc',
     help: 'Action line on the front, above the URL. Builder users pick one. Keep it short and punchy.',
-    fields: [{ key: 'text', label: 'Text', type: 'text', max: 30 }],
-  },
-  {
-    id: 'stats', label: 'Stats Strip', singular: 'stat', prefix: 's',
+    fields: [{ key: 'text', label: 'Text', type: 'text', max: 30 }] },
+  { id: 'stats', label: 'Stats Strip', singular: 'stat', prefix: 's',
     help: 'Big-number stats in the lime band on the back. Builder users pick up to 3. Keep numbers very short ("180K+", "$8K") and labels to one or two words.',
     fields: [
       { key: 'num',   label: 'Number', type: 'text', max: 10 },
       { key: 'label', label: 'Label',  type: 'text', max: 30 },
-    ],
-  },
-  {
-    id: 'facts', label: 'Fast Facts', singular: 'fact', prefix: 'f',
+    ]},
+  { id: 'facts', label: 'Fast Facts', singular: 'fact', prefix: 'f',
     help: 'Numbered fast-fact lines on the back. Builder users pick up to 5.',
-    fields: [{ key: 'text', label: 'Text', type: 'textarea', max: 200 }],
-  },
-  {
-    id: 'quotes', label: 'Pull Quotes', singular: 'quote', prefix: 'q',
+    fields: [{ key: 'text', label: 'Text', type: 'textarea', max: 200 }] },
+  { id: 'quotes', label: 'Pull Quotes', singular: 'quote', prefix: 'q',
     help: 'Pull-quote testimonial above the back-side CTA bar. Builder users pick one (or write their own).',
     fields: [
       { key: 'text',        label: 'Quote',       type: 'textarea', max: 220 },
       { key: 'attribution', label: 'Attribution', type: 'text',     max: 80 },
-    ],
-  },
-  {
-    id: 'backCtas', label: 'Back CTAs', singular: 'back CTA', prefix: 'bc',
+    ]},
+  { id: 'backCtas', label: 'Back CTAs', singular: 'back CTA', prefix: 'bc',
     help: 'Two-line action in the navy bar at the bottom of the back side. Use a period to split lines — second half is colored lime. Example: "Partner with us. Start this week."',
-    fields: [{ key: 'text', label: 'Text', type: 'text', max: 60 }],
-  },
+    fields: [{ key: 'text', label: 'Text', type: 'text', max: 60 }] },
 ];
 
 const BRAND_FIELDS = [
@@ -187,6 +193,115 @@ const PREVIEW_DEFAULT_SUBHEAD = 'A workforce engine purpose-built for your org �
 const PREVIEW_DEFAULT_URL = 'partners.wgu.edu';
 
 function genExternalId(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 8); }
+function genUUID() {
+  if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const deepClone = (x) => JSON.parse(JSON.stringify(x));
+
+// =========================================================================
+// Diff: turn (saved, draft) into a list of database operations.
+// Each op records both old and new values so we can invert it for undo.
+// =========================================================================
+function computeOperations(saved, draft) {
+  const ops = [];
+
+  if (!equal(saved.brand, draft.brand)) {
+    ops.push({
+      type: 'update_brand',
+      brandRowId: saved.brandRowId,
+      old: saved.brand,
+      new: draft.brand,
+    });
+  }
+
+  const savedById = new Map(saved.items.map((i) => [i.id, i]));
+
+  // Inserts: new items not yet in DB
+  for (const di of draft.items) {
+    if (di._new && !di._deleted) {
+      ops.push({
+        type: 'insert',
+        row: {
+          id: di.id, builder_id: BUILDER_ID,
+          section: di.section, external_id: di.external_id,
+          sort_order: di.sort_order, content: di.content,
+        },
+      });
+    }
+  }
+
+  // Deletes: items present in saved but missing or marked deleted in draft
+  for (const si of saved.items) {
+    const di = draft.items.find((x) => x.id === si.id);
+    if (!di || di._deleted) {
+      ops.push({ type: 'delete', row: si });
+    }
+  }
+
+  // Updates: existing items whose content or sort_order changed
+  for (const di of draft.items) {
+    if (di._new || di._deleted) continue;
+    const si = savedById.get(di.id);
+    if (!si) continue;
+    if (!equal(si.content, di.content) || si.sort_order !== di.sort_order) {
+      ops.push({
+        type: 'update',
+        id: di.id,
+        old: { content: si.content, sort_order: si.sort_order },
+        new: { content: di.content, sort_order: di.sort_order },
+      });
+    }
+  }
+
+  return ops;
+}
+
+function invertOp(op) {
+  if (op.type === 'update_brand') return { ...op, old: op.new, new: op.old };
+  if (op.type === 'update')      return { ...op, old: op.new, new: op.old };
+  if (op.type === 'insert')      return { type: 'delete', row: op.row };
+  if (op.type === 'delete')      return { type: 'insert', row: op.row };
+  return op;
+}
+
+async function applyOp(op) {
+  if (op.type === 'update_brand') {
+    if (op.brandRowId) {
+      const { error } = await sb.from('library_items').update({ content: op.new }).eq('id', op.brandRowId);
+      if (error) throw error;
+    } else {
+      const { error } = await sb.from('library_items').insert({
+        builder_id: BUILDER_ID, section: 'fixed_text', external_id: 'main',
+        sort_order: 0, content: op.new,
+      });
+      if (error) throw error;
+    }
+  } else if (op.type === 'insert') {
+    const { error } = await sb.from('library_items').insert(op.row);
+    if (error) throw error;
+  } else if (op.type === 'update') {
+    const { error } = await sb.from('library_items').update(op.new).eq('id', op.id);
+    if (error) throw error;
+  } else if (op.type === 'delete') {
+    const { error } = await sb.from('library_items').delete().eq('id', op.row.id);
+    if (error) throw error;
+  }
+}
+
+function changeSummary(ops) {
+  const counts = { insert: 0, update: 0, delete: 0, brand: 0 };
+  for (const op of ops) {
+    if (op.type === 'update_brand') counts.brand++;
+    else counts[op.type]++;
+  }
+  return counts;
+}
 
 // =========================================================================
 // Sign-in
@@ -226,9 +341,7 @@ function SignIn() {
         });
         if (error) throw error;
       }
-    } catch (e) {
-      setStatus('error'); setError(e.message || 'Sign in failed.');
-    }
+    } catch (e) { setStatus('error'); setError(e.message || 'Sign in failed.'); }
   };
 
   return (
@@ -314,78 +427,58 @@ function ChangePasswordModal({ onClose, showToast }) {
 }
 
 // =========================================================================
-// Brand-text section (the formerly-locked stuff)
+// Brand-text section (controlled)
 // =========================================================================
-function BrandTextSection({ brand, onSave }) {
-  const [local, setLocal] = React.useState(brand);
-  const [savingState, setSavingState] = React.useState('idle');
-  React.useEffect(() => { setLocal(brand); }, [JSON.stringify(brand)]);
-
-  const setField = (key, val) => setLocal((prev) => ({ ...prev, [key]: val }));
-  const flushIfDirty = async (key) => {
-    if (local[key] === brand[key]) return;
-    setSavingState('saving');
-    try { await onSave(local); setSavingState('saved'); setTimeout(() => setSavingState('idle'), 1500); }
-    catch (e) { console.error(e); setSavingState('error'); setTimeout(() => setSavingState('idle'), 4000); }
-  };
-
+function BrandTextSection({ brand, onChange, savedBrand }) {
+  const setField = (key, val) => onChange({ ...brand, [key]: val });
   return (
     <div className="section">
       <h2>
         <span className="step-num brand">★</span>
         Brand text <span className="meta">unlocked for admins</span>
       </h2>
-      <div className="help">Normally locked from builder users for brand consistency. Edit here and changes go live to all postcards.</div>
+      <div className="help">Normally locked from builder users for brand consistency. Edits go live to all postcards on save.</div>
       <div className="brand-grid">
         {BRAND_FIELDS.map((f) => {
-          const val = local[f.key] || '';
+          const val = brand[f.key] || '';
           const len = val.length;
           const counterCls = len > f.max ? 'over' : (len > f.max * 0.9 ? 'warn' : '');
+          const isDirty = savedBrand && savedBrand[f.key] !== val;
           return (
             <div key={f.key} className={`brand-row ${f.full ? 'full' : ''}`}>
-              <label>{f.label} <span style={{ color: '#A7A7A7', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>· {f.help}</span></label>
-              <input
-                type="text"
-                className={f.className || ''}
-                value={val}
-                onChange={(e) => setField(f.key, e.target.value)}
-                onBlur={() => flushIfDirty(f.key)}
-                maxLength={f.max + 20}
-              />
+              <label>
+                {f.label}
+                <span style={{ color: '#A7A7A7', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> · {f.help}</span>
+                {isDirty && <span className="badge badge-edited" style={{ marginLeft: 6 }}>edited</span>}
+              </label>
+              <input type="text" className={f.className || ''} value={val}
+                onChange={(e) => setField(f.key, e.target.value)} maxLength={f.max + 20} />
               <span className={`counter ${counterCls}`}>{len}/{f.max}</span>
             </div>
           );
         })}
-      </div>
-      <div className="save-pill-wrap" style={{ marginTop: 8 }}>
-        {savingState === 'saving' && <span className="save-pill saving-pill">Saving…</span>}
-        {savingState === 'saved' && <span className="save-pill">Saved</span>}
-        {savingState === 'error' && <span className="save-pill error-pill">Save failed</span>}
       </div>
     </div>
   );
 }
 
 // =========================================================================
-// One library item row
+// Item row (controlled)
 // =========================================================================
-function ItemRow({ item, idx, total, sectionDef, onSave, onMove, onDelete }) {
-  const [local, setLocal] = React.useState(item.content);
-  const [savingState, setSavingState] = React.useState('idle');
-  React.useEffect(() => { setLocal(item.content); }, [item.id, JSON.stringify(item.content)]);
-  const setField = (key, val) => setLocal((prev) => ({ ...prev, [key]: val }));
-  const flushIfDirty = async (key) => {
-    if (local[key] === item.content[key]) return;
-    setSavingState('saving');
-    try { await onSave(item.id, local); setSavingState('saved'); setTimeout(() => setSavingState('idle'), 1500); }
-    catch (e) { console.error(e); setSavingState('error'); setTimeout(() => setSavingState('idle'), 4000); }
-  };
+function ItemRow({ item, idx, total, sectionDef, savedItem, onChange, onMove, onDelete, onRestore }) {
+  const setField = (key, val) => onChange(item.id, { ...item.content, [key]: val });
+  const isEdited = !item._new && !item._deleted && savedItem && !equal(savedItem.content, item.content);
   return (
-    <div className={`item ${savingState === 'saving' ? 'saving' : ''} ${savingState === 'error' ? 'error-state' : ''}`}>
+    <div className={`item ${item._new ? 'is-new' : ''} ${item._deleted ? 'is-deleted' : ''}`}>
       <div className="item-num">{idx + 1}</div>
       <div className="item-fields">
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', minHeight: 16 }}>
+          {item._new && <span className="badge badge-new">New</span>}
+          {item._deleted && <span className="badge badge-deleted">Will delete</span>}
+          {isEdited && <span className="badge badge-edited">Edited</span>}
+        </div>
         {sectionDef.fields.map((f) => {
-          const val = local[f.key] || '';
+          const val = item.content[f.key] || '';
           const len = val.length;
           const counterCls = len > f.max ? 'over' : (len > f.max * 0.9 ? 'warn' : '');
           return (
@@ -393,96 +486,105 @@ function ItemRow({ item, idx, total, sectionDef, onSave, onMove, onDelete }) {
               {sectionDef.fields.length > 1 && <span className="field-label">{f.label}</span>}
               <div className="field-input-wrap">
                 {f.type === 'textarea' ? (
-                  <textarea value={val} onChange={(e) => setField(f.key, e.target.value)} onBlur={() => flushIfDirty(f.key)} maxLength={f.max + 60} />
+                  <textarea value={val} onChange={(e) => setField(f.key, e.target.value)} disabled={item._deleted} maxLength={f.max + 60} />
                 ) : (
-                  <input type="text" value={val} onChange={(e) => setField(f.key, e.target.value)} onBlur={() => flushIfDirty(f.key)} maxLength={f.max + 30} />
+                  <input type="text" value={val} onChange={(e) => setField(f.key, e.target.value)} disabled={item._deleted} maxLength={f.max + 30} />
                 )}
                 <span className={`counter ${counterCls}`}>{len}/{f.max}</span>
               </div>
             </div>
           );
         })}
-        <div className="save-pill-wrap">
-          {savingState === 'saving' && <span className="save-pill saving-pill">Saving…</span>}
-          {savingState === 'saved' && <span className="save-pill">Saved</span>}
-          {savingState === 'error' && <span className="save-pill error-pill">Save failed</span>}
-        </div>
       </div>
       <div className="item-actions">
-        <button className="icon-btn" disabled={idx === 0} onClick={() => onMove(item.id, -1)} title="Move up">▲</button>
-        <button className="icon-btn" disabled={idx === total - 1} onClick={() => onMove(item.id, 1)} title="Move down">▼</button>
-        <button className="icon-btn delete" onClick={() => onDelete(item.id)} title="Delete">✕</button>
+        {!item._deleted ? (
+          <>
+            <button className="icon-btn" disabled={idx === 0} onClick={() => onMove(item.id, -1)} title="Move up">▲</button>
+            <button className="icon-btn" disabled={idx === total - 1} onClick={() => onMove(item.id, 1)} title="Move down">▼</button>
+            <button className="icon-btn delete" onClick={() => onDelete(item.id)} title="Delete">✕</button>
+          </>
+        ) : (
+          <button className="icon-btn restore" onClick={() => onRestore(item.id)} title="Restore">↶ Restore</button>
+        )}
       </div>
     </div>
   );
 }
 
 // =========================================================================
-// Library section (one of facts / stats / quotes / etc)
+// Library section (controlled)
 // =========================================================================
-function LibrarySection({ stepIdx, sectionDef, items, refresh, showToast }) {
-  const [adding, setAdding] = React.useState(false);
-
-  const saveContent = async (id, content) => {
-    const { error } = await sb.from('library_items').update({ content }).eq('id', id);
-    if (error) throw error;
-    refresh();
-  };
-  const move = async (id, delta) => {
-    const idx = items.findIndex((x) => x.id === id);
-    const target = idx + delta;
-    if (idx < 0 || target < 0 || target >= items.length) return;
-    const a = items[idx], b = items[target];
-    const { error: e1 } = await sb.from('library_items').update({ sort_order: b.sort_order }).eq('id', a.id);
-    if (e1) { showToast('Reorder failed: ' + e1.message, true); return; }
-    const { error: e2 } = await sb.from('library_items').update({ sort_order: a.sort_order }).eq('id', b.id);
-    if (e2) { showToast('Reorder failed: ' + e2.message, true); return; }
-    refresh();
-  };
-  const remove = async (id) => {
-    if (!confirm("Delete this item? This can't be undone.")) return;
-    const { error } = await sb.from('library_items').delete().eq('id', id);
-    if (error) { showToast('Delete failed: ' + error.message, true); return; }
-    refresh();
-  };
-  const add = async () => {
-    setAdding(true);
-    const maxSort = items.reduce((m, x) => Math.max(m, x.sort_order), 0);
-    const blankContent = sectionDef.fields.reduce((o, f) => { o[f.key] = ''; return o; }, {});
-    const { error } = await sb.from('library_items').insert({
-      builder_id: BUILDER_ID, section: sectionDef.id,
-      external_id: genExternalId(sectionDef.prefix),
-      sort_order: maxSort + 1, content: blankContent,
-    });
-    setAdding(false);
-    if (error) { showToast('Add failed: ' + error.message, true); return; }
-    refresh();
-  };
-
+function LibrarySection({ stepIdx, sectionDef, items, savedItems, onItemChange, onMove, onDelete, onRestore, onAdd }) {
+  const visibleItems = items.filter((x) => !x._deleted);
+  const deletedItems = items.filter((x) => x._deleted);
   return (
     <div className="section">
       <h2>
         <span className="step-num">{stepIdx}</span>
         {sectionDef.label}
-        <span className="meta">{items.length} item{items.length === 1 ? '' : 's'}</span>
+        <span className="meta">{visibleItems.length} item{visibleItems.length === 1 ? '' : 's'}</span>
       </h2>
       {sectionDef.help && <div className="help">{sectionDef.help}</div>}
       <div className="item-list">
-        {items.map((item, i) => (
-          <ItemRow key={item.id} item={item} idx={i} total={items.length} sectionDef={sectionDef}
-                   onSave={saveContent} onMove={move} onDelete={remove} />
+        {visibleItems.map((item, i) => (
+          <ItemRow key={item.id} item={item} idx={i} total={visibleItems.length} sectionDef={sectionDef}
+                   savedItem={savedItems.find((s) => s.id === item.id)}
+                   onChange={onItemChange} onMove={onMove} onDelete={onDelete} onRestore={onRestore} />
         ))}
-        {items.length === 0 && (
+        {deletedItems.map((item) => (
+          <ItemRow key={item.id} item={item} idx={visibleItems.length} total={visibleItems.length + 1} sectionDef={sectionDef}
+                   savedItem={savedItems.find((s) => s.id === item.id)}
+                   onChange={onItemChange} onMove={onMove} onDelete={onDelete} onRestore={onRestore} />
+        ))}
+        {visibleItems.length === 0 && deletedItems.length === 0 && (
           <div style={{ padding: 16, textAlign: 'center', color: '#A7A7A7', fontSize: 12, background: '#fff', border: '1px dashed #e0e6ee', borderRadius: 6 }}>
             No items yet. Add one below.
           </div>
         )}
       </div>
       <div className="add-row">
-        <button className="btn btn-outline" onClick={add} disabled={adding}>
-          {adding ? 'Adding…' : `+ Add a ${sectionDef.singular}`}
+        <button className="btn btn-outline" onClick={() => onAdd(sectionDef.id)}>+ Add a {sectionDef.singular}</button>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// Sticky save bar
+// =========================================================================
+function SaveBar({ pendingCount, isDirty, canUndo, busy, onSave, onDiscard, onUndo, savedAt }) {
+  if (!isDirty && !canUndo) {
+    return (
+      <div className="save-bar">
+        <span className="msg" style={{ color: '#A7A7A7', fontWeight: 500 }}>All changes saved</span>
+      </div>
+    );
+  }
+  if (isDirty) {
+    return (
+      <div className="save-bar">
+        <span className="msg">
+          {pendingCount} unsaved change{pendingCount === 1 ? '' : 's'}
+          <span className="msg-detail">Preview reflects your draft. Save to publish, or Discard to revert.</span>
+        </span>
+        <button className="btn btn-warn" onClick={onDiscard} disabled={busy !== 'idle'}>Discard</button>
+        <button className="btn btn-primary" onClick={onSave} disabled={busy !== 'idle'}>
+          {busy === 'saving' ? 'Saving…' : 'Save changes'}
         </button>
       </div>
+    );
+  }
+  // canUndo
+  const time = savedAt ? savedAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
+  return (
+    <div className="save-bar">
+      <span className="msg saved">
+        ✓ Saved{time ? ` at ${time}` : ''}
+        <span className="msg-detail" style={{ color: '#5fa61f' }}>Click Undo to revert your last save.</span>
+      </span>
+      <button className="btn btn-outline" onClick={onUndo} disabled={busy !== 'idle'}>
+        {busy === 'undoing' ? 'Undoing…' : 'Undo last save'}
+      </button>
     </div>
   );
 }
@@ -491,57 +593,192 @@ function LibrarySection({ stepIdx, sectionDef, items, refresh, showToast }) {
 // Admin (after auth)
 // =========================================================================
 function Admin({ session }) {
-  const [items, setItems]       = React.useState(null);
-  const [brand, setBrand]       = React.useState(DEFAULT_BRAND);
-  const [brandRowId, setBrandRowId] = React.useState(null);
+  const [saved, setSaved] = React.useState(null);
+  const [draft, setDraft] = React.useState(null);
+  const [lastOps, setLastOps] = React.useState(null);
+  const [busy, setBusy] = React.useState('idle');
   const [loadError, setLoadError] = React.useState('');
-  const [toast, setToast]       = React.useState(null);
+  const [toast, setToast] = React.useState(null);
   const [showPwModal, setShowPwModal] = React.useState(false);
+  const [savedAt, setSavedAt] = React.useState(null);
 
-  const refresh = React.useCallback(async () => {
-    const { data, error } = await sb
-      .from('library_items')
+  const fetchAll = React.useCallback(async () => {
+    const { data, error } = await sb.from('library_items')
       .select('id, section, external_id, sort_order, content')
       .eq('builder_id', BUILDER_ID)
       .order('sort_order', { ascending: true });
-    if (error) { setLoadError(error.message); return; }
+    if (error) { setLoadError(error.message); return null; }
     const all = data || [];
-    setItems(all.filter((x) => x.section !== 'fixed_text'));
+    const itemsArr = all.filter((x) => x.section !== 'fixed_text');
     const brandRow = all.find((x) => x.section === 'fixed_text');
-    if (brandRow) {
-      setBrandRowId(brandRow.id);
-      setBrand({ ...DEFAULT_BRAND, ...(brandRow.content || {}) });
-    } else {
-      setBrandRowId(null);
-      setBrand(DEFAULT_BRAND);
-    }
+    return {
+      brand: brandRow ? { ...DEFAULT_BRAND, ...(brandRow.content || {}) } : { ...DEFAULT_BRAND },
+      brandRowId: brandRow ? brandRow.id : null,
+      items: itemsArr,
+    };
   }, []);
 
-  React.useEffect(() => { refresh(); }, [refresh]);
+  React.useEffect(() => {
+    fetchAll().then((s) => {
+      if (s) { setSaved(s); setDraft(deepClone(s)); }
+    });
+  }, [fetchAll]);
+
+  const isDirty = React.useMemo(() => {
+    if (!saved || !draft) return false;
+    return !equal(saved, draft);
+  }, [saved, draft]);
+
+  // Browser-unload guard
+  React.useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e) => { e.preventDefault(); e.returnValue = ''; return ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
+  // Pending operations count (for the bar) — same logic as save uses
+  const pendingOps = React.useMemo(() => {
+    if (!saved || !draft) return [];
+    return computeOperations(saved, draft);
+  }, [saved, draft]);
+  const pendingCount = pendingOps.length;
+  const canUndo = lastOps !== null && !isDirty;
 
   const showToast = (msg, isError = false) => {
     setToast({ msg, isError });
     setTimeout(() => setToast(null), 3000);
   };
 
-  const saveBrand = async (newBrand) => {
-    setBrand(newBrand);
-    if (brandRowId) {
-      const { error } = await sb.from('library_items').update({ content: newBrand }).eq('id', brandRowId);
-      if (error) throw error;
-    } else {
-      // Row doesn't exist yet (admin in a fresh DB) — create it.
-      const { data, error } = await sb.from('library_items').insert({
-        builder_id: BUILDER_ID, section: 'fixed_text', external_id: 'main',
-        sort_order: 0, content: newBrand,
-      }).select().single();
-      if (error) throw error;
-      if (data) setBrandRowId(data.id);
-    }
-    refresh();
+  // Edits clear undo (the past save is no longer the latest state)
+  const clearUndoIfSet = () => { if (lastOps !== null) setLastOps(null); };
+
+  const updateBrand = (newBrand) => {
+    setDraft((d) => ({ ...d, brand: newBrand }));
+    clearUndoIfSet();
+  };
+  const updateItemContent = (id, content) => {
+    setDraft((d) => ({ ...d, items: d.items.map((it) => it.id === id ? { ...it, content } : it) }));
+    clearUndoIfSet();
+  };
+  const moveItem = (id, delta) => {
+    setDraft((d) => {
+      const item = d.items.find((i) => i.id === id);
+      if (!item || item._deleted) return d;
+      const sectionItems = d.items.filter((x) => x.section === item.section && !x._deleted)
+        .sort((a, b) => a.sort_order - b.sort_order);
+      const idx = sectionItems.findIndex((x) => x.id === id);
+      const targetIdx = idx + delta;
+      if (targetIdx < 0 || targetIdx >= sectionItems.length) return d;
+      const a = sectionItems[idx], b = sectionItems[targetIdx];
+      return {
+        ...d,
+        items: d.items.map((x) => {
+          if (x.id === a.id) return { ...x, sort_order: b.sort_order };
+          if (x.id === b.id) return { ...x, sort_order: a.sort_order };
+          return x;
+        }),
+      };
+    });
+    clearUndoIfSet();
+  };
+  const deleteItem = (id) => {
+    setDraft((d) => {
+      const item = d.items.find((i) => i.id === id);
+      if (!item) return d;
+      // If it's a never-saved new item, just drop it from the draft entirely.
+      if (item._new) {
+        return { ...d, items: d.items.filter((x) => x.id !== id) };
+      }
+      return { ...d, items: d.items.map((x) => x.id === id ? { ...x, _deleted: true } : x) };
+    });
+    clearUndoIfSet();
+  };
+  const restoreItem = (id) => {
+    setDraft((d) => ({ ...d, items: d.items.map((x) => x.id === id ? { ...x, _deleted: false } : x) }));
+    clearUndoIfSet();
+  };
+  const addItem = (sectionId) => {
+    const def = SECTIONS.find((s) => s.id === sectionId);
+    const blankContent = def.fields.reduce((o, f) => { o[f.key] = ''; return o; }, {});
+    setDraft((d) => {
+      const sectionItems = d.items.filter((x) => x.section === sectionId && !x._deleted);
+      const maxSort = sectionItems.reduce((m, x) => Math.max(m, x.sort_order), 0);
+      return {
+        ...d,
+        items: [...d.items, {
+          id: genUUID(), section: sectionId,
+          external_id: genExternalId(def.prefix),
+          sort_order: maxSort + 1,
+          content: blankContent,
+          _new: true,
+        }],
+      };
+    });
+    clearUndoIfSet();
   };
 
-  const signOut = async () => { await sb.auth.signOut(); };
+  const save = async () => {
+    setBusy('saving');
+    try {
+      const ops = computeOperations(saved, draft);
+      if (ops.length === 0) return;
+      for (const op of ops) await applyOp(op);
+      const fresh = await fetchAll();
+      if (fresh) {
+        setSaved(fresh);
+        setDraft(deepClone(fresh));
+        setLastOps(ops);
+        setSavedAt(new Date());
+        const c = changeSummary(ops);
+        const parts = [];
+        if (c.brand) parts.push(`brand text`);
+        if (c.insert) parts.push(`${c.insert} added`);
+        if (c.update) parts.push(`${c.update} edited`);
+        if (c.delete) parts.push(`${c.delete} deleted`);
+        showToast(`Saved · ${parts.join(' · ')}`);
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Save failed: ' + (e.message || ''), true);
+    } finally {
+      setBusy('idle');
+    }
+  };
+
+  const undo = async () => {
+    if (!lastOps) return;
+    if (!confirm('Undo your last save? This reverts the changes you just made.')) return;
+    setBusy('undoing');
+    try {
+      const inverted = [...lastOps].reverse().map(invertOp);
+      for (const op of inverted) await applyOp(op);
+      const fresh = await fetchAll();
+      if (fresh) {
+        setSaved(fresh);
+        setDraft(deepClone(fresh));
+        setLastOps(null);
+        setSavedAt(null);
+        showToast('Last save undone.');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Undo failed: ' + (e.message || ''), true);
+    } finally {
+      setBusy('idle');
+    }
+  };
+
+  const discard = () => {
+    if (pendingCount === 0) return;
+    if (!confirm(`Discard ${pendingCount} unsaved change${pendingCount === 1 ? '' : 's'}?`)) return;
+    setDraft(deepClone(saved));
+  };
+
+  const signOut = async () => {
+    if (isDirty && !confirm('You have unsaved changes. Sign out anyway?')) return;
+    await sb.auth.signOut();
+  };
 
   if (loadError) return (
     <div style={{ padding: 32, color: '#dc2626', fontFamily: "'Jost', sans-serif" }}>
@@ -549,15 +786,15 @@ function Admin({ session }) {
       <pre style={{ background: '#fff1f1', padding: 12, borderRadius: 6, fontSize: 12 }}>{loadError}</pre>
     </div>
   );
-  if (!items) return <div style={{ padding: 32, color: '#264468' }}>Loading library…</div>;
+  if (!draft || !saved) return <div style={{ padding: 32, color: '#264468' }}>Loading library…</div>;
 
-  // ----- Build preview data from current brand + first-N items per library -----
-  const itemsBy = (sec) => items.filter((x) => x.section === sec).sort((a, b) => a.sort_order - b.sort_order);
-  const facts     = itemsBy('facts').slice(0, 5).map((r) => ({ id: r.external_id, ...r.content }));
-  const stats     = itemsBy('stats').slice(0, 3).map((r) => ({ id: r.external_id, ...r.content }));
-  const quotesArr = itemsBy('quotes');
-  const frontArr  = itemsBy('frontCtas');
-  const backArr   = itemsBy('backCtas');
+  // ----- Build preview from draft -----
+  const draftBy = (sec) => draft.items.filter((x) => x.section === sec && !x._deleted).sort((a, b) => a.sort_order - b.sort_order);
+  const facts     = draftBy('facts').slice(0, 5).map((r) => ({ id: r.external_id, ...r.content }));
+  const stats     = draftBy('stats').slice(0, 3).map((r) => ({ id: r.external_id, ...r.content }));
+  const quotesArr = draftBy('quotes');
+  const frontArr  = draftBy('frontCtas');
+  const backArr   = draftBy('backCtas');
   const quote     = quotesArr[0] ? { ...quotesArr[0].content } : null;
   const frontCta  = frontArr[0]?.content?.text || 'Start here →';
   const backCta   = backArr[0]?.content?.text || 'Partner with us. Start this week.';
@@ -569,7 +806,7 @@ function Admin({ session }) {
     qrSource: PREVIEW_DEFAULT_URL,
     facts, stats, quote,
     frontCta, backCta,
-    fixedText: brand,
+    fixedText: draft.brand,
   };
 
   return (
@@ -578,7 +815,7 @@ function Admin({ session }) {
         <div className="form-header">
           <div className="title-block">
             <h1>Library Admin</h1>
-            <p>WGU Postcard Builder · edit content + brand text. Saves are live.</p>
+            <p>WGU Postcard Builder · edit content + brand text. Save publishes to all builder users.</p>
           </div>
           <div className="header-actions">
             <span className="user-line">{session.user.email}</span>
@@ -588,22 +825,43 @@ function Admin({ session }) {
           </div>
         </div>
 
-        <BrandTextSection brand={brand} onSave={saveBrand} />
+        <BrandTextSection brand={draft.brand} savedBrand={saved.brand} onChange={updateBrand} />
 
         {SECTIONS.map((sec, i) => {
-          const sectionItems = itemsBy(sec.id);
-          return <LibrarySection key={sec.id} stepIdx={i + 1} sectionDef={sec} items={sectionItems} refresh={refresh} showToast={showToast} />;
+          const sectionDraft = draft.items.filter((x) => x.section === sec.id).sort((a, b) => a.sort_order - b.sort_order);
+          const sectionSaved = saved.items.filter((x) => x.section === sec.id);
+          return (
+            <LibrarySection
+              key={sec.id} stepIdx={i + 1} sectionDef={sec}
+              items={sectionDraft} savedItems={sectionSaved}
+              onItemChange={updateItemContent} onMove={moveItem}
+              onDelete={deleteItem} onRestore={restoreItem} onAdd={addItem}
+            />
+          );
         })}
+
+        <SaveBar
+          pendingCount={pendingCount}
+          isDirty={isDirty}
+          canUndo={canUndo}
+          busy={busy}
+          onSave={save}
+          onDiscard={discard}
+          onUndo={undo}
+          savedAt={savedAt}
+        />
       </div>
 
       <div className="preview-panel">
         <div className="preview-toolbar">
-          <span className="pill live-pill">● Live preview</span>
-          <span className="pill">Default builder state · first 5 facts, first 3 stats, etc.</span>
+          <span className={`pill ${isDirty ? 'draft-pill' : 'live-pill'}`}>
+            {isDirty ? `● Draft preview · ${pendingCount} unsaved` : '● Live preview'}
+          </span>
+          <span className="pill">First item from each library</span>
           <a href="Postcard%20Builder.html" target="_blank" rel="noopener" style={{ marginLeft: 'auto', fontSize: 11, color: '#0070F0', fontWeight: 600, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Open builder ↗</a>
         </div>
         <div className="preview-help">
-          <strong>What you're seeing:</strong> a sample postcard rendered with the first item from each library + the brand text fields above. Edit any field and watch this preview update. Builder users see this same renderer with their own selections.
+          <strong>What you're seeing:</strong> the postcard rendered with your <em>draft</em> brand text and the first item from each library. Edits show here immediately. The public builder still shows the last saved version until you hit Save.
         </div>
         <div className="preview-row">
           <div className="preview-side">
@@ -631,10 +889,8 @@ function App() {
   const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    sb.auth.getSession().then(({ data }) => {
-      setSession(data.session); setLoaded(true);
-    });
-    const { data } = sb.auth.onAuthStateChange((_event, newSession) => { setSession(newSession); });
+    sb.auth.getSession().then(({ data }) => { setSession(data.session); setLoaded(true); });
+    const { data } = sb.auth.onAuthStateChange((_e, s) => { setSession(s); });
     return () => data.subscription.unsubscribe();
   }, []);
 
