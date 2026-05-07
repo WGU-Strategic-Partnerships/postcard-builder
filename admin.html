@@ -24,6 +24,12 @@
   .method-toggle { display: flex; gap: 4px; background: #eef2f6; border-radius: 6px; padding: 3px; margin-bottom: 16px; }
   .method-toggle button { flex: 1; border: 0; background: transparent; padding: 8px 10px; font-size: 12px; font-weight: 600; color: #264468; border-radius: 4px; cursor: pointer; font-family: inherit; }
   .method-toggle button.active { background: #fff; color: #0070F0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .btn-google { background: #fff; color: #001731; border: 1px solid #c7d1de; padding: 11px 14px; width: 100%; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; font-family: inherit; transition: all 0.12s; }
+  .btn-google:hover:not(:disabled) { background: #f4f6f9; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.08); }
+  .btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: #A7A7A7; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e0e6ee; }
 
   /* ===== App layout (mirrors builder) ===== */
   .app { display: grid; grid-template-columns: 460px 1fr; min-height: 100vh; }
@@ -475,6 +481,23 @@ function SignIn() {
     } catch (e) { setStatus('error'); setError(e.message || 'Sign in failed.'); }
   };
 
+  const signInWithGoogle = async () => {
+    setStatus('sending'); setError('');
+    try {
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.href.split('#')[0],
+          // hd hint: Google skips the account picker if the user only has one wgu.edu account,
+          // and bounces them at Google's end if they pick a non-wgu.edu account.
+          queryParams: { hd: 'wgu.edu' },
+        },
+      });
+      if (error) throw error;
+      // signInWithOAuth navigates to Google; the rest happens after redirect.
+    } catch (e) { setStatus('error'); setError(e.message || 'Google sign-in failed.'); }
+  };
+
   return (
     <div className="signin-wrap">
       <div className="signin-card">
@@ -482,6 +505,16 @@ function SignIn() {
         <p className="sub">Sign in to edit the content libraries that power the WGU builder family.</p>
         {status !== 'sent' ? (
           <>
+            <button type="button" className="btn-google" onClick={signInWithGoogle} disabled={status === 'sending'}>
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+                <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+                <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+                <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+              </svg>
+              {status === 'sending' ? 'Redirecting…' : 'Continue with Google'}
+            </button>
+            <div className="divider">or sign in with email</div>
             <div className="method-toggle">
               <button type="button" className={method === 'password' ? 'active' : ''} onClick={() => { setMethod('password'); setError(''); }}>Password</button>
               <button type="button" className={method === 'magic' ? 'active' : ''} onClick={() => { setMethod('magic'); setError(''); }}>Magic link</button>
