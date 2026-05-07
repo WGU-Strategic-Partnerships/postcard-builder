@@ -1,15 +1,16 @@
 // abr-render.jsx — locked-down ABR (Annual Business Report) renderer
 // Letter size at 100 DPI: 850 × 1100 px → scales to 8.5 × 11" PDF.
-// Layout strategy: hero (220) at top, footer (100) absolute-bottom; the
-// middle 780px holds three content rows with explicit heights. Ensures
-// the footer never collides with overflowing card content.
+// Layout: hero (220) at top, footer (100) absolute-bottom; middle 780px
+// holds three content rows with explicit heights.
 
 const ABR_C = {
   midnight:   '#001731',
   blue:       '#002855',
   mediumBlue: '#0070F0',
   sky:        '#46B1EF',
+  skyDeep:    '#2596E0',
   lime:       '#97E152',
+  limeDeep:   '#5fa61f',
   white:      '#FFFFFF',
   gray:       '#f4f6f9',
   grayBorder: '#e0e6ee',
@@ -20,30 +21,12 @@ const ABR_FONT_DISPLAY  = "'Jost', 'Futura PT', Arial, sans-serif";
 const ABR_FONT_SERIF    = "'Newsreader', 'Rocky', Georgia, serif";
 const ABR_FONT_CAMPAIGN = "'Oswald', 'Program Nar OT', Arial, sans-serif";
 
-const ABR_LOGO_WHITE_URL = (window.__resources && window.__resources.wguLogo) || 'assets/wgu-wordmark-white.png';
+const ABR_LOGO_WHITE_URL = (window.__resources && window.__resources.wguLogo)     || 'assets/wgu-wordmark-white.png';
+const ABR_LOGO_NAVY_URL  = (window.__resources && window.__resources.wguLogoNavy) || 'assets/wgu-wordmark.png';
 
 // =========================================================================
 // Helpers
 // =========================================================================
-function ABRWGULogoNavy({ width = 64 }) {
-  return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-      <svg width={width * 0.32} height={width * 0.32} viewBox="0 0 32 32">
-        <circle cx="16" cy="16" r="14" fill={ABR_C.midnight}/>
-        <circle cx="11" cy="13" r="3.5" fill={ABR_C.white}/>
-        <circle cx="21" cy="13" r="3.5" fill={ABR_C.white}/>
-        <circle cx="11" cy="13" r="1.6" fill={ABR_C.midnight}/>
-        <circle cx="21" cy="13" r="1.6" fill={ABR_C.midnight}/>
-        <path d="M13 19l3 2 3-2" stroke={ABR_C.lime} strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      </svg>
-      <span style={{
-        fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: width * 0.45,
-        color: ABR_C.midnight, letterSpacing: '0.02em', lineHeight: 1,
-      }}>WGU.</span>
-    </div>
-  );
-}
-
 function ABRCircleIcon({ size = 56, bg = ABR_C.lime, color = ABR_C.midnight, children }) {
   return (
     <div style={{
@@ -55,74 +38,74 @@ function ABRCircleIcon({ size = 56, bg = ABR_C.lime, color = ABR_C.midnight, chi
   );
 }
 
-// Lucide-style line icons (simplified path data)
+// Filled SVG icons (closer to the PDF's illustrative style than line icons).
 const Icon = {
-  handshake: ({ size = 26, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 17l2 2a1 1 0 0 0 3-3"/>
-      <path d="M14 14l2.5 2.5a1 1 0 0 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87"/>
-      <path d="M3 3l1 11h2"/>
-      <path d="M3 4h8"/>
+  handshake: ({ size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M14.4 5.5l-2.4 2.4-1.6-1.6c-.6-.6-1.6-.6-2.2 0L3 11.5v3.4l1.4 1.4 4.6-4.6 1.6 1.6c.4.4 1 .4 1.4 0l3.6-3.6c.4-.4.4-1 0-1.4l-1.2-.8z"/>
+      <path d="M21 11.5l-4.6-4.6c-.4-.4-1-.4-1.4 0l-3 3 .8 1.2c.6.6.6 1.6 0 2.2l-1.2 1.2 1.6 1.6c.6.6 1.6.6 2.2 0l1-1 .8.8c.6.6 1.6.6 2.2 0l1.6-1.6c.6-.6.6-1.6 0-2.2l-.2-.2 1-1c.6-.6.6-1.6 0-2.2L21 11.5z"/>
     </svg>
   ),
-  award: ({ size = 26, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="9" r="6"/>
-      <path d="M15.5 13L17 22l-5-3-5 3 1.5-9"/>
+  award: ({ size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M5 3h14a1 1 0 011 1v10a1 1 0 01-1 1h-4l-3 3-3-3H5a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+      <path d="M12 5.5l1.3 2.6 2.9.4-2.1 2 .5 2.9L12 12l-2.6 1.4.5-2.9-2.1-2 2.9-.4z" fill={ABR_C.lime}/>
     </svg>
   ),
-  users: ({ size = 26, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  users: ({ size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="6" cy="8" r="3"/>
+      <circle cx="18" cy="8" r="3"/>
+      <circle cx="12" cy="7" r="3.5"/>
+      <path d="M2 19c0-2.5 2-4.5 4.5-4.5S11 16.5 11 19v1H2v-1z"/>
+      <path d="M13 19c0-2.5 2-4.5 4.5-4.5S22 16.5 22 19v1h-9v-1z"/>
+      <path d="M6 18c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5v2H6v-2z"/>
     </svg>
   ),
-  briefcase: ({ size = 22, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="7" width="20" height="14" rx="2"/>
-      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+  briefcase: ({ size = 22 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 4h6a2 2 0 012 2v1H7V6a2 2 0 012-2zm-2 5h10v2H7V9z"/>
+      <path d="M3 9a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9zm9 4a1 1 0 100 2 1 1 0 000-2z"/>
     </svg>
   ),
-  cloudUp: ({ size = 22, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.4 18.4A5 5 0 0 0 18 9h-1.3A8 8 0 1 0 3 16.3"/>
-      <path d="M16 16l-4-4-4 4"/>
-      <path d="M12 12v9"/>
+  cloudUp: ({ size = 22 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M7 18a5 5 0 010-10 6 6 0 0111.5 1.5A4.5 4.5 0 0117 18H7z"/>
+      <path d="M11 12.5l-2.2 2.2 1.4 1.4 1.3-1.3V19h2v-4.2l1.3 1.3 1.4-1.4-2.2-2.2c-.4-.4-1-.4-1.4 0z" fill={ABR_C.midnight}/>
     </svg>
   ),
-  apple: ({ size = 22, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/>
-      <path d="M10 2c1 .5 2 2 2 5"/>
+  apple: ({ size = 22 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 7c-1.5-1-3-1.5-4.5-1C5 7 3 9.5 3 13c0 4 3 8 5 8 1 0 1.5-.5 2.5-.5s1.5.5 2.5.5c2 0 5-4 5-8 0-3-2-5.5-4.5-6-1.5-.5-3 0-4.5 1z"/>
+      <path d="M13 6c0-1 .5-2 1.5-3 .5-.5 1-1 1.5-1 0 .5 0 1.5-.5 2.5-.5 1-1.5 1.5-2.5 1.5z"/>
+      <path d="M14 8c-.7 0-1.4-.4-2-1" stroke={ABR_C.midnight} strokeWidth="0.6" fill="none"/>
     </svg>
   ),
-  heartPulse: ({ size = 22, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"/>
-      <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>
+  heartPulse: ({ size = 22 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 21l-7-7a4 4 0 010-6 4 4 0 016 0l1 1 1-1a4 4 0 016 0 4 4 0 010 6l-7 7z"/>
+      <path d="M5.5 12h3l1-1.5L11 14l1.5-4 1 2h4" stroke={ABR_C.midnight} strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  insight: ({ size = 22, color = 'currentColor' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="7" width="20" height="14" rx="2"/>
-      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+  insight: ({ size = 22 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 4h6a2 2 0 012 2v1H7V6a2 2 0 012-2zm-2 5h10v2H7V9z"/>
+      <path d="M3 9a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9zm9 4a1 1 0 100 2 1 1 0 000-2z"/>
     </svg>
   ),
 };
 
 // Section title with underline accent
-function ABRSectionTitle({ children, color = ABR_C.midnight, accentColor = ABR_C.mediumBlue, align = 'center', size = 16 }) {
+function ABRSectionTitle({ children, color = ABR_C.midnight, accentColor = ABR_C.mediumBlue, align = 'center', size = 19 }) {
   return (
     <div style={{ textAlign: align }}>
       <h3 style={{
         fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: size,
         color, textTransform: 'uppercase', letterSpacing: '0.08em',
-        margin: 0, display: 'inline-block', lineHeight: 1.1,
+        margin: 0, display: 'inline-block', lineHeight: 1.05,
       }}>{children}</h3>
       <div style={{
-        width: 36, height: 2, background: accentColor, marginTop: 5,
+        width: 42, height: 2, background: accentColor, marginTop: 6,
         marginLeft: align === 'center' ? 'auto' : 0,
         marginRight: align === 'center' ? 'auto' : 0,
       }}/>
@@ -131,7 +114,7 @@ function ABRSectionTitle({ children, color = ABR_C.midnight, accentColor = ABR_C
 }
 
 // Card wrapper (gray background, rounded, padded)
-function ABRCard({ children, bg = ABR_C.gray, style, padding = 16 }) {
+function ABRCard({ children, bg = ABR_C.gray, style, padding = 18 }) {
   return (
     <div style={{
       background: bg, borderRadius: 6, padding,
@@ -143,7 +126,7 @@ function ABRCard({ children, bg = ABR_C.gray, style, padding = 16 }) {
 }
 
 // =========================================================================
-// MISSION ALIGNMENT block
+// MISSION ALIGNMENT
 // =========================================================================
 function ABRMissionAlignment({ ft }) {
   const trios = [
@@ -154,18 +137,18 @@ function ABRMissionAlignment({ ft }) {
   return (
     <ABRCard>
       <ABRSectionTitle>{ft.mission_section || 'Mission Alignment'}</ABRSectionTitle>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flex: 1, paddingTop: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flex: 1, paddingTop: 8 }}>
         {trios.map((t, i) => (
           <React.Fragment key={i}>
-            <div style={{ textAlign: 'center', maxWidth: 92 }}>
-              <ABRCircleIcon size={62} bg={ABR_C.lime} color={ABR_C.midnight}>
-                {React.cloneElement(t.icon, { size: 28 })}
+            <div style={{ textAlign: 'center', maxWidth: 96 }}>
+              <ABRCircleIcon size={64} bg={ABR_C.lime} color={ABR_C.midnight}>
+                {React.cloneElement(t.icon, { size: 30 })}
               </ABRCircleIcon>
-              <div style={{ marginTop: 8, fontFamily: ABR_FONT_DISPLAY, fontSize: 13, fontWeight: 700, color: ABR_C.midnight, lineHeight: 1.15 }}>{t.title}</div>
-              <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 10.5, color: ABR_C.textMuted, lineHeight: 1.2, marginTop: 2 }}>{t.subtitle}</div>
+              <div style={{ marginTop: 10, fontFamily: ABR_FONT_DISPLAY, fontSize: 14, fontWeight: 700, color: ABR_C.midnight, lineHeight: 1.15 }}>{t.title}</div>
+              <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 11, color: ABR_C.textMuted, lineHeight: 1.2, marginTop: 1 }}>{t.subtitle}</div>
             </div>
             {i < trios.length - 1 && (
-              <div style={{ fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 22, color: ABR_C.midnight, lineHeight: 1, alignSelf: 'flex-start', marginTop: 24 }}>+</div>
+              <div style={{ fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 24, color: ABR_C.midnight, lineHeight: 1, alignSelf: 'flex-start', marginTop: 26 }}>+</div>
             )}
           </React.Fragment>
         ))}
@@ -175,7 +158,7 @@ function ABRMissionAlignment({ ft }) {
 }
 
 // =========================================================================
-// PARTNERSHIP OVERVIEW block
+// PARTNERSHIP OVERVIEW
 // =========================================================================
 function ABRPartnershipOverview({ ft, data }) {
   const subStats = [
@@ -187,27 +170,25 @@ function ABRPartnershipOverview({ ft, data }) {
     <ABRCard>
       <ABRSectionTitle>{ft.partnership_section || 'Partnership Overview'}</ABRSectionTitle>
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, flex: 1, paddingTop: 6 }}>
-        {/* Big circle stat */}
         <div style={{
-          width: 124, height: 124, borderRadius: '50%',
-          background: ABR_C.midnight, border: `4px solid ${ABR_C.lime}`,
+          width: 132, height: 132, borderRadius: '50%',
+          background: ABR_C.midnight, border: `5px solid ${ABR_C.lime}`,
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 34, color: ABR_C.white, lineHeight: 1 }}>
+          <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 36, color: ABR_C.white, lineHeight: 1 }}>
             {data.totalGraduates ?? 0}
           </div>
-          <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 10, color: ABR_C.white, marginTop: 4, fontWeight: 500, textAlign: 'center', lineHeight: 1.1 }}>
+          <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 10.5, color: ABR_C.white, marginTop: 4, fontWeight: 500, textAlign: 'center', lineHeight: 1.1 }}>
             {ft.partnership_total_label || 'Total Graduates'}
           </div>
         </div>
-        {/* Three sub-stats */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignSelf: 'stretch', paddingTop: 4, paddingBottom: 4 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignSelf: 'stretch', paddingTop: 6, paddingBottom: 6 }}>
           {subStats.map((s, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <div style={{ width: 18, height: 1, background: ABR_C.mediumBlue, flexShrink: 0 }}/>
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+              <div style={{ width: 18, height: 1, background: ABR_C.mediumBlue, flexShrink: 0, marginTop: 14 }}/>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 22, color: ABR_C.midnight, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 24, color: ABR_C.midnight, lineHeight: 1 }}>{s.value}</div>
                 <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 9.5, color: ABR_C.midnight, fontWeight: 600, marginTop: 2, letterSpacing: '0.02em' }}>{s.label}</div>
                 {s.sub && <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 8.5, color: ABR_C.textMuted, marginTop: 1 }}>{s.sub}</div>}
               </div>
@@ -220,7 +201,7 @@ function ABRPartnershipOverview({ ft, data }) {
 }
 
 // =========================================================================
-// PROGRAM MIX block
+// PROGRAM MIX
 // =========================================================================
 function ABRProgramMix({ ft, data }) {
   const cells = [
@@ -238,15 +219,15 @@ function ABRProgramMix({ ft, data }) {
       <ABRSectionTitle align="left">
         {titleMain}{titleFy && <span style={{ color: ABR_C.lime }}> {titleFy}</span>}
       </ABRSectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, flex: 1, paddingTop: 18 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, flex: 1, paddingTop: 18 }}>
         {cells.map((c, i) => (
           <div key={i} style={{
-            background: ABR_C.midnight, borderRadius: 4, padding: '10px 12px 8px',
+            background: ABR_C.midnight, borderRadius: 4, padding: '10px 14px 8px',
             display: 'flex', flexDirection: 'column', position: 'relative', minHeight: 0,
           }}>
-            <div style={{ position: 'absolute', top: -10, left: 10 }}>
-              <ABRCircleIcon size={30} bg={ABR_C.sky} color={ABR_C.midnight}>
-                {React.cloneElement(c.icon, { size: 15 })}
+            <div style={{ position: 'absolute', top: -12, left: 12 }}>
+              <ABRCircleIcon size={32} bg={ABR_C.sky} color={ABR_C.white}>
+                {React.cloneElement(c.icon, { size: 17 })}
               </ABRCircleIcon>
             </div>
             <div style={{ marginTop: 14, fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 22, color: ABR_C.white, lineHeight: 1 }}>
@@ -263,7 +244,7 @@ function ABRProgramMix({ ft, data }) {
 }
 
 // =========================================================================
-// STATS block
+// STATS
 // =========================================================================
 function ABRStats({ ft, data }) {
   const years  = data.timelineYears  || ['', '', ''];
@@ -272,33 +253,37 @@ function ABRStats({ ft, data }) {
     <ABRCard>
       <ABRSectionTitle align="left">{ft.stats_section || 'Stats'}</ABRSectionTitle>
 
-      {/* Timeline */}
-      <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ flex: '0 0 110', fontFamily: ABR_FONT_DISPLAY, fontSize: 10, color: ABR_C.midnight, lineHeight: 1.3, fontWeight: 500 }}>
+      {/* Timeline — values are the focal point, big serif numerals */}
+      <div style={{ marginTop: 12, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+        <div style={{ flex: '0 0 100', fontFamily: ABR_FONT_DISPLAY, fontSize: 10.5, color: ABR_C.midnight, lineHeight: 1.3, fontWeight: 500, paddingTop: 18 }}>
           {ft.stats_timeline_label || 'Total degrees awarded over time'}
         </div>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', position: 'relative', paddingTop: 0 }}>
-          {years.slice(0, 3).map((y, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, zIndex: 1 }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: '50%', background: ABR_C.mediumBlue,
+        <div style={{ flex: 1, position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', position: 'relative' }}>
+            {years.slice(0, 3).map((y, i) => (
+              <div key={i} style={{
+                width: 34, height: 34, borderRadius: '50%', background: ABR_C.mediumBlue,
                 color: ABR_C.white, fontFamily: ABR_FONT_DISPLAY, fontSize: 10, fontWeight: 700,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1,
               }}>{y}</div>
-              <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 22, color: ABR_C.midnight, lineHeight: 1, marginTop: 2 }}>
-                {values[i] ?? ''}
+            ))}
+            <div style={{ position: 'absolute', top: 16, left: '14%', right: '14%', height: 2, background: ABR_C.mediumBlue, zIndex: 0 }}/>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 6 }}>
+            {values.slice(0, 3).map((v, i) => (
+              <div key={i} style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 36, color: ABR_C.midnight, lineHeight: 1 }}>
+                {v ?? ''}
               </div>
-            </div>
-          ))}
-          <div style={{ position: 'absolute', top: 16, left: '14%', right: '14%', height: 2, background: ABR_C.mediumBlue, zIndex: 0 }}/>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div style={{ borderTop: `1px solid ${ABR_C.grayBorder}`, margin: '10px 0' }}/>
+      <div style={{ borderTop: `1px solid ${ABR_C.grayBorder}`, margin: '12px 0 10px' }}/>
 
       {/* Completion rates */}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flex: 1 }}>
-        <div style={{ flex: '0 0 110', fontFamily: ABR_FONT_DISPLAY, fontSize: 9.5, color: ABR_C.midnight, lineHeight: 1.35 }}>
+        <div style={{ flex: '0 0 100', fontFamily: ABR_FONT_DISPLAY, fontSize: 9.5, color: ABR_C.midnight, lineHeight: 1.35 }}>
           {(() => {
             const msg = ft.stats_completion_message || 'Completion rates with partner organizations are higher than national WGU rates.';
             const parts = msg.split(/(higher)/i);
@@ -310,19 +295,19 @@ function ABRStats({ ft, data }) {
           })()}
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
-          <div style={{ background: ABR_C.lime, borderLeft: `3px solid #5fa61f`, padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 18, color: ABR_C.midnight, lineHeight: 1, flexShrink: 0 }}>
+          <div style={{ background: ABR_C.lime, borderLeft: `3px solid ${ABR_C.limeDeep}`, padding: '7px 11px', display: 'flex', alignItems: 'center', gap: 9 }}>
+            <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 22, color: ABR_C.midnight, lineHeight: 1, flexShrink: 0 }}>
               {data.completionPartner ?? 0}%
             </div>
-            <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 9, fontWeight: 700, color: ABR_C.midnight, lineHeight: 1.15 }}>
+            <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 9.5, fontWeight: 700, color: ABR_C.midnight, lineHeight: 1.15 }}>
               {ft.stats_partner_rate_label || 'Completion rates with partner'}
             </div>
           </div>
-          <div style={{ background: ABR_C.midnight, borderLeft: `3px solid ${ABR_C.lime}`, padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 18, color: ABR_C.white, lineHeight: 1, flexShrink: 0 }}>
+          <div style={{ background: ABR_C.midnight, borderLeft: `3px solid ${ABR_C.lime}`, padding: '7px 11px', display: 'flex', alignItems: 'center', gap: 9 }}>
+            <div style={{ fontFamily: ABR_FONT_SERIF, fontWeight: 600, fontSize: 22, color: ABR_C.white, lineHeight: 1, flexShrink: 0 }}>
               {data.completionNonPartner ?? 0}%
             </div>
-            <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 9, fontWeight: 700, color: ABR_C.white, lineHeight: 1.15 }}>
+            <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 9.5, fontWeight: 700, color: ABR_C.white, lineHeight: 1.15 }}>
               {ft.stats_nonpartner_rate_label || 'Non-partner completion rates'}
             </div>
           </div>
@@ -333,7 +318,7 @@ function ABRStats({ ft, data }) {
 }
 
 // =========================================================================
-// TOP PROGRAMS block
+// TOP PROGRAMS
 // =========================================================================
 function ABRTopPrograms({ ft, data }) {
   const programs = (data.topPrograms || []).slice(0, 8);
@@ -344,14 +329,14 @@ function ABRTopPrograms({ ft, data }) {
   return (
     <ABRCard bg={ABR_C.midnight}>
       <h3 style={{
-        fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 15,
+        fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 16,
         color: ABR_C.white, textTransform: 'uppercase', letterSpacing: '0.08em',
         margin: 0, lineHeight: 1.1,
       }}>
         {titleMain}{titleFy && <span style={{ color: ABR_C.lime }}> {titleFy}</span>}
       </h3>
-      <div style={{ width: 30, height: 2, background: ABR_C.lime, marginTop: 5, marginBottom: 12 }}/>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, justifyContent: 'flex-start' }}>
+      <div style={{ width: 32, height: 2, background: ABR_C.lime, marginTop: 6, marginBottom: 14 }}/>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1, justifyContent: 'flex-start' }}>
         {programs.map((p, i) => (
           <div key={i} style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 11, color: ABR_C.white, fontWeight: 600, lineHeight: 1.3 }}>
             {p.text || ''}
@@ -363,7 +348,7 @@ function ABRTopPrograms({ ft, data }) {
 }
 
 // =========================================================================
-// INSIGHTS block
+// INSIGHTS
 // =========================================================================
 function ABRInsights({ ft, data }) {
   const insights = (data.insights || []).slice(0, 3);
@@ -373,15 +358,15 @@ function ABRInsights({ ft, data }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1, justifyContent: 'flex-start', paddingTop: 12 }}>
         {insights.map((ins, i) => (
           <React.Fragment key={i}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-              <ABRCircleIcon size={38} bg={ABR_C.sky} color={ABR_C.midnight}>
-                <Icon.insight size={18} />
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+              <ABRCircleIcon size={42} bg={ABR_C.sky} color={ABR_C.white}>
+                <Icon.insight size={20} />
               </ABRCircleIcon>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 11, fontWeight: 700, color: ABR_C.midnight, lineHeight: 1.2 }}>
+                <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 11.5, fontWeight: 700, color: ABR_C.midnight, lineHeight: 1.2 }}>
                   {ins.title || ''}
                 </div>
-                <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 9.5, color: ABR_C.midnight, lineHeight: 1.4, marginTop: 4 }}>
+                <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 10, color: ABR_C.midnight, lineHeight: 1.4, marginTop: 4 }}>
                   {ins.description || ''}
                 </div>
               </div>
@@ -397,23 +382,35 @@ function ABRInsights({ ft, data }) {
 // =========================================================================
 // FOOTER (absolute-positioned at the bottom of the artboard)
 // =========================================================================
+function splitUrlForWrap(url) {
+  if (!url) return { line1: '', line2: '' };
+  // Split after the last "/" if there's content after it (e.g.
+  // "wgu.edu/partners/ohio-health" → "wgu.edu/partners/" + "ohio-health").
+  const lastSlash = url.lastIndexOf('/');
+  if (lastSlash > 0 && lastSlash < url.length - 1) {
+    return { line1: url.slice(0, lastSlash + 1), line2: url.slice(lastSlash + 1) };
+  }
+  return { line1: url, line2: '' };
+}
+
 function ABRFooter({ data }) {
   const contacts = (data.contacts || []).slice(0, 2);
+  const url = data.url || 'wgu.edu/partners/';
+  const { line1, line2 } = splitUrlForWrap(url);
   return (
     <div style={{
       position: 'absolute', left: 0, right: 0, bottom: 0, height: 100,
-      padding: '20px 28px 0', display: 'flex', alignItems: 'flex-start', gap: 22,
+      padding: '20px 28px 0', display: 'flex', alignItems: 'flex-start', gap: 24,
       borderTop: `1px solid ${ABR_C.grayBorder}`,
     }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: '0 0 auto' }}>
-        <ABRWGULogoNavy width={56} />
-        <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 10, color: ABR_C.midnight, fontWeight: 500, lineHeight: 1.3, marginTop: 2 }}>
-          {data.url || 'wgu.edu/partners/'}
-        </div>
+      <img src={ABR_LOGO_NAVY_URL} alt="WGU" style={{ width: 90, height: 'auto', display: 'block', flexShrink: 0, marginTop: 8 }} />
+      <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 11, color: ABR_C.midnight, fontWeight: 500, lineHeight: 1.3, flex: '0 0 auto', maxWidth: 130, marginTop: 6 }}>
+        <div>{line1}</div>
+        {line2 && <div>{line2}</div>}
       </div>
       {contacts.map((c, i) => (
-        <div key={i} style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 10, color: ABR_C.midnight, lineHeight: 1.4, flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: 12 }}>{c.name || ''}</div>
+        <div key={i} style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 11, color: ABR_C.midnight, lineHeight: 1.4, flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, fontSize: 13, color: ABR_C.midnight }}>{c.name || ''}</div>
           {c.title && <div style={{ color: ABR_C.textMuted }}>{c.title}</div>}
           {c.email && <div style={{ color: ABR_C.mediumBlue, wordBreak: 'break-word' }}>{c.email}</div>}
         </div>
@@ -429,28 +426,28 @@ function ABRHero({ ft, data }) {
   return (
     <div style={{
       position: 'relative', width: '100%', height: 220,
-      background: `linear-gradient(135deg, ${ABR_C.midnight} 0%, ${ABR_C.blue} 100%)`,
+      background: `linear-gradient(135deg, ${ABR_C.midnight} 0%, ${ABR_C.blue} 60%, ${ABR_C.midnight} 100%)`,
       overflow: 'hidden', flexShrink: 0,
     }}>
       <div style={{
-        position: 'absolute', top: 0, left: 0, width: 220, height: '100%',
+        position: 'absolute', top: 0, left: 0, width: 240, height: '100%',
         background: data.heroImage
           ? `url(${data.heroImage}) center/cover no-repeat`
-          : 'linear-gradient(180deg, rgba(70,177,239,0.18) 0%, rgba(0,23,49,0.0) 100%)',
+          : 'radial-gradient(ellipse at 30% 50%, rgba(70,177,239,0.22) 0%, rgba(0,23,49,0.0) 70%)',
       }}/>
-      <div style={{ position: 'absolute', top: 0, left: 220, right: 0, height: '100%', padding: '32px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ position: 'absolute', top: 0, left: 240, right: 0, height: '100%', padding: '32px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <h1 style={{
-          fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 40,
+          fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 42,
           color: ABR_C.white, textTransform: 'uppercase', letterSpacing: '0.01em',
           margin: 0, lineHeight: 0.95,
         }}>
           {ft.title || 'Annual Business Report'}
         </h1>
-        <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 11, color: ABR_C.white, textTransform: 'uppercase', letterSpacing: '0.18em' }}>
+        <div style={{ marginTop: 22 }}>
+          <div style={{ fontFamily: ABR_FONT_CAMPAIGN, fontWeight: 700, fontSize: 12, color: ABR_C.white, textTransform: 'uppercase', letterSpacing: '0.18em' }}>
             {ft.prepared_for_label || 'Prepared For'}
           </div>
-          <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 20, color: ABR_C.white, fontWeight: 500, marginTop: 4, lineHeight: 1 }}>
+          <div style={{ fontFamily: ABR_FONT_DISPLAY, fontSize: 22, color: ABR_C.white, fontWeight: 500, marginTop: 4, lineHeight: 1 }}>
             {data.partnerName || ''}
           </div>
         </div>
@@ -471,8 +468,7 @@ function ABROnePager({ data }) {
     }}>
       <ABRHero ft={ft} data={data} />
 
-      {/* Middle content area: between hero (220) and footer (100). Total 780 high.
-          Three rows: 240 + 14 + 220 + 14 + (rest=278) = 766 → fits in 780 - 14 (top pad) = 766. */}
+      {/* Middle content area: between hero (220) and footer (100). 780 high. */}
       <div style={{
         position: 'absolute', top: 220, left: 0, right: 0, bottom: 100,
         padding: '14px 24px 0', display: 'flex', flexDirection: 'column', gap: 14,
