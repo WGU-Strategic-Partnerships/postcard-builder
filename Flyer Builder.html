@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>WGU Strategic Partnerships — ABR Builder</title>
+<title>WGU Strategic Partnerships — Tuition Benefits Flyer Builder</title>
 <link rel="stylesheet" href="source/colors_and_type.css" />
 <meta name="ext-resource-dependency" content="assets/wgu-wordmark-white.png" data-resource-id="wguLogo" />
+<meta name="ext-resource-dependency" content="assets/wgu-wordmark.png"       data-resource-id="wguLogoNavy" />
 <style>
   :root { --nav-h: 53px; }
   html, body { margin: 0; padding: 0; background: #f4f6f9; font-family: 'Jost', sans-serif; color: #001731; }
@@ -36,20 +37,10 @@
   .field { margin-bottom: 14px; }
   .field-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; color: #264468; margin-bottom: 6px; }
   .field-counter { font-size: 11px; color: #A7A7A7; font-variant-numeric: tabular-nums; }
-  .field-counter.warn { color: #d97706; }
-  .field-counter.over { color: #dc2626; font-weight: 700; }
 
-  input[type="text"], input[type="url"], input[type="number"], textarea { width: 100%; padding: 9px 11px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; transition: border-color 0.15s; }
+  input[type="text"], input[type="url"], textarea { width: 100%; padding: 9px 11px; border: 1px solid #c7d1de; border-radius: 6px; font-family: inherit; font-size: 14px; color: #001731; background: #fff; transition: border-color 0.15s; }
   input:focus, textarea:focus { outline: none; border-color: #0070F0; box-shadow: 0 0 0 3px rgba(0,112,240,0.15); }
   textarea { resize: vertical; min-height: 70px; line-height: 1.4; }
-  input[type="number"] { -moz-appearance: textfield; }
-  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
-  .field-mini { display: flex; flex-direction: column; gap: 4px; }
-  .field-mini .lbl { font-size: 10px; color: #264468; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
 
   .picklist { display: flex; flex-direction: column; gap: 6px; }
   .pick-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e0e6ee; border-radius: 6px; cursor: pointer; transition: all 0.12s; background: #fff; }
@@ -61,19 +52,20 @@
   .pick-checkbox svg { display: none; }
   .pick-item.selected .pick-checkbox svg { display: block; }
   .pick-text { flex: 1; font-size: 13px; color: #001731; line-height: 1.4; min-width: 0; }
-  .pick-text strong { font-weight: 700; }
+  .pick-text strong { font-weight: 700; color: #0070F0; }
   .pick-text small { display: block; font-size: 11px; color: #264468; margin-top: 2px; line-height: 1.4; }
   .pick-order { width: 22px; height: 22px; border-radius: 50%; background: #97E152; color: #001731; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .pick-help { font-size: 11px; color: #A7A7A7; margin: 4px 0 8px; }
+
+  .qr-toggle { display: flex; gap: 4px; background: #eef2f6; border-radius: 6px; padding: 3px; margin-bottom: 8px; }
+  .qr-toggle button { flex: 1; border: 0; background: transparent; padding: 6px 8px; font-size: 12px; font-weight: 600; color: #264468; border-radius: 4px; cursor: pointer; font-family: inherit; }
+  .qr-toggle button.active { background: #fff; color: #0070F0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
   .upload-zone { border: 1.5px dashed #c7d1de; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; background: #f9fbfd; transition: all 0.12s; }
   .upload-zone:hover { border-color: #0070F0; background: #eef6ff; }
   .upload-zone.has-file { border-style: solid; border-color: #97E152; background: #f4fce4; }
   .upload-zone .upload-label { font-size: 13px; font-weight: 600; color: #264468; }
   .upload-zone .upload-hint { font-size: 11px; color: #A7A7A7; margin-top: 3px; }
-
-  .locked-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f4f6f9; border: 1px solid #e0e6ee; border-radius: 6px; font-size: 12px; color: #A7A7A7; margin-bottom: 8px; }
-  .locked-row svg { flex-shrink: 0; }
 
   .preview-panel { padding: 32px; overflow: auto; height: calc(100vh - var(--nav-h)); background: #f4f6f9; }
   .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
@@ -89,12 +81,11 @@
 
   .help-banner { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
 
-  .preview-stage { display: flex; justify-content: center; }
-  .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; }
-
-  .sum-tip { font-size: 11px; color: #264468; margin-top: 4px; }
-  .sum-tip.warn { color: #d97706; }
-  .sum-tip.ok { color: #5fa61f; }
+  .preview-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .preview-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #264468; font-weight: 600; }
+  .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; transform: scale(0.7); transform-origin: top center; }
+  .card-frame-wrap { width: 595px; /* 850 * 0.7 */ overflow: hidden; height: 770px; /* 1100 * 0.7 */ }
 </style>
 </head>
 <body>
@@ -102,8 +93,8 @@
   <div class="top-nav-brand"><span class="brand-dot"></span>WGU Builders</div>
   <div class="top-nav-tabs">
     <a class="nav-tab" href="Postcard%20Builder.html">Postcard</a>
-    <a class="nav-tab active" href="ABR%20Builder.html">Annual Business Report</a>
-    <a class="nav-tab" href="Flyer%20Builder.html">Tuition Benefits Flyer</a>
+    <a class="nav-tab" href="ABR%20Builder.html">Annual Business Report</a>
+    <a class="nav-tab active" href="Flyer%20Builder.html">Tuition Benefits Flyer</a>
   </div>
   <div class="top-nav-right">
     <a class="nav-admin" href="admin.html">Admin</a>
@@ -119,7 +110,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
 <script src="source/supabase-config.js"></script>
-<script type="text/babel" src="source/abr-render.jsx?v=3"></script>
+<script src="source/qrcode-mini.js"></script>
+<script type="text/babel" src="source/flyer-render.jsx?v=1"></script>
 
 <script type="text/babel">
 const sb = window.supabase.createClient(
@@ -128,44 +120,32 @@ const sb = window.supabase.createClient(
   { auth: { persistSession: false, detectSessionInUrl: false } }
 );
 
-const BUILDER_ID = 'abr';
+const BUILDER_ID = 'flyer';
 
 const LIMITS = {
   partnerName: 60,
   url: 100,
-  asOfDate: 24,
 };
 
 const DEFAULTS = {
   partnerName: '',
-  url: 'wgu.edu/partners/',
-  asOfDate: 'Jan 2026',
-  totalGraduates: 77,
-  currentEnrollment: 61,
-  fyCurrentStarts: 33,
-  fyPrevStarts: 33,
-  timelineYears: ['2023', '2024', '2025'],
-  timelineValues: [19, 20, 24],
-  completionPartner: 68,
-  completionNonPartner: 62,
-  programMixBusiness: 31,
-  programMixTechnology: 13,
-  programMixEducation: 3,
-  programMixHealth: 52,
-  topProgramIds: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'],
-  insightIds: ['i1', 'i2', 'i3'],
-  contactIds: ['c1', 'c2'],
+  url: 'wgu.edu/partnerships',
+  qrMode: 'url',
+  qrImage: '',
   heroImage: '',
+  benefitIds: ['b1', 'b2', 'b3', 'b4', 'b5'],
+  factIds: ['f1', 'f2', 'f3', 'f4', 'f5'],
+  statIds: ['s1', 's2', 's3'],
 };
 
-async function fetchABRLibrary() {
+async function fetchFlyerLibrary() {
   const { data, error } = await sb.from('library_items')
     .select('section, external_id, content')
     .eq('builder_id', BUILDER_ID)
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
   if (error) throw error;
-  const out = { insights: [], programs: [], contacts: [], fixedText: {} };
+  const out = { benefits: [], facts: [], stats: [], fixedText: {} };
   for (const row of data || []) {
     if (row.section === 'fixed_text') out.fixedText = row.content || {};
     else if (out[row.section]) out[row.section].push({ id: row.external_id, ...row.content });
@@ -210,7 +190,7 @@ function App() {
   const update = (patch) => setState((prev) => ({ ...prev, ...patch }));
 
   React.useEffect(() => {
-    fetchABRLibrary().then(setLib).catch((e) => { console.error('ABR library fetch failed:', e); setLoadError(e.message || 'Failed to load library'); });
+    fetchFlyerLibrary().then(setLib).catch((e) => { console.error('Flyer library fetch failed:', e); setLoadError(e.message || 'Failed to load library'); });
   }, []);
 
   React.useEffect(() => {
@@ -225,29 +205,14 @@ function App() {
 
   const renderData = React.useMemo(() => {
     if (!lib) return null;
-    const programs  = state.topProgramIds.map((id) => lib.programs.find((p) => p.id === id)).filter(Boolean);
-    const insights  = state.insightIds.map((id) => lib.insights.find((p) => p.id === id)).filter(Boolean);
-    const contacts  = state.contactIds.map((id) => lib.contacts.find((p) => p.id === id)).filter(Boolean);
     return {
-      partnerName:        state.partnerName,
-      url:                state.url,
-      asOfDate:           state.asOfDate,
-      totalGraduates:     Number(state.totalGraduates) || 0,
-      currentEnrollment:  Number(state.currentEnrollment) || 0,
-      fyCurrentStarts:    Number(state.fyCurrentStarts) || 0,
-      fyPrevStarts:       Number(state.fyPrevStarts) || 0,
-      timelineYears:      state.timelineYears,
-      timelineValues:     state.timelineValues.map((v) => Number(v) || 0),
-      completionPartner:  Number(state.completionPartner) || 0,
-      completionNonPartner: Number(state.completionNonPartner) || 0,
-      programMixBusiness:    Number(state.programMixBusiness) || 0,
-      programMixTechnology:  Number(state.programMixTechnology) || 0,
-      programMixEducation:   Number(state.programMixEducation) || 0,
-      programMixHealth:      Number(state.programMixHealth) || 0,
-      topPrograms: programs,
-      insights,
-      contacts,
+      partnerName: state.partnerName,
+      url: state.url,
+      qrSource: state.qrMode === 'image' ? state.qrImage : state.url,
       heroImage: state.heroImage,
+      benefits: state.benefitIds.map((id) => lib.benefits.find((b) => b.id === id)).filter(Boolean),
+      facts:    state.factIds.map((id) => lib.facts.find((f) => f.id === id)).filter(Boolean),
+      stats:    state.statIds.map((id) => lib.stats.find((s) => s.id === id)).filter(Boolean),
       fixedText: lib.fixedText,
     };
   }, [state, lib]);
@@ -257,15 +222,22 @@ function App() {
     if (cur.includes(id)) update({ [key]: cur.filter((x) => x !== id) });
     else if (cur.length < max) update({ [key]: [...cur, id] });
   };
-  const togglePrograms = togglePick('topProgramIds', 8);
-  const toggleInsight  = togglePick('insightIds', 3);
-  const toggleContact  = togglePick('contactIds', 2);
+  const toggleBenefit = togglePick('benefitIds', 5);
+  const toggleFact    = togglePick('factIds', 5);
+  const toggleStat    = togglePick('statIds', 3);
 
   const onHeroUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => update({ heroImage: reader.result });
+    reader.readAsDataURL(file);
+  };
+  const onQRUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => update({ qrImage: reader.result, qrMode: 'image' });
     reader.readAsDataURL(file);
   };
 
@@ -292,12 +264,16 @@ function App() {
       const SCALE = 3;
 
       const pdf = new jsPDF({ unit: 'in', format: [PAGE_W, PAGE_H], orientation: 'portrait', compress: true });
-      const cardEl = document.querySelector('.card-frame > div');
-      if (!cardEl) throw new Error('Preview not rendered yet');
-      const canvas = await window.html2canvas(cardEl, { scale: SCALE, backgroundColor: null, useCORS: true, logging: false });
-      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', MARGIN_IN, MARGIN_IN, PAGE_W - MARGIN_IN * 2, PAGE_H - MARGIN_IN * 2, undefined, 'FAST');
+      const cardEls = document.querySelectorAll('.card-frame > div');
+      for (let i = 0; i < cardEls.length; i++) {
+        if (i > 0) pdf.addPage([PAGE_W, PAGE_H], 'portrait');
+        const canvas = await window.html2canvas(cardEls[i], { scale: SCALE, backgroundColor: null, useCORS: true, logging: false });
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG',
+          MARGIN_IN, MARGIN_IN, PAGE_W - MARGIN_IN * 2, PAGE_H - MARGIN_IN * 2,
+          undefined, 'FAST');
+      }
       const slug = (state.partnerName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-      pdf.save(`wgu-abr${slug ? '-' + slug : ''}.pdf`);
+      pdf.save(`wgu-tuition-flyer${slug ? '-' + slug : ''}.pdf`);
       showToast('PDF saved.');
     } catch (e) {
       console.error('PDF export failed:', e);
@@ -309,7 +285,7 @@ function App() {
     return (
       <div style={{ padding: 40, fontFamily: "'Jost', sans-serif", color: '#001731', maxWidth: 520 }}>
         <h2 style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: 22, color: '#dc2626', textTransform: 'uppercase' }}>Couldn't load library</h2>
-        <p style={{ fontSize: 14, color: '#264468' }}>The ABR builder couldn't reach Supabase.</p>
+        <p style={{ fontSize: 14, color: '#264468' }}>The flyer builder couldn't reach Supabase.</p>
         <pre style={{ background: '#f4f6f9', padding: 12, borderRadius: 6, fontSize: 12, color: '#dc2626', overflowX: 'auto' }}>{loadError}</pre>
       </div>
     );
@@ -318,15 +294,12 @@ function App() {
     return <div style={{ padding: 40, fontFamily: "'Jost', sans-serif", color: '#264468', fontSize: 14 }}>Loading library content…</div>;
   }
 
-  // Helpers for sums
-  const programMixSum = (Number(state.programMixBusiness) || 0) + (Number(state.programMixTechnology) || 0) + (Number(state.programMixEducation) || 0) + (Number(state.programMixHealth) || 0);
-
   return (
     <div className="app">
       <div className="form-panel">
         <div className="form-header">
-          <h1>ABR Builder</h1>
-          <p>Annual Business Report · 8.5×11" partner report. Fill the fields, see your report live, export to PDF.</p>
+          <h1>Tuition Benefits Flyer</h1>
+          <p>Two-sided 8.5×11" flyer · employer-focused front, fast-facts back. Edit, preview live, export to PDF.</p>
         </div>
 
         {/* 1. Partner & URL */}
@@ -334,26 +307,26 @@ function App() {
           <h2><span className="step-num">1</span>Partner & URL</h2>
           <div className="field">
             <div className="field-label">
-              <span>Partner organization</span>
+              <span>Partner organization <span style={{ color: '#A7A7A7', fontWeight: 400 }}>(optional, used in filename)</span></span>
               <CharCounter value={state.partnerName} max={LIMITS.partnerName} />
             </div>
             <input type="text" value={state.partnerName} onChange={(e) => update({ partnerName: e.target.value })} placeholder="e.g. OhioHealth" />
           </div>
           <div className="field">
             <div className="field-label">
-              <span>Partner URL</span>
+              <span>URL <span style={{ color: '#A7A7A7', fontWeight: 400 }}>(footer + QR target)</span></span>
               <CharCounter value={state.url} max={LIMITS.url} />
             </div>
-            <input type="text" value={state.url} onChange={(e) => update({ url: e.target.value })} placeholder="wgu.edu/partners/your-partner" />
+            <input type="text" value={state.url} onChange={(e) => update({ url: e.target.value })} placeholder="wgu.edu/partnerships/your-event" />
           </div>
         </div>
 
-        {/* 2. Hero image (optional) */}
+        {/* 2. Hero image */}
         <div className="section">
           <h2><span className="step-num">2</span>Hero image <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· optional</span></h2>
           <label className={`upload-zone ${state.heroImage ? 'has-file' : ''}`}>
             <div className="upload-label">{state.heroImage ? '✓ Hero image loaded — click to replace' : 'Click to upload hero image'}</div>
-            <div className="upload-hint">Aspect ~1:1 ideal. Sits left of the title in the dark hero band.</div>
+            <div className="upload-hint">Portrait of a person works best — sits on the right side of the front hero.</div>
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onHeroUpload} />
           </label>
           {state.heroImage && (
@@ -361,176 +334,75 @@ function App() {
           )}
         </div>
 
-        {/* 3. Partnership numbers */}
+        {/* 3. QR Code */}
         <div className="section">
-          <h2><span className="step-num">3</span>Partnership Numbers</h2>
-          <div className="grid-2">
-            <div className="field-mini">
-              <span className="lbl">Total Graduates</span>
-              <input type="number" min="0" value={state.totalGraduates} onChange={(e) => update({ totalGraduates: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">Current Enrollment</span>
-              <input type="number" min="0" value={state.currentEnrollment} onChange={(e) => update({ currentEnrollment: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">FY26 Starts</span>
-              <input type="number" min="0" value={state.fyCurrentStarts} onChange={(e) => update({ fyCurrentStarts: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">FY25 Starts</span>
-              <input type="number" min="0" value={state.fyPrevStarts} onChange={(e) => update({ fyPrevStarts: e.target.value })} />
-            </div>
+          <h2><span className="step-num">3</span>QR Code</h2>
+          <div className="qr-toggle">
+            <button className={state.qrMode === 'url' ? 'active' : ''} onClick={() => update({ qrMode: 'url' })}>Generate from URL</button>
+            <button className={state.qrMode === 'image' ? 'active' : ''} onClick={() => update({ qrMode: 'image' })}>Upload image</button>
           </div>
-          <div className="field" style={{ marginTop: 14 }}>
-            <div className="field-label">
-              <span>"As of" date <span style={{ color: '#A7A7A7', fontWeight: 400 }}>(shown next to FY-current starts)</span></span>
-              <CharCounter value={state.asOfDate} max={LIMITS.asOfDate} />
-            </div>
-            <input type="text" value={state.asOfDate} onChange={(e) => update({ asOfDate: e.target.value })} placeholder="e.g. Jan 2026" />
-          </div>
-        </div>
-
-        {/* 4. Timeline */}
-        <div className="section">
-          <h2><span className="step-num">4</span>Degrees Timeline</h2>
-          <div className="pick-help">Three years across the timeline strip and the count for each year.</div>
-          <div className="grid-3">
-            {[0, 1, 2].map((i) => (
-              <React.Fragment key={i}>
-                <div className="field-mini">
-                  <span className="lbl">Year {i + 1}</span>
-                  <input type="text" value={state.timelineYears[i] || ''} onChange={(e) => {
-                    const arr = [...state.timelineYears]; arr[i] = e.target.value; update({ timelineYears: arr });
-                  }} />
-                </div>
-              </React.Fragment>
-            ))}
-            {[0, 1, 2].map((i) => (
-              <div key={`v${i}`} className="field-mini">
-                <span className="lbl">Value {i + 1}</span>
-                <input type="number" min="0" value={state.timelineValues[i] ?? 0} onChange={(e) => {
-                  const arr = [...state.timelineValues]; arr[i] = e.target.value; update({ timelineValues: arr });
-                }} />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 5. Completion rates */}
-        <div className="section">
-          <h2><span className="step-num">5</span>Completion Rates</h2>
-          <div className="grid-2">
-            <div className="field-mini">
-              <span className="lbl">Partner %</span>
-              <input type="number" min="0" max="100" value={state.completionPartner} onChange={(e) => update({ completionPartner: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">Non-partner %</span>
-              <input type="number" min="0" max="100" value={state.completionNonPartner} onChange={(e) => update({ completionNonPartner: e.target.value })} />
-            </div>
-          </div>
-        </div>
-
-        {/* 6. Program Mix */}
-        <div className="section">
-          <h2><span className="step-num">6</span>Program Mix %</h2>
-          <div className="grid-4">
-            <div className="field-mini">
-              <span className="lbl">Business</span>
-              <input type="number" min="0" max="100" value={state.programMixBusiness} onChange={(e) => update({ programMixBusiness: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">Tech</span>
-              <input type="number" min="0" max="100" value={state.programMixTechnology} onChange={(e) => update({ programMixTechnology: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">Education</span>
-              <input type="number" min="0" max="100" value={state.programMixEducation} onChange={(e) => update({ programMixEducation: e.target.value })} />
-            </div>
-            <div className="field-mini">
-              <span className="lbl">Health</span>
-              <input type="number" min="0" max="100" value={state.programMixHealth} onChange={(e) => update({ programMixHealth: e.target.value })} />
-            </div>
-          </div>
-          <div className={`sum-tip ${programMixSum === 100 ? 'ok' : 'warn'}`}>Sum: {programMixSum}% {programMixSum === 100 ? '✓' : '· should equal 100'}</div>
-        </div>
-
-        {/* 7. Top Programs picklist */}
-        <div className="section">
-          <h2><span className="step-num">7</span>Top Programs <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick up to 8</span></h2>
-          <div className="pick-help">Selected: {state.topProgramIds.length} of 8 · order reflects display order in the navy box</div>
-          <div className="picklist">
-            {lib.programs.map((p) => {
-              const idx = state.topProgramIds.indexOf(p.id);
-              const selected = idx >= 0;
-              const disabled = !selected && state.topProgramIds.length >= 8;
-              return (
-                <PickItem key={p.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => togglePrograms(p.id)}>
-                  {p.text}
-                </PickItem>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 8. Insights */}
-        <div className="section">
-          <h2><span className="step-num">8</span>Insights & Opportunities <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 3</span></h2>
-          <div className="pick-help">Selected: {state.insightIds.length} of 3</div>
-          <div className="picklist">
-            {lib.insights.map((ins) => {
-              const idx = state.insightIds.indexOf(ins.id);
-              const selected = idx >= 0;
-              const disabled = !selected && state.insightIds.length >= 3;
-              return (
-                <PickItem key={ins.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleInsight(ins.id)}>
-                  <strong>{ins.title}</strong>
-                  <small>{ins.description}</small>
-                </PickItem>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 9. Contacts */}
-        <div className="section">
-          <h2><span className="step-num">9</span>Contacts <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick up to 2</span></h2>
-          <div className="pick-help">Selected: {state.contactIds.length} of 2 · shown in the footer in selection order</div>
-          <div className="picklist">
-            {lib.contacts.map((c) => {
-              const idx = state.contactIds.indexOf(c.id);
-              const selected = idx >= 0;
-              const disabled = !selected && state.contactIds.length >= 2;
-              return (
-                <PickItem key={c.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleContact(c.id)}>
-                  <strong>{c.name}</strong>
-                  <small>{c.title}{c.email ? ` · ${c.email}` : ''}</small>
-                </PickItem>
-              );
-            })}
-          </div>
-          {lib.contacts.length === 0 && (
-            <div style={{ fontSize: 11, color: '#A7A7A7' }}>No contacts in the directory yet. Add some via the admin app.</div>
+          {state.qrMode === 'image' && (
+            <label className={`upload-zone ${state.qrImage ? 'has-file' : ''}`}>
+              <div className="upload-label">{state.qrImage ? '✓ QR image loaded — click to replace' : 'Click to upload QR image'}</div>
+              <div className="upload-hint">PNG, JPG, or SVG · square aspect</div>
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onQRUpload} />
+            </label>
           )}
+          {state.qrMode === 'url' && <div className="pick-help">A QR will be generated from your URL automatically and shown on both sides.</div>}
         </div>
 
-        {/* 10. Locked items */}
-        <div className="section" style={{ borderBottom: 'none' }}>
-          <h2><span className="step-num" style={{ background: '#A7A7A7' }}>🔒</span>Locked for brand consistency</h2>
-          <div className="locked-row">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <rect x="2.5" y="6" width="9" height="6" rx="1" fill="#A7A7A7"/>
-              <path d="M4.5 6V4a2.5 2.5 0 015 0v2" stroke="#A7A7A7" strokeWidth="1.3" fill="none"/>
-            </svg>
-            <span><strong style={{ color: '#264468' }}>Section titles, headline, mission alignment text</strong> — admins can edit these in the admin app.</span>
+        {/* 4. Benefits picklist */}
+        <div className="section">
+          <h2><span className="step-num">4</span>Benefits <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 5</span></h2>
+          <div className="pick-help">Selected: {state.benefitIds.length} of 5 · order reflects display order on the front</div>
+          <div className="picklist">
+            {lib.benefits.map((b) => {
+              const idx = state.benefitIds.indexOf(b.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.benefitIds.length >= 5;
+              return (
+                <PickItem key={b.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleBenefit(b.id)}>
+                  <strong>{b.title}</strong>
+                  <small>{b.description}</small>
+                </PickItem>
+              );
+            })}
           </div>
-          <div className="locked-row">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <rect x="2.5" y="6" width="9" height="6" rx="1" fill="#A7A7A7"/>
-              <path d="M4.5 6V4a2.5 2.5 0 015 0v2" stroke="#A7A7A7" strokeWidth="1.3" fill="none"/>
-            </svg>
-            <span><strong style={{ color: '#264468' }}>Layout, colors, WGU logo</strong> — fixed for brand consistency.</span>
+        </div>
+
+        {/* 5. Stats */}
+        <div className="section">
+          <h2><span className="step-num">5</span>Back Stats Strip <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 3</span></h2>
+          <div className="pick-help">Selected: {state.statIds.length} of 3 · the row of big numbers near the top of the back</div>
+          <div className="picklist">
+            {lib.stats.map((s) => {
+              const idx = state.statIds.indexOf(s.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.statIds.length >= 3;
+              return (
+                <PickItem key={s.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleStat(s.id)}>
+                  <strong>{s.num}</strong> <span style={{ color: '#264468' }}>· {s.label}</span>
+                </PickItem>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 6. Fast facts */}
+        <div className="section">
+          <h2><span className="step-num">6</span>Back Fast Facts <span style={{ fontSize: 11, color: '#A7A7A7', fontWeight: 500, letterSpacing: 0 }}>· pick 5</span></h2>
+          <div className="pick-help">Selected: {state.factIds.length} of 5 · numbered list on the back</div>
+          <div className="picklist">
+            {lib.facts.map((f) => {
+              const idx = state.factIds.indexOf(f.id);
+              const selected = idx >= 0;
+              const disabled = !selected && state.factIds.length >= 5;
+              return (
+                <PickItem key={f.id} selected={selected} order={selected ? idx + 1 : null} disabled={disabled} onClick={() => toggleFact(f.id)}>
+                  {f.text}
+                </PickItem>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -546,15 +418,22 @@ function App() {
             Copy share link
           </button>
           <button className="btn btn-secondary" onClick={resetAll}>Reset</button>
-          <div style={{ marginLeft: 'auto', fontSize: 11, color: '#A7A7A7' }}>8.5 × 11 in · 850 × 1100 px</div>
+          <div style={{ marginLeft: 'auto', fontSize: 11, color: '#A7A7A7' }}>8.5 × 11 in × 2 sides · 850 × 1100 px each</div>
         </div>
 
         <div className="help-banner">
-          <strong>How to use:</strong> Edit the fields on the left → preview updates live → click <strong>Save as PDF</strong> for print, or <strong>Copy share link</strong> to send your draft to a teammate (the URL contains all your numbers).
+          <strong>How to use:</strong> Pick 5 benefits → 3 stats → 5 facts. Edit on the left, preview updates live. Click <strong>Save as PDF</strong> for a 2-page print-ready file, or <strong>Copy share link</strong> to send your draft to a teammate.
         </div>
 
-        <div className="preview-stage">
-          <div className="card-frame"><ABROnePager data={renderData} /></div>
+        <div className="preview-row">
+          <div className="preview-side">
+            <div className="preview-label">Front</div>
+            <div className="card-frame-wrap"><div className="card-frame"><FlyerFront data={renderData} /></div></div>
+          </div>
+          <div className="preview-side">
+            <div className="preview-label">Back</div>
+            <div className="card-frame-wrap"><div className="card-frame"><FlyerBack data={renderData} /></div></div>
+          </div>
         </div>
       </div>
 
