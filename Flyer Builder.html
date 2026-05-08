@@ -81,11 +81,14 @@
 
   .help-banner { background: #eef6ff; border: 1px solid #b8d8fc; border-radius: 6px; padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: #002855; line-height: 1.5; }
 
-  .preview-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
-  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  /* Stack front + back vertically; each fills the panel width at native or
+     scaled-down ratio so nothing crops. Container queries compute scale
+     based on the actual available width. */
+  .preview-row { display: flex; flex-direction: column; gap: 32px; align-items: center; container-type: inline-size; }
+  .preview-side { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(100%, 850px); }
   .preview-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #264468; font-weight: 600; }
-  .card-frame { box-shadow: 0 12px 36px rgba(0,23,49,0.18); border-radius: 4px; overflow: hidden; background: #fff; transform: scale(0.7); transform-origin: top center; }
-  .card-frame-wrap { width: 595px; /* 850 * 0.7 */ overflow: hidden; height: 770px; /* 1100 * 0.7 */ }
+  .card-frame-wrap { width: 100%; aspect-ratio: 850 / 1100; overflow: hidden; position: relative; background: #fff; border-radius: 4px; box-shadow: 0 12px 36px rgba(0,23,49,0.18); }
+  .card-frame { position: absolute; top: 0; left: 0; width: 850px; height: 1100px; transform-origin: top left; transform: scale(min(1, calc(100cqw / 850px))); }
 </style>
 </head>
 <body>
