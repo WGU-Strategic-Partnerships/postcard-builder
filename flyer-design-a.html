@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Flyer · Design A — Editorial</title>
+<link rel="stylesheet" href="source/colors_and_type.css" />
+<style>
+  body { margin: 0; background: #d8dde4; font-family: 'Jost', sans-serif; padding: 40px; display: flex; justify-content: center; }
+  .label-strip { position: fixed; top: 0; left: 0; right: 0; background: #001731; color: #97E152; padding: 8px 16px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; z-index: 100; }
+  .page {
+    width: 850px; height: 1100px; background: #FAF8F4;
+    color: #001731; position: relative; overflow: hidden;
+    box-shadow: 0 12px 36px rgba(0,23,49,0.18);
+  }
+
+  /* HERO */
+  .hero { position: absolute; top: 0; left: 0; right: 0; height: 540px; display: grid; grid-template-columns: 1fr 1fr; }
+  .hero-text { padding: 70px 40px 70px 70px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .eyebrow { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: #0070F0; margin-bottom: 18px; }
+  .hero-text h1 {
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 70px;
+    color: #001731; text-transform: uppercase; letter-spacing: -0.005em;
+    margin: 0; line-height: 0.92;
+  }
+  .hero-text h1 em {
+    font-family: 'Newsreader', serif; font-weight: 500; font-style: italic;
+    text-transform: lowercase; letter-spacing: -0.01em; font-size: 80px; color: #0070F0;
+  }
+  .hero-photo {
+    background: linear-gradient(135deg, #2E4868 0%, #001731 80%);
+    position: relative; overflow: hidden;
+  }
+  .hero-photo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 35% 45%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.03) 35%, rgba(0,23,49,0.6) 75%);
+  }
+  .hero-photo .photo-label { position: absolute; bottom: 30px; right: 30px; font-family: 'Jost', sans-serif; font-size: 10px; color: #BBD0E8; letter-spacing: 0.14em; text-transform: uppercase; z-index: 1; }
+
+  /* BODY */
+  .body { position: absolute; top: 580px; left: 70px; right: 70px; height: 320px; display: grid; grid-template-columns: 1fr 240px; gap: 48px; }
+  .benefits { font-size: 13px; line-height: 1.55; color: #001731; }
+  .benefits ol { list-style: none; counter-reset: b; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .benefits li { counter-increment: b; display: grid; grid-template-columns: 32px 1fr; gap: 16px; align-items: baseline; }
+  .benefits li::before {
+    content: counter(b, decimal-leading-zero);
+    font-family: 'Newsreader', serif; font-weight: 600; font-size: 22px; color: #0070F0;
+    line-height: 1;
+  }
+  .benefits .lead { color: #001731; font-weight: 700; }
+  .benefits .body-text { color: #2c4060; }
+  .footnote { font-size: 9px; font-style: italic; color: #6c7990; margin-top: 14px; max-width: 380px; }
+
+  .pull-stat {
+    background: transparent; border-top: 2px solid #001731; padding-top: 24px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .pull-stat .pct {
+    font-family: 'Newsreader', serif; font-weight: 600; font-size: 110px;
+    color: #001731; line-height: 0.85; letter-spacing: -0.04em;
+  }
+  .pull-stat .pct span { font-size: 60px; }
+  .pull-stat .caption {
+    font-family: 'Jost', sans-serif; font-size: 11px; line-height: 1.4;
+    color: #001731; font-weight: 500;
+  }
+  .pull-stat .source { font-size: 9px; color: #97a2b8; font-style: italic; margin-top: 4px; }
+
+  /* WHY WGU */
+  .why-section { position: absolute; top: 920px; left: 70px; right: 70px; }
+  .why-section .why-title {
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.2em;
+    color: #0070F0; text-transform: uppercase; margin-bottom: 14px;
+    border-top: 1px solid #001731; padding-top: 14px;
+  }
+  .why-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; }
+  .why-col-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 0.06em; color: #001731; margin-bottom: 6px; }
+  .why-col-desc { font-size: 11px; line-height: 1.45; color: #2c4060; }
+
+  /* FOOTER */
+  .footer {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: #001731; color: #fff;
+    display: flex; align-items: center; padding: 0 70px; gap: 24px;
+  }
+  .footer img { height: 22px; width: auto; }
+  .footer .urls { font-family: 'Jost', sans-serif; font-size: 12px; color: #BBD0E8; flex: 1; }
+  .footer .cta { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.04em; color: #97E152; text-transform: uppercase; }
+  .footer .qr { width: 38px; height: 38px; background: #fff; padding: 3px; }
+  .footer .qr div { width: 100%; height: 100%; background:
+    repeating-conic-gradient(#001731 0% 25%, #fff 0% 50%) 50% / 6px 6px; }
+</style>
+</head>
+<body>
+<div class="label-strip">Design A · Editorial / Magazine — sophisticated, breathy, mixed serif + sans</div>
+<div class="page">
+  <div class="hero">
+    <div class="hero-text">
+      <div class="eyebrow">Strategic Partnerships · Tuition Benefits</div>
+      <h1>Invest<br/>in your team's<br/><em>future</em><br/>with educational<br/>benefits.</h1>
+    </div>
+    <div class="hero-photo">
+      <div class="photo-label">[partner upload area]</div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="benefits">
+      <ol>
+        <li><div><span class="lead">Recruitment Magnet.</span> <span class="body-text">Attract top talent by offering a highly valued benefit. <strong>84%</strong> of employees consider tuition assistance when choosing a company.</span></div></li>
+        <li><div><span class="lead">Boost Retention.</span> <span class="body-text">Combat turnover with career development. <strong>76%</strong> of employees participate to advance within their current company.</span></div></li>
+        <li><div><span class="lead">Tax Savings.</span> <span class="body-text">IRS Section 127 lets you deduct up to <strong>$5,250</strong> per employee annually.</span></div></li>
+        <li><div><span class="lead">Cultivate Talent.</span> <span class="body-text">Build a skilled workforce that evolves with your business needs.</span></div></li>
+        <li><div><span class="lead">Enhance Engagement.</span> <span class="body-text">Tuition assistance encourages lifelong learning and personal growth.</span></div></li>
+      </ol>
+      <div class="footnote">Source: Bright Horizons, "Lasting Impact of Tuition Assistance," investors.brighthorizons.com.</div>
+    </div>
+    <div class="pull-stat">
+      <div class="pct">84<span>%</span></div>
+      <div class="caption">of employees consider tuition assistance when choosing a company.</div>
+      <div class="source">— Bright Horizons</div>
+    </div>
+  </div>
+  <div class="why-section">
+    <div class="why-title">Why WGU is the right partner</div>
+    <div class="why-cols">
+      <div>
+        <div class="why-col-title">Flexible.</div>
+        <div class="why-col-desc">No required class times — employees keep their work schedule and pace themselves through coursework.</div>
+      </div>
+      <div>
+        <div class="why-col-title">Affordable.</div>
+        <div class="why-col-desc">Your tuition support goes further with WGU's low-cost flat-rate model.</div>
+      </div>
+      <div>
+        <div class="why-col-title">Accredited.</div>
+        <div class="why-col-desc">Confidence in every certificate and degree — accredited by the Northwest Commission (NWCCU).</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <img src="assets/wgu-wordmark-white.png" alt="WGU" />
+    <div class="urls">wgu.edu/partnerships</div>
+    <div class="cta">Learn more →</div>
+    <div class="qr"><div></div></div>
+  </div>
+</div>
+</body>
+</html>

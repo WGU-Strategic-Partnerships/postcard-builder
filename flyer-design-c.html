@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Flyer · Design C v2 — Modular Cards (WGU-branded)</title>
+<link rel="stylesheet" href="source/colors_and_type.css" />
+<style>
+  body { margin: 0; background: #d8dde4; font-family: 'Jost', sans-serif; padding: 40px; display: flex; justify-content: center; }
+  .label-strip { position: fixed; top: 0; left: 0; right: 0; background: #001731; color: #97E152; padding: 8px 16px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; z-index: 100; }
+  .page {
+    width: 850px; height: 1100px; background: #f4f6f9;
+    color: #001731; position: relative; overflow: hidden; padding: 28px;
+    box-shadow: 0 12px 36px rgba(0,23,49,0.18);
+  }
+
+  /* ===== HERO CARD ===== */
+  .hero-card {
+    height: 290px; background: #001731; color: #fff;
+    border-radius: 14px; padding: 32px 36px;
+    display: grid; grid-template-columns: 1fr 240px; gap: 28px;
+    position: relative; overflow: hidden; margin-bottom: 14px;
+  }
+  /* Swirl pattern overlay — the canonical Strategic Partnerships brand asset */
+  .hero-card::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url('assets/swirl-navy.png');
+    background-size: cover; background-position: right center;
+    opacity: 0.55;
+  }
+  .hero-card::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(110deg, rgba(0,23,49,0.92) 0%, rgba(0,23,49,0.7) 50%, rgba(0,23,49,0.3) 100%);
+  }
+  .hero-card > * { position: relative; z-index: 1; }
+  .hero-card .hero-text { display: flex; flex-direction: column; }
+  .hero-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+  .hero-card .wgu-mark { width: 108px; height: auto; display: block; }
+  .hero-card .strap { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.26em; color: #97E152; text-transform: uppercase; text-align: right; line-height: 1.4; }
+  .hero-card .strap span { display: block; }
+  .hero-card h1 {
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 46px;
+    color: #fff; text-transform: uppercase; letter-spacing: -0.005em;
+    margin: 0; line-height: 0.96; max-width: 460px;
+  }
+  .hero-card h1 em {
+    font-family: 'Newsreader', serif; font-style: italic; font-weight: 500;
+    text-transform: lowercase; color: #97E152; letter-spacing: -0.02em; font-size: 56px;
+  }
+  .hero-card .partner-block { margin-top: auto; padding-top: 18px; display: flex; gap: 28px; align-items: center; }
+  .hero-card .partner-label { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.18em; color: #97E152; text-transform: uppercase; }
+  .hero-card .partner-name { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 16px; color: #fff; margin-top: 2px; }
+  .hero-card .accent-bar { width: 40px; height: 3px; background: #97E152; margin-top: 6px; }
+
+  .hero-photo {
+    grid-column: 2; grid-row: 1 / span 2;
+    width: 240px; height: 240px;
+    background: linear-gradient(135deg, #46B1EF 0%, #002855 100%);
+    border-radius: 10px; align-self: center;
+    box-shadow: 0 12px 28px rgba(0,23,49,0.5);
+    position: relative; overflow: hidden;
+    border: 2px solid rgba(151,225,82,0.4);
+  }
+  .hero-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,23,49,0) 60%, rgba(0,23,49,0.5) 100%); }
+  .hero-photo .photo-label {
+    position: absolute; bottom: 12px; left: 14px;
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 9px;
+    color: #97E152; letter-spacing: 0.18em; text-transform: uppercase;
+    z-index: 1;
+  }
+
+  /* ===== STATS ROW ===== */
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .stat-card {
+    background: #fff; border-radius: 10px; padding: 16px 18px;
+    border-top: 3px solid #97E152;
+    position: relative; overflow: hidden;
+  }
+  .stat-card.medium { border-top-color: #0070F0; }
+  .stat-card.dark { border-top-color: #002855; }
+  .stat-card .num {
+    font-family: 'Newsreader', serif; font-weight: 600; font-size: 38px;
+    color: #001731; line-height: 1; letter-spacing: -0.02em;
+  }
+  .stat-card .lbl {
+    font-size: 10.5px; line-height: 1.4; color: #2c4060; margin-top: 6px; font-weight: 500;
+  }
+  .stat-card .lbl strong { color: #001731; font-weight: 700; }
+
+  /* ===== BENEFITS GRID ===== */
+  .benefits-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;
+  }
+  .benefit-card {
+    background: #fff; border-radius: 10px; padding: 14px 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .benefit-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #97E152; color: #001731; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0;
+  }
+  .benefit-text { font-size: 11.5px; line-height: 1.45; color: #2c4060; flex: 1; }
+  .benefit-text strong { color: #0070F0; font-weight: 700; display: block; margin-bottom: 2px; font-size: 12.5px; }
+  .benefit-card.wide { grid-column: 1 / -1; }
+
+  /* ===== WHY WGU CARD ===== */
+  .why-card {
+    background: #fff; border-radius: 10px;
+    margin-bottom: 14px;
+    position: relative; overflow: hidden;
+  }
+  .why-card::before {
+    content: ''; position: absolute; top: 0; right: 0; width: 220px; height: 100%;
+    background-image: url('assets/swirl-navy.png');
+    background-size: cover; background-position: right center;
+    opacity: 0.06;
+  }
+  .why-card-inner { padding: 20px 24px; position: relative; z-index: 1; }
+  .why-card h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.2em; color: #001731; text-transform: uppercase; margin: 0; }
+  .why-card .why-accent { width: 36px; height: 2px; background: #0070F0; margin: 6px 0 14px; }
+  .why-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .why-pill { display: flex; gap: 12px; align-items: flex-start; }
+  .why-mark {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .why-mark.flex { background: #001731; color: #97E152; }
+  .why-mark.aff { background: #0070F0; color: #fff; }
+  .why-mark.acc { background: #97E152; color: #001731; }
+  .why-mark svg { width: 16px; height: 16px; }
+  .why-text-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.04em; color: #001731; text-transform: uppercase; }
+  .why-text-desc { font-size: 10.5px; line-height: 1.4; color: #2c4060; margin-top: 4px; }
+
+  /* ===== FOOTER CARD ===== */
+  .footer-card {
+    background: #001731; color: #fff;
+    border-radius: 10px; padding: 18px 24px;
+    display: flex; align-items: center; gap: 22px;
+    position: relative; overflow: hidden;
+  }
+  .footer-card::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url('assets/swirl-navy.png');
+    background-size: cover; background-position: left center;
+    opacity: 0.15;
+  }
+  .footer-card > * { position: relative; z-index: 1; }
+  .footer-card img { height: 30px; width: auto; }
+  .footer-card .div { width: 1px; align-self: stretch; background: rgba(255,255,255,0.12); margin: 0 6px; }
+  .footer-card .info { flex: 1; }
+  .footer-card .cta { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 0.04em; color: #97E152; text-transform: uppercase; }
+  .footer-card .url { font-family: 'Jost', sans-serif; font-size: 12.5px; color: #BBD0E8; margin-top: 2px; }
+
+  /* QR rendered as inline SVG via QRCodeMini */
+  .footer-card .qr-wrap { background: #fff; padding: 4px; border-radius: 6px; flex-shrink: 0; }
+  .footer-card .qr-wrap svg { display: block; }
+</style>
+</head>
+<body>
+<div class="label-strip">Design C v2 · Modular Cards — WGU-branded with swirl pattern, real wordmark, lime accents</div>
+<div class="page">
+  <div class="hero-card">
+    <div class="hero-text">
+      <div class="top-row">
+        <img class="wgu-mark" src="assets/wgu-wordmark-white.png" alt="WGU" />
+        <div class="strap">
+          <span>WGU</span>
+          <span>Strategic</span>
+          <span>Partnerships</span>
+        </div>
+      </div>
+      <h1>Invest in your team's <em>future</em> with educational benefits.</h1>
+      <div class="partner-block">
+        <div>
+          <div class="partner-label">Prepared for</div>
+          <div class="partner-name">[Partner Name]</div>
+          <div class="accent-bar"></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <div class="photo-label">[Partner Photo]</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num">84%</div>
+      <div class="lbl">of employees consider <strong>tuition assistance</strong> when choosing a company.</div>
+    </div>
+    <div class="stat-card medium">
+      <div class="num">76%</div>
+      <div class="lbl">participate in tuition programs to <strong>advance at their current company</strong>.</div>
+    </div>
+    <div class="stat-card dark">
+      <div class="num">$5,250</div>
+      <div class="lbl">deductible per employee annually under <strong>IRS Section 127</strong>.</div>
+    </div>
+  </div>
+
+  <div class="benefits-grid">
+    <div class="benefit-card">
+      <div class="benefit-num">01</div>
+      <div class="benefit-text"><strong>Recruitment Magnet.</strong>Attract top talent by offering a highly valued benefit.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">02</div>
+      <div class="benefit-text"><strong>Boost Retention.</strong>Combat turnover with career development opportunities.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">03</div>
+      <div class="benefit-text"><strong>Tax Savings.</strong>Significant tax benefits for both your business and employees.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">04</div>
+      <div class="benefit-text"><strong>Cultivate Talent.</strong>Build a workforce that evolves with your business needs.</div>
+    </div>
+    <div class="benefit-card wide">
+      <div class="benefit-num">05</div>
+      <div class="benefit-text"><strong>Enhance Engagement.</strong>Keep your team motivated and invested. Tuition assistance encourages lifelong learning and personal growth.</div>
+    </div>
+  </div>
+
+  <div class="why-card">
+    <div class="why-card-inner">
+      <h2>Why WGU is the right partner</h2>
+      <div class="why-accent"></div>
+      <div class="why-row">
+        <div class="why-pill">
+          <div class="why-mark flex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4l3 2" stroke-linecap="round"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div>
+            <div class="why-text-title">Flexible</div>
+            <div class="why-text-desc">No required class times — keep your work schedule and pace yourself.</div>
+          </div>
+        </div>
+        <div class="why-pill">
+          <div class="why-mark aff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6" stroke-linecap="round"/></svg></div>
+          <div>
+            <div class="why-text-title">Affordable</div>
+            <div class="why-text-desc">Tuition support goes further with WGU's flat-rate model.</div>
+          </div>
+        </div>
+        <div class="why-pill">
+          <div class="why-mark acc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <div class="why-text-title">Accredited</div>
+            <div class="why-text-desc">Every certificate and degree backed by NWCCU accreditation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-card">
+    <img src="assets/wgu-wordmark-white.png" alt="WGU" />
+    <div class="div"></div>
+    <div class="info">
+      <div class="cta">Scan to learn more</div>
+      <div class="url">wgu.edu/partnerships</div>
+    </div>
+    <div class="qr-wrap" id="qr-wrap"></div>
+  </div>
+</div>
+
+<script src="source/qrcode-mini.js"></script>
+<script>
+  // Render a real QR code into the footer
+  (function() {
+    const wrap = document.getElementById('qr-wrap');
+    if (!wrap || !window.QRCodeMini) return;
+    const matrix = window.QRCodeMini.generate('https://wgu.edu/partnerships', 'M');
+    if (!matrix) return;
+    const n = matrix.length, size = 56;
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('width', size); svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', `0 0 ${n} ${n}`);
+    svg.setAttribute('shape-rendering', 'crispEdges');
+    matrix.forEach((row, r) => row.forEach((on, c) => {
+      if (!on) return;
+      const rect = document.createElementNS(ns, 'rect');
+      rect.setAttribute('x', c); rect.setAttribute('y', r);
+      rect.setAttribute('width', 1); rect.setAttribute('height', 1);
+      rect.setAttribute('fill', '#001731');
+      svg.appendChild(rect);
+    }));
+    wrap.appendChild(svg);
+  })();
+</script>
+</body>
+</html>
