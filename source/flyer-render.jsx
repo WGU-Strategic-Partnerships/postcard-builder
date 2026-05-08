@@ -163,6 +163,9 @@ function FlyerFront({ data }) {
     { pct: ft.callout_3_pct || '$5,250',                            label: ft.callout_3_label || 'deductible per employee annually under IRS Section 127.',                                accent: FL_C.blue },
   ];
 
+  const url = data.url || 'wgu.edu/partnerships';
+  const qrCta = ft.back_qr_cta || 'Scan to learn more';
+
   return (
     <div style={{
       width: 850, height: 1100, background: FL_C.pageBg,
@@ -171,10 +174,10 @@ function FlyerFront({ data }) {
       display: 'flex', flexDirection: 'column',
     }}>
       {/* HERO BAND — full-bleed, edge to edge, no border-radius */}
-      <div style={{ height: 360, flexShrink: 0 }}>
+      <div style={{ height: 300, flexShrink: 0 }}>
         <NavyBrandCard
           height="100%"
-          padding="42px 60px 32px"
+          padding="32px 60px 26px"
           swirlOpacity={0.45}
           gradientStops="110deg, rgba(0,23,49,0.96) 0%, rgba(0,23,49,0.92) 45%, rgba(0,23,49,0.7) 100%"
           style={{ borderRadius: 0 }}
@@ -208,45 +211,73 @@ function FlyerFront({ data }) {
       </div>
 
       {/* BODY — padded; benefits left (60%), stats right (40%) */}
-      <div style={{ padding: '18px 28px 28px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+      <div style={{ padding: '18px 28px 18px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '60% 1fr', gap: 14, flex: 1, minHeight: 0 }}>
           {/* Benefits column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 }}>
             {benefits.map((b, i) => (
-              <div key={i} style={{ ...cardStyle, flex: 1, display: 'flex', gap: 14, alignItems: 'flex-start', padding: '14px 18px' }}>
+              <div key={i} style={{ ...cardStyle, flex: 1, display: 'flex', gap: 14, alignItems: 'flex-start', padding: '12px 16px' }}>
                 <div style={{
-                  width: 32, height: 32, borderRadius: '50%',
+                  width: 30, height: 30, borderRadius: '50%',
                   background: FL_C.lime, color: FL_C.midnight, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: FL_FONT_CAMPAIGN, fontWeight: 700, fontSize: 13,
+                  fontFamily: FL_FONT_CAMPAIGN, fontWeight: 700, fontSize: 12.5,
                 }}>
                   {String(i + 1).padStart(2, '0')}
                 </div>
-                <div style={{ fontSize: 12.5, lineHeight: 1.45, color: FL_C.textMuted, flex: 1, alignSelf: 'center' }}>
-                  <strong style={{ color: FL_C.mediumBlue, fontWeight: 700, display: 'block', marginBottom: 3, fontSize: 13.5 }}>{b.title || ''}</strong>
+                <div style={{ fontSize: 12, lineHeight: 1.4, color: FL_C.textMuted, flex: 1, alignSelf: 'center' }}>
+                  <strong style={{ color: FL_C.mediumBlue, fontWeight: 700, display: 'block', marginBottom: 2, fontSize: 13 }}>{b.title || ''}</strong>
                   {b.description || ''}
                 </div>
               </div>
             ))}
           </div>
           {/* Stats column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
             {stats.map((s, i) => (
               <div key={i} style={{
-                ...cardStyle, flex: 1, padding: '20px 22px',
+                ...cardStyle, flex: 1, padding: '16px 20px',
                 borderTop: `4px solid ${s.accent}`,
                 display: 'flex', flexDirection: 'column', justifyContent: 'center',
                 minHeight: 0,
               }}>
-                <div style={{ fontFamily: FL_FONT_SERIF, fontWeight: 600, fontSize: 56, color: FL_C.midnight, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                <div style={{ fontFamily: FL_FONT_SERIF, fontWeight: 600, fontSize: 50, color: FL_C.midnight, lineHeight: 1, letterSpacing: '-0.02em' }}>
                   {s.pct}
                 </div>
-                <div style={{ fontSize: 11.5, lineHeight: 1.4, color: FL_C.textMuted, marginTop: 12, fontWeight: 500 }}
+                <div style={{ fontSize: 11, lineHeight: 1.4, color: FL_C.textMuted, marginTop: 10, fontWeight: 500 }}
                      dangerouslySetInnerHTML={{ __html: highlightInlineNumbers(s.label) }} />
               </div>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* BOTTOM CTA BAND — full-bleed, mirrors the back's bottom band */}
+      <div style={{ height: 200, flexShrink: 0 }}>
+        <NavyBrandCard
+          height="100%"
+          padding="26px 60px"
+          swirlOpacity={0.45}
+          gradientStops="110deg, rgba(0,23,49,0.96) 0%, rgba(0,23,49,0.92) 45%, rgba(0,23,49,0.7) 100%"
+          style={{ borderRadius: 0 }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32, height: '100%' }}>
+            <FlyerQR size={130} fg={FL_C.midnight} bg={FL_C.white} urlOrImage={data.qrSource} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: FL_FONT_CAMPAIGN, fontWeight: 700, fontSize: 11, letterSpacing: '0.26em', color: FL_C.lime, textTransform: 'uppercase' }}>
+                Connect with the partnership team
+              </div>
+              <div style={{ fontFamily: FL_FONT_CAMPAIGN, fontWeight: 700, fontSize: 34, color: FL_C.white, textTransform: 'uppercase', letterSpacing: '-0.005em', lineHeight: 1, marginTop: 6 }}>
+                {qrCta}
+              </div>
+              <div style={{ width: 44, height: 3, background: FL_C.lime, marginTop: 10 }} />
+              <div style={{ fontFamily: FL_FONT_DISPLAY, fontSize: 14, color: FL_C.subtleNavy, fontWeight: 500, marginTop: 10 }}>
+                {url}
+              </div>
+            </div>
+            <img src={FL_LOGO_WHITE_URL} alt="WGU" style={{ height: 30, width: 'auto', display: 'block', alignSelf: 'flex-end' }} />
+          </div>
+        </NavyBrandCard>
       </div>
     </div>
   );
