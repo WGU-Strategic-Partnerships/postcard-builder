@@ -9,7 +9,7 @@ Operational workflows for the people who run this thing. For architecture and co
 | **Builder** (public, embedded in SharePoint) | https://postcard-builder.vercel.app/ |
 | **Admin** (sign-in required) | https://postcard-builder.vercel.app/admin.html |
 | **Supabase dashboard** (Bentley only) | https://supabase.com/dashboard/project/zkvotdzwccztdmwagtjs |
-| **GitHub repo** | https://github.com/bentley-wgu/postcard-builder |
+| **GitHub repo** | https://github.com/WGU-Strategic-Partnerships/postcard-builder |
 
 ## How content flows
 
