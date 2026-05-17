@@ -12,7 +12,8 @@
 
   /* ===== Global nav (top tab bar) ===== */
   .top-nav { display: flex; align-items: center; height: var(--nav-h); padding: 0 24px; background: #fff; border-bottom: 1px solid #e0e6ee; gap: 28px; flex-shrink: 0; box-shadow: 0 1px 0 rgba(0,23,49,0.04); position: sticky; top: 0; z-index: 50; }
-  .top-nav-brand { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; color: #001731; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; }
+  .top-nav-brand { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; color: #001731; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; text-decoration: none; transition: color 0.12s; }
+  .top-nav-brand:hover { color: #0070F0; }
   .top-nav-brand .brand-dot { width: 10px; height: 10px; border-radius: 50%; background: #97E152; box-shadow: 0 0 0 3px rgba(151,225,82,0.18); }
   .top-nav-tabs { display: flex; gap: 0; flex: 1; align-self: stretch; align-items: stretch; }
   .nav-tab { display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 600; color: #264468; text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 2px solid transparent; transition: color 0.12s, border-color 0.12s; }
@@ -99,7 +100,7 @@
 </head>
 <body>
 <nav class="top-nav">
-  <div class="top-nav-brand"><span class="brand-dot"></span>WGU Builders</div>
+  <a class="top-nav-brand" href="https://wgu-tools.vercel.app/" title="Back to WGU Tools"><span class="brand-dot"></span>WGU Builders</a>
   <div class="top-nav-tabs">
     <a class="nav-tab" href="Postcard%20Builder.html">Postcard</a>
     <a class="nav-tab active" href="ABR%20Builder.html">Annual Business Report</a>
