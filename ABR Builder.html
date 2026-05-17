@@ -19,7 +19,10 @@
   .nav-tab { display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 600; color: #264468; text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 2px solid transparent; transition: color 0.12s, border-color 0.12s; }
   .nav-tab:hover { color: #0070F0; }
   .nav-tab.active { color: #0070F0; border-bottom-color: #0070F0; }
-  .top-nav-right { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+  .top-nav-right { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+  .wgu-tools-btn { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px; background: rgba(0, 40, 85, 0.04); border: 1px solid rgba(0, 40, 85, 0.10); font-family: 'Jost', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.04em; color: #002855; text-transform: uppercase; text-decoration: none; transition: background 0.12s, border-color 0.12s; }
+  .wgu-tools-btn:hover { background: rgba(0, 40, 85, 0.08); border-color: rgba(0, 40, 85, 0.20); }
+  .wgu-tools-btn .dot-tools { color: #0070F0; }
   .nav-admin { font-size: 11px; color: #0070F0; text-decoration: none; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 14px; border: 1px solid #c7d1de; border-radius: 4px; transition: all 0.12s; }
   .nav-admin:hover { background: #f7faff; border-color: #0070F0; color: #0057C2; }
 
@@ -107,6 +110,7 @@
     <a class="nav-tab" href="Flyer%20Builder.html">Tuition Benefits Flyer</a>
   </div>
   <div class="top-nav-right">
+    <a class="wgu-tools-btn" href="https://wgu-tools.vercel.app/" title="Back to WGU.tools">WGU<span class="dot-tools">.tools</span></a>
     <a class="nav-admin" href="admin.html">Admin</a>
   </div>
 </nav>
